@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -1088,7 +1088,7 @@ _ss_function_textual_representation_from( /* call via wrapper */
 {
     const U32 min_n_args = p_resource_spec->n_args;
     const U32 max_n_args = min_n_args + p_resource_spec->max_additional_args;
-    const bool emit_parentheses = (max_n_args != 0) || g_ss_decompiler_options.zero_args_function_parentheses;
+    const bool emit_parentheses = (max_n_args != 0) || (p_resource_spec->may_have_args && g_ss_decompiler_options.zero_args_function_parentheses);
     SS_FUNCTION_ADD_ARGUMENTS ss_function_add_arguments;
     zero_struct_fn(ss_function_add_arguments);
 
@@ -1422,7 +1422,7 @@ _ss_function_paste_to_editing_line( /* call via wrapper */
         const P_RESOURCE_SPEC p_resource_spec = &resource_spec;
         const U32 min_n_args = p_resource_spec->n_args;
         const U32 max_n_args = p_resource_spec->n_args + p_resource_spec->max_additional_args;
-        const bool emit_parentheses = (max_n_args != 0) || g_ss_decompiler_options.zero_args_function_parentheses;
+        const bool emit_parentheses = (max_n_args != 0) || (p_resource_spec->may_have_args && g_ss_decompiler_options.zero_args_function_parentheses);
         QUICK_UBLOCK_WITH_BUFFER(quick_ublock, elemof32("function(....and....,....some....,....arguments....)"));
         quick_ublock_with_buffer_setup(quick_ublock);
 

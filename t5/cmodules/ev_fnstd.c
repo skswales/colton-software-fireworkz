@@ -2,9 +2,9 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2021 Stuart Swales */
+/* Copyright (C) 2014-2022 Stuart Swales */
 
 /* Statistical function routines (distributions etc) for evaluator */
 
@@ -331,7 +331,7 @@ PROC_EXEC_PROTO(c_binom_inv)
 ******************************************************************************/
 
 static void
-alternate_hypgeom_dist_pdf_calc(
+alternate_hypgeom_dist_pmf_calc(
     _OutRef_    P_SS_DATA p_ss_data_out, /* may return real or error */
     _InVal_     S32 s,
     _InVal_     S32 n,
@@ -374,7 +374,7 @@ alternate_hypgeom_dist_calc(
     {
         SS_DATA ss_data_term;
 
-        alternate_hypgeom_dist_pdf_calc(&ss_data_term, i, n, M, N, ln_denominator); /* may return real or error */
+        alternate_hypgeom_dist_pmf_calc(&ss_data_term, i, n, M, N, ln_denominator); /* may return real or error */
 
         if(!two_nums_add_propagate_error(p_ss_data_out, p_ss_data_out, &ss_data_term))
             ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
@@ -391,7 +391,7 @@ alternate_hypgeom_dist_calc(
  */
 
 static void
-hypgeom_dist_pdf_calc(
+hypgeom_dist_pmf_calc(
     _OutRef_    P_SS_DATA p_ss_data_out, /* may return integer or real or error */
     _InVal_     S32 s,
     _InVal_     S32 n,
@@ -438,7 +438,7 @@ hypgeom_dist_calc(
     {
         SS_DATA term;
 
-        hypgeom_dist_pdf_calc(&term, i, n, M, N, &denominator); /* may return integer or real or error */
+        hypgeom_dist_pmf_calc(&term, i, n, M, N, &denominator); /* may return integer or real or error */
 
         if(!two_nums_add_propagate_error(p_ss_data_out, p_ss_data_out, &term))
             ss_data_set_error(p_ss_data_out, EVAL_ERR_CALC_FAILURE);
@@ -564,7 +564,7 @@ PROC_EXEC_PROTO(c_negbinom_dist)
 
 /******************************************************************************
 *
-* NUMBER poisson.dist(x:number, lambda:number {, cumulative:Logical=TRUE})
+* NUMBER poisson.dist(x:number, lambda:number {, cumulative:Boolean=TRUE})
 *
 * See OpenDocument 1.2 definition of POISSON
 *

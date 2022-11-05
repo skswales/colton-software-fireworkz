@@ -5,10 +5,10 @@ OBJID=18
 
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# Copyright (C) 1993-1998 Colton Software Limited
-# Copyright (C) 1998-2015 R W Colton
+# Copyright © 1993-1998 Colton Software Limited
+# Copyright © 1998-2015 R W Colton
 
 $(BUILD_DIR).ob_toolb.o.ob_toolb: $(T5).ob_toolb.c.ob_toolb
  $(CC) -o $@ $(ccflags) $?

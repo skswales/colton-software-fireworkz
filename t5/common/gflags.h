@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1989-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -170,19 +170,9 @@ RISC OS Draw file stuff needed on all platforms
 #include "cmodules/debug.h"
 #include "cmodules/myassert.h"
 
+#if !defined(_MSC_VER) || (!defined(__cplusplus))
 /* base Fireworkz definitions */
 #include "ob_skel/xp_skel.h"
-
-#if defined(_MSC_VER) && (!RELEASED || 0)
-/* much speed up with precompiled header stuff on MSVC */
-
-#ifndef         __xp_skeld_h
-#include "ob_skel/xp_skeld.h"
-#endif
-
-#ifndef    __skel_flags_h
-#include "ob_skel/flags.h"
-#endif
 #endif /* _MSC_VER */
 
 #if defined(__cplusplus)

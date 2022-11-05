@@ -1,12 +1,14 @@
+@charset "UTF-8";
+
 /* --------------------------------- */
 /* CSS for Fireworkz simple HTMLHelp */
 /* --------------------------------- */
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2021 Stuart Swales */
+/* Copyright © 2014-2022 Stuart Swales */
 
 /* default rules for the whole document */
 body {
@@ -112,7 +114,7 @@ ul ul, ol ol, ul ol, ol ul {
     margin-bottom: 1em;
 }
 
-/* See http://bugs.netsurf-browser.org/mantis/view.php?id=2434 */
+/* See https://bugs.netsurf-browser.org/mantis/view.php?id=2434 */
 ul.csg-netsurf-2434 {
     padding: 0 0 0 2em;
     list-style-type: none;

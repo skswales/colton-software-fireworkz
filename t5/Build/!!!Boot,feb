@@ -2,42 +2,30 @@
 |
 | This Source Code Form is subject to the terms of the Mozilla Public
 | License, v. 2.0. If a copy of the MPL was not distributed with this
-| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+| file, You can obtain one at https://mozilla.org/MPL/2.0/.
 |
-| Copyright (C) 1991-1998 Colton Software Limited
-| Copyright (C) 1998-2015 R W Colton
+| Copyright © 1991-1998 Colton Software Limited
+| Copyright © 1998-2015 R W Colton
 |
 If "<Hdr$Path>"="" Then Error AcornC/C++ Tools not yet opened
 |
-If "<fireworkz_root>"<>""  Then Error 0 Please reboot and reselect
-|
-| SKS iMX6
-If "<disc_root>"="" Then IfThere SCSI::hd4.$.!Boot Then Set disc_root SCSI::hd4.$
-|
-| SKS RISC PC
-If "<disc_root>"="" Then IfThere ADFS::id0.$ Then Set disc_root ADFS::id0.$
-|
-| Raspberry Pi
-If "<disc_root>"="" Then IfThere SDFS::RISCOSpi.$.!Boot Then Set disc_root SDFS::RISCOSpi.$
-|
-| RPCEmu
-If "<disc_root>"="" Then IfThere HostFS:$.!Boot Then Set disc_root HostFS:$
+BASIC -quit <Obey$Dir>.Tools.SetBuildEnv -variable fireworkz_root -strip t5.Build.Tools.SetBuildEnv
 |
 | RISC OS filetypes are stored using ,xyz suffixes for this project
 | and not the svn:riscosfiletype property
 Set svn$filetypeext ""
 |
-Set FIREWORKZ_TBT fireworkz__2_31__branch
+Set FIREWORKZ_TBT fireworkz__2_32__branch
 |et FIREWORKZ_TBT trunk
-Set fireworkz_root <disc_root>.fireworkz.<FIREWORKZ_TBT>
+|et fireworkz_root <disc_root>.fireworkz.<FIREWORKZ_TBT>
 |
 URD <fireworkz_root>
 |Lib &.arm.Library
 Dir &
 |
 | Fireworkz Pro can only be built if R-Comp components are present
-IfThere <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib    Then Set DPlib$Path    <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.
-IfThere <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.WindLibC Then Set WindLibC$Path <disc_root>.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.WindLibC.<C$Mode>.
+IfThere <fireworkz_root>.^.^.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.DPlib    Then Set DPlib$Path    <fireworkz_root>.^.^.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.
+IfThere <fireworkz_root>.^.^.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.DPlib.<C$Mode>.WindLibC Then Set WindLibC$Path <fireworkz_root>.^.^.coltsoft.<FIREWORKZ_TBT>.cs-nonfree.DataPower.WindLibC.<C$Mode>.
 |
 Set Fireworkz$ReportEnable 1
 Set Fireworkz$TraceEnable 1

@@ -212,9 +212,6 @@
     <Filter Include="Docs\UserGuide\sg\sg06\sg6_compatibility">
       <UniqueIdentifier>{18cec4ba-2c33-47f4-bddc-4dea27ba9c95}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Docs\UserGuide\sg\sg06\sg6_logical">
-      <UniqueIdentifier>{d15dff24-baf1-4882-aa25-0bcdb5675863}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Docs\UserGuide\sg\sg06\sg6_database">
       <UniqueIdentifier>{53956f84-32f3-4433-b06e-cb4f82e1843b}</UniqueIdentifier>
     </Filter>
@@ -424,6 +421,9 @@
     </Filter>
     <Filter Include="Source Files\foreign_formats\fl_123\fl_123_resource">
       <UniqueIdentifier>{a25d99b1-b6d3-4242-8330-c9417f3c0b2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs\UserGuide\sg\sg06\sg6_boolean">
+      <UniqueIdentifier>{d15dff24-baf1-4882-aa25-0bcdb5675863}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -812,9 +812,6 @@
       <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ob_skel\windows\ho_xform.c">
-      <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cmodules\muldiv86.c">
       <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ob_skel\windows\splash.c">
@@ -1321,6 +1318,12 @@
     <ClCompile Include="..\..\cmodules\cfbfnative.c">
       <Filter>Source Files\ob_skel\ob_skel_windows</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\cmodules\ss_string.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cmodules\muldiv64.c">
+      <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\fl_123\fl_123.h">
@@ -1551,7 +1554,7 @@
     <ClInclude Include="..\..\cmodules\allocblk.h">
       <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\external\FreeBSD\srcp\lib\msun\src\math.h">
+    <ClInclude Include="..\..\external\FreeBSD\srcp\lib\msun\src\openmath-libm.h">
       <Filter>Source Files\ob_ss\ob_ss_external</Filter>
     </ClInclude>
     <ClInclude Include="..\..\external\FreeBSD\srcp\lib\msun\src\math_private.h">
@@ -1848,6 +1851,9 @@
     <ClInclude Include="..\..\..\fprowrkz\ob_rec\resource\resource.h">
       <Filter>Source Files\fprowrkz\ob_rec\ob_rec_resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\cmodules\coltsoft\target_riscos_host_clang.h">
+      <Filter>Header Files\coltsoft</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\MakeAll">
@@ -1974,22 +1980,22 @@
       <Filter>Docs\UserGuide\sg\sg06\sg6_compatibility</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06a\sg6_AND.htm">
-      <Filter>Docs\UserGuide\sg\sg06\sg6_logical</Filter>
+      <Filter>Docs\UserGuide\sg\sg06\sg6_boolean</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06x\sg6_XOR.htm">
-      <Filter>Docs\UserGuide\sg\sg06\sg6_logical</Filter>
+      <Filter>Docs\UserGuide\sg\sg06\sg6_boolean</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_TRUE.htm">
-      <Filter>Docs\UserGuide\sg\sg06\sg6_logical</Filter>
+      <Filter>Docs\UserGuide\sg\sg06\sg6_boolean</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06o\sg6_OR.htm">
-      <Filter>Docs\UserGuide\sg\sg06\sg6_logical</Filter>
+      <Filter>Docs\UserGuide\sg\sg06\sg6_boolean</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NOT.htm">
-      <Filter>Docs\UserGuide\sg\sg06\sg6_logical</Filter>
+      <Filter>Docs\UserGuide\sg\sg06\sg6_boolean</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FALSE.htm">
-      <Filter>Docs\UserGuide\sg\sg06\sg6_logical</Filter>
+      <Filter>Docs\UserGuide\sg\sg06\sg6_boolean</Filter>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg06d\sg6_DAVG.htm">
       <Filter>Docs\UserGuide\sg\sg06\sg6_database</Filter>
@@ -3153,9 +3159,6 @@
     <None Include="..\..\..\docs\UserGuide\content\ug\ug98_glossary.htm">
       <Filter>Docs\UserGuide\ug</Filter>
     </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug\ug99_addenda.htm">
-      <Filter>Docs\UserGuide\ug</Filter>
-    </None>
     <None Include="..\..\ob_skel\resource\Germany\msg">
       <Filter>Source Files\ob_skel\ob_skel_resource\Germany</Filter>
     </None>
@@ -3378,6 +3381,312 @@
     <None Include="..\..\..\docs\UserGuide\content\sg\sg07_custom_functions.htm">
       <Filter>Docs\UserGuide\sg</Filter>
     </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_string</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BETA_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_array_or_range_or_list.htm">
+      <Filter>Docs\UserGuide\sg\sg06</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_compatibility_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_database_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_date_time_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_engineering_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_financial_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_boolean_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_lookup_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_mathematical_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_matrix_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_miscellaneous_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_statistical_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_string_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_trigonometrical_functions.htm">
+      <Filter>Docs\UserGuide\sg</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06w\sg6_WEIBULL_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06l\sg6_LOGNORM_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_POISSON_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06h\sg6_HYPGEOM_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06e\sg6_EXPON_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06g\sg6_GAMMA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06g\sg6_GAMMA_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NORM_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NORM_S_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PHI.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06s\sg6_STEYX.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FORECAST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_INTERCEPT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06s\sg6_SLOPE.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_IRR.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_MOD.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_INT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_LOG10.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06a\sg6_ADDRESS.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_lookup</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FACTDOUBLE.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_mathematical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06m\sg6_M_UNIT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_matrix</Filter>
+    </None>
+    <None Include="..\..\firewrkz\Resources\Windows\Germany\res01.rci">
+      <Filter>Source Files\ob_ss\ob_ss_resource\Germany</Filter>
+    </None>
+    <None Include="..\..\firewrkz\Resources\Windows\France\res01.rci">
+      <Filter>Source Files\ob_ss\ob_ss_resource\France</Filter>
+    </None>
+    <None Include="..\..\firewrkz\Resources\Windows\France\res06.rci">
+      <Filter>Source Files\ob_chart\ob_chart_resource\France</Filter>
+    </None>
+    <None Include="..\..\firewrkz\Resources\Windows\Germany\res06.rci">
+      <Filter>Source Files\ob_chart\ob_chart_resource\Germany</Filter>
+    </None>
+    <None Include="..\..\firewrkz\Resources\Windows\France\res00.rci">
+      <Filter>Source Files\ob_skel\ob_skel_resource\France</Filter>
+    </None>
+    <None Include="..\..\firewrkz\Resources\Windows\Germany\res00.rci">
+      <Filter>Source Files\ob_skel\ob_skel_resource\Germany</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06a\sg6_AVERAGEA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06m\sg6_MAXA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06m\sg6_MINA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06s\sg6_STDEVA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06s\sg6_STDEVPA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06v\sg6_VARA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06v\sg6_VARPA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06l\sg6_LOGNORM_INV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BINOM_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BINOM_DIST_RANGE.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BINOM_INV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BETA_INV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06g\sg6_GAMMA_INV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NEGBINOM_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_COMBINA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PROB.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CORREL.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PEARSON.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06r\sg6_RSQ.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_INDEX.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_TDIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_compatibility</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06z\sg6_Z_TEST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FISHER.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FISHERINV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_DIST_RT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_INV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_INV_RT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_DIST_RT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_INV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_INV_RT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_DIST_RT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_INV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_DIST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_INV_2T.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_DIST_2T.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CONFIDENCE_NORM.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CONFIDENCE_T.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PERCENTRANK_INC.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PERCENTRANK_EXC.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_TEST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_TEST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_TEST.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FREQUENCY.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NORM_INV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NORM_S_INV.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_statistical</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISBLANK.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISERR.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISERROR.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISTEXT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISNONTEXT.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISREF.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISNUMBER.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISNA.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISLOGICAL.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_miscellaneous</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06e\sg6_EDATE.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06e\sg6_EOMONTH.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_date_time</Filter>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06d\sg6_DB.htm">
+      <Filter>Docs\UserGuide\sg\sg06\sg6_financial</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\firewrkz\Resources\Windows\Neutral\banner.bmp">
@@ -3567,9 +3876,6 @@
       <Filter>Source Files\ob_skel\ob_skel_cmodules\unicode\UCD</Filter>
     </Text>
     <Text Include="..\..\firewrkz\Resources\Windows\UK\config.txt">
-      <Filter>Source Files\firewrkz</Filter>
-    </Text>
-    <Text Include="..\..\firewrkz\TODO.txt">
       <Filter>Source Files\firewrkz</Filter>
     </Text>
   </ItemGroup>

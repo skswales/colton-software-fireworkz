@@ -59,7 +59,7 @@ __FBSDID("$FreeBSD: head/lib/msun/src/k_cos.c 176408 2008-02-19 12:54:14Z bde $"
  *	   any extra precision in w.
  */
 
-#include "math.h"
+#include "openlibm-math.h"
 #include "math_private.h"
 
 static const double

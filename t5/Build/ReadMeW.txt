@@ -1,11 +1,11 @@
 ReadMe for Fireworkz Build (Microsoft Windows)
 ----------------------------------------------
 
-This Source Code Form is subject to the terms of the Mozilla Public
-License, v. 2.0. If a copy of the MPL was not distributed with this
-file, You can obtain one at http://mozilla.org/MPL/2.0/.
+** This Source Code Form is subject to the terms of the Mozilla Public
+** License, v. 2.0. If a copy of the MPL was not distributed with this
+** file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-Copyright (C) 2013-2021 Stuart Swales
+** Copyright © 2013-2022 Stuart Swales
 
 Prerequisites
 -------------
@@ -14,7 +14,7 @@ A Windows SVN client such as TortoiseSVN (minimal install, with command line too
 
 GNU Win32 Patch to generate the patched BTTNCUR(P) source files.
 
-Microsoft Visual Studio 2017 or later (C compiler, headers, libraries, linker). The free Community Edition is suitable (you don't need Blend, MFC, SQL or Web development options).
+Microsoft Visual Studio 2019 (C compiler, headers, libraries, linker). The free Community Edition is suitable (you don't need Blend, MFC, SQL or Web development options). You need to add 'C++ Windows XP Support for VS 2017 (v141) tools [deprecated]'.
 
 I recommend setting:
 
@@ -46,7 +46,7 @@ external/setup-windows.cmd
 
 to copy and patch those files as needed.
 
-Double-click on Build\windows\firewrkz-vs2013.sln to load the solution and project files into Visual Studio.
+Double-click on Build\windows\firewrkz-vs2019.sln to load the solution and project files into Visual Studio.
 
 Choose the variant to build (e.g. Debug XP ANSI or Release XP ANSI).
 

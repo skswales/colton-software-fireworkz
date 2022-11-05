@@ -2,7 +2,7 @@
 
 ; This Source Code Form is subject to the terms of the Mozilla Public
 ; License, v. 2.0. If a copy of the MPL was not distributed with this
-; file, You can obtain one at http://mozilla.org/MPL/2.0/.
+; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 ; Copyright (C) 1991-1998 Colton Software Limited
 ; Copyright (C) 1998-2015 R W Colton
@@ -365,27 +365,6 @@ muldiv64_zero_result
         LDR     a1, [a1, #MULDIV_OVERFLOW]
 
         Return "","LinkNotStacked"
-
- [ {FALSE} ; Still used in PipeDream but no longer used in Fireworkz
-
-; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-; extern int32_t muldiv64_limiting(int32_t dividend, int32_t multiplier, int32_t divisor);
-
-        BeginExternal muldiv64_limiting
-
-        FunctionEntry "","MakeFrame"
-
-        BL      muldiv64            ; a1 := (a1 * a2) / a3
-
-        LDR     a2, =muldiv64__statics ; check overflow, limit if overflow != 0
-        LDR     a2, [a2, #MULDIV_OVERFLOW]
-        CMP     a2, #0
-        MOV     a2, #&80000000 ; LONG_MAX + 1 (overflowed)
-        SUBGT   a1, a2, #1 ; -> +LONG_MAX (0x7FFFFFFF)
-        ADDLT   a1, a2, #1 ; -> -LONG_MAX (0x80000001)
-
-        Return "","fpbased"
- ]
 
 ; ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ; extern void muldiv64_init(void);

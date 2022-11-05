@@ -1,48 +1,80 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
-    <title>BETA</title>
-</head>
-<body>
     <!-- This Source Code Form is subject to the terms of the Mozilla Public
        - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>BETA.DIST</title>
+</head>
+<body>
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="BETA" />
-        <param name="Keyword" value="Statistical functions, BETA" />
+        <param name="Keyword" value="Spreadsheet functions, Statistical, BETA.DIST" />
+        <param name="Keyword" value="Statistical functions, beta distribution" />
     </object>
 
-    <h1><a name="beta" id="beta"></a>BETA</h1>
+    <h1><a name="beta_dist" id="beta_dist"></a>BETA.DIST</h1>
+
+    <p>Beta distribution<sup><a href="#cite_note-1">[1]</a></sup>.</p>
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        BETA(<span class="csg-function-parameter">a</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter">b</span>:<span class="csg-function-parameter-type">Number</span>)
+        BETA.DIST(
+        <span class="csg-function-parameter">x</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">alpha</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">beta</span>:<span class="csg-function-parameter-type">Number</span>
+        {, <span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>
+        {, <span class="csg-function-parameter">lower_limit</span>:<span class="csg-function-parameter-type">Number</span>
+        {, <span class="csg-function-parameter">upper_limit</span>:<span class="csg-function-parameter-type">Number</span>} } } )
     </p>
-    <p>Returns the value of the Beta function for parameters <span class="csg-function-parameter">a</span> and <span class="csg-function-parameter">b</span>.</p>
 
-    <p class="csg-function-subheading">Formula:</p>
-    <p>One definition of the Beta function is</p>
-    <p class="csg-function-formula">&Beta;(<i>a</i>, <i>b</i>) = &Gamma;(<i>a</i>) &sdot; &Gamma;(<i>b</i>) &divide; &Gamma;(<i>a</i> + <i>b</i>)</p>
+    <p>
+        Returns the value of the cumulative distribution function (CDF)
+        or the probability density function (PDF) for the
+        beta distribution with given
+        <span class="csg-function-parameter">alpha</span> and
+        <span class="csg-function-parameter">beta</span> shape parameters at
+        <span class="csg-function-parameter">x</span>.
+    </p>
 
-    <p>This special function is actually evaluated by Fireworkz using the formula</p>
-    <p class="csg-function-formula">&Beta;(<i>a</i>, <i>b</i>) = EXP( GAMMALN(<i>a</i>) + GAMMALN(<i>b</i>) &minus; GAMMALN(<i>a</i> + <i>b</i>) )</p>
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>, default) or PDF (<code>FALSE</code>).</p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <p>If <span class="csg-function-parameter">lower_limit</span> is omitted the standard beta distribution lower limit of zero is used.</p>
+
+    <p>If <span class="csg-function-parameter">upper_limit</span> is omitted the standard beta distribution upper limit of one is used.</p>
+
+    <p>
+        If given, these parameters are used to
+        scale and shift the given <span class="csg-function-parameter">x</span>-value
+        from [<span class="csg-function-parameter">lower_limit</span>..<span class="csg-function-parameter">upper_limit</span>]
+        into the standardized beta distribution range [0..1].
+    </p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in Fireworkz 2.00.</p>
+
+    <div class="csg-line"><!-- ... --> </div>
+    <ol class="references">
+        <li id="cite_note-1">
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/about/author.html">Weisstein, Eric W.</a>
+            "Beta Distribution."
+            From <a class="external" target="_blank" href="https://mathworld.wolfram.com/">MathWorld</a>--A Wolfram Web Resource.
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/BetaDistribution.html">https://mathworld.wolfram.com/BetaDistribution.html</a>
+        </li>
+    </ol>
+
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06a/sg6_AVEDEV.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="sg5_statistical_functions.htm">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06b/sg6_BIN.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06b/sg6_BETA.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06b/sg6_BETA_INV.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

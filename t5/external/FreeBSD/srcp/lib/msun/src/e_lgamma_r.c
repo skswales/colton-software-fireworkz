@@ -92,7 +92,7 @@ __FBSDID("$FreeBSD: src/lib/msun/src/e_lgamma_r.c,v 1.11 2011/10/15 07:00:28 das
  *	
  */
 
-#include "math.h"
+#include "openlibm-math.h"
 #include "math_private.h"
 
 static const double

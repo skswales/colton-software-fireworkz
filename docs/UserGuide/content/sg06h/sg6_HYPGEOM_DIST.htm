@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>HYPGEOM.DIST</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Statistical, HYPGEOM.DIST" />
+        <param name="Keyword" value="Statistical functions, hypergeometric distribution" />
+    </object>
+
+    <h1><a name="hypgeom_dist" id="hypgeom_dist"></a>HYPGEOM.DIST</h1>
+
+    <p>Hypergeometric distribution<sup><a href="#cite_note-1">[1]</a><a href="#cite_note-2">[2]</a></sup>.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        HYPGEOM.DIST(
+        <span class="csg-function-parameter">sample_successes</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">number_sample</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">population_successes</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">number_population</span>:<span class="csg-function-parameter-type">Number</span>
+        {, <span class="csg-function-parameter">cumulative</span>:<span class="csg-function-parameter-type">Boolean</span>} )
+    </p>
+
+    <p>
+        Returns the value of the cumulative distribution function (CDF)
+        or the probability mass function (PMF) for the
+        hypergeometric distribution for
+        a sample with <span class="csg-function-parameter">sample_successes</span>, <span class="csg-function-parameter">number_sample</span> and
+        a population with <span class="csg-function-parameter">population_successes</span>, <span class="csg-function-parameter">number_population</span>.
+    </p>
+
+    <p><span class="csg-function-parameter">cumulative</span> selects CDF (<code>TRUE</code>) or PMF (<code>FALSE</code>, default).</p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in Fireworkz 2.00.</p>
+
+    <div class="csg-line"><!-- ... --> </div>
+    <ol class="references">
+        <li id="cite_note-1">
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/about/author.html">Weisstein, Eric W.</a>
+            "Hypergeometric Distribution."
+            From <a class="external" target="_blank" href="https://mathworld.wolfram.com/">MathWorld</a>--A Wolfram Web Resource.
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/HypergeometricDistribution.html">https://mathworld.wolfram.com/HypergeometricDistribution.html</a>
+        </li>
+        <li id="cite_note-2">
+            "Hypergeometric Distribution."
+            <a class="external" target="_blank" href="https://onlinestatbook.com/2/probability/hypergeometric.html">Chapter V, Section K</a>,
+            Online Statistics Education: A Multimedia Course of Study
+            (<a class="external" target="_blank" href="http://onlinestatbook.com/">http://onlinestatbook.com/</a>).
+            Project Leader: David M. Lane, Rice University.
+        </li>
+    </ol>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="../sg06h/sg6_HARMEAN.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06i/sg6_INTERCEPT.htm">Next</a></td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

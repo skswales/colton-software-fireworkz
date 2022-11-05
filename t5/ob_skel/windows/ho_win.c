@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1993-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -2353,16 +2353,36 @@ wndproc_host_onCreate(
 }
 
 static void
+host_onDestroy_clipboard_may_be_gone(
+    _DocuRef_   P_DOCU p_docu,
+    _ViewRef_   P_VIEW p_view)
+{
+    /* NB see host_onClose_process_clipboard() */
+    /* Windows will already have issued a WM_RENDERALLFORMATS if this had been the clipboard owner */
+    if( (g_global_clipboard_owning_docno  == docno_from_p_docu(p_docu))  &&
+        (g_global_clipboard_owning_viewno == viewno_from_p_view(p_view)) )
+    {
+        g_global_clipboard_owning_docno  = DOCNO_NONE;
+        g_global_clipboard_owning_viewno = VIEWNO_NONE;
+        trace_0(TRACE_APP_CLIPBOARD, TEXT("host_onDestroy: cbo docno:=NONE, viewno:=NONE"));
+    }
+}
+
+static void
 host_onDestroy(
     _HwndRef_   HWND hwnd,
+    _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view,
     _InVal_     EVENT_HANDLER event_handler)
 {
     /* destroy the window handle ref as soon as it becomes invalid */
     HWND * p_hwnd = PtrAddBytes(HWND *, p_view, host_event_desc_table[event_handler].offset_of_hwnd);
+    /* except we do need to do this first - it's only the back window that's the clipboard owner: */
+    if(hwnd == p_view->main[WIN_BACK].hwnd)
+        host_onDestroy_clipboard_may_be_gone(p_docu, p_view);
     *p_hwnd = NULL;
 
-    if(ho_win_state.caret.visible.hwnd == hwnd) /* SKS after 1.08b2 */
+    if(hwnd == ho_win_state.caret.visible.hwnd) /* SKS after 1.08b2 */
     {
         ho_win_state.caret.visible.hwnd = NULL;
         ho_win_state.caret.visible.dimensions.y = 0;
@@ -2380,7 +2400,7 @@ wndproc_host_onDestroy(
     if(DOCNO_NONE != (docno = resolve_hwnd(hwnd, &p_view, &event_handler)))
     {
         RemoveProp(hwnd, TYPE5_PROPERTY_WORD); /* AFTER resolve_hwnd!!! */
-        host_onDestroy(hwnd, p_view, event_handler);
+        host_onDestroy(hwnd, p_docu_from_docno_valid(docno), p_view, event_handler);
         return;
     }
 

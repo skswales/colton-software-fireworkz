@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -964,109 +964,109 @@ PROC_EXEC_PROTO(c_upper)
 *
 ******************************************************************************/
 
+#if 1
+/* quick hack that just removes leading common currency symbols, and thousands separators before a decimal point */
+
+static void
+ev_recog_constant_using_common_symbols(
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _Inout_z_   P_USTR ustr /*updated*/)
+{
+    PC_USTR ustr_in = ustr;
+    P_USTR ustr_out = ustr;
+    U8 ch = *ustr_in;
+    bool had_decimal_point = false;
+
+    for( ; CH_NULL != ch; ustr_IncByte(ustr_in))
+    {
+        ch = PtrGetByte(ustr_in);
+
+        switch(ch)
+        {
+        case UCH_POUND_SIGN:
+        case UCH_DOLLAR_SIGN:
+#if RISCOS || WINDOWS
+        case 0x80: /* UCH_EURO_CURRENCY_SIGN in both Acorn Extended Latin-1 and Windows-1252 */
+#endif
+        // case UCH_EURO_CURRENCY_SIGN:
+            if(ustr_in == ustr)
+                continue;
+            break;
+
+        default:
+            if(g_ss_recog_context.decimal_point_char == ch)
+                had_decimal_point = true;
+
+            if( (g_ss_recog_context.thousands_char == ch) && !had_decimal_point )
+                continue;
+
+            break;
+        }
+
+        PtrPutByte(ustr_out, ch); ustr_IncByte_wr(ustr_out);
+    }
+
+    /* don't leave half-recognised things lying around, or strings (numbers, dates, errors, arrays OK) */
+    if( !status_done(ss_recog_constant(p_ss_data_out, ustr)) ||
+        ss_data_is_string(p_ss_data_out) )
+    {
+        ss_data_set_blank(p_ss_data_out);
+    }
+}
+
+#define quick_ublock_ustr_wr(p_quick_ublock) de_const_cast(P_USTR, quick_ublock_ustr(p_quick_ublock))
+#endif
+
 PROC_EXEC_PROTO(c_value)
 {
-    PC_UCHARS s_ptr = ss_data_get_string(args[0]);
+    PC_UCHARS uchars = ss_data_get_string(args[0]);
     U32 len = ss_data_get_string_size(args[0]);
+
+    uchars = ss_string_trim_leading_whitespace_uchars(uchars, &len);
 
     exec_func_ignore_parms();
 
-    while((0 != len) && (PtrGetByte(s_ptr) == CH_SPACE)) /* skip leading spaces prior to copy */
-    {
-        uchars_IncByte(s_ptr);
-        --len;
-    }
-
     if(0 == len)
-    {
+    {   /* completely whitespace */
         ss_data_set_integer(p_ss_data_res, 0); /* SKS 08sep97 now behaves as documented */
+        return;
     }
-    else
+
     {
-        PC_UCHARS e_ptr = uchars_AddBytes(s_ptr, len);
-        STATUS status;
-        QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
-        quick_ublock_with_buffer_setup(quick_ublock);
+    STATUS status;
+    QUICK_UBLOCK_WITH_BUFFER(quick_ublock, 64);
+    quick_ublock_with_buffer_setup(quick_ublock);
 
-        /* we are guaranteed here to have at least one byte to transfer */
-        while(/*(e_ptr > s_ptr) &&*/ (PtrGetByteOff(e_ptr, -1) == CH_SPACE)) /* skip trailing spaces prior to copy */
-        {
-            uchars_DecByte(e_ptr);
-            --len;
-        }
-
-        /* just copy the trimmed string and CH_NULL-terminate */
-        if(status_ok(status = quick_ublock_uchars_add(&quick_ublock, s_ptr, len)))
-        if(status_ok(status = quick_ublock_nullch_add(&quick_ublock)))
-        {
+    /* copy the string and CH_NULL-terminate */
+    /* NB no longer bothers to strip trailing spaces as we are using QB */
+    if(status_ok(status = quick_ublock_uchars_add(&quick_ublock, uchars, len)))
+    if(status_ok(status = quick_ublock_nullch_add(&quick_ublock)))
+    {
 #if 0
-            ev_recog_constant_using_autoformat(p_ss_data_res, ev_slr_docno(p_cur_slr), quick_ublock_ustr(&quick_ublock));
+        ev_recog_constant_using_autoformat(p_ss_data_res, ev_slr_docno(p_cur_slr), quick_ublock_ustr(&quick_ublock));
 #elif 1
-            PC_USTR ustr = quick_ublock_ustr(&quick_ublock);
-            SS_RECOG_CONTEXT ss_recog_context;
-
-            ss_recog_context_push(&ss_recog_context); /* recognise constants from cells as if typed by user with current UI settings */
-
-            { /* quick hack removing leading common currency symbols, thousands separators before a decimal point */
-            PC_USTR ustr_in = ustr;
-            P_USTR ustr_out = de_const_cast(P_USTR, ustr);
-            U8 ch = *ustr_in;
-            bool had_decimal_point = false;
-
-            for( ; CH_NULL != ch; ustr_IncByte(ustr_in))
-            {
-                ch = PtrGetByte(ustr_in);
-
-                switch(ch)
-                {
-                case UCH_POUND_SIGN:
-                case UCH_DOLLAR_SIGN:
-#if RISCOS || WINDOWS
-                case 0x80: /* UCH_EURO_CURRENCY_SIGN in both Acorn Extended Latin-1 and Windows-1252 */
-#endif
-                // case UCH_EURO_CURRENCY_SIGN:
-                    if(ustr_in == ustr)
-                        continue;
-                    break;
-
-                default:
-                    if(ss_recog_context.decimal_point_char == ch)
-                        had_decimal_point = true;
-
-                    if( (ss_recog_context.thousands_char == ch) && !had_decimal_point )
-                        continue;
-
-                    break;
-                }
-
-                PtrPutByte(ustr_out, ch); ustr_IncByte_wr(ustr_out);
-            }
-            } /*block */
-
-            if( !status_done(ss_recog_constant(p_ss_data_res, ustr)) ||
-                ss_data_is_string(p_ss_data_res) )
-            {
-                ss_data_set_blank(p_ss_data_res); /* don't leave half-recognised things lying around, or strings (numbers, dates, errors, arrays OK) */
-            }
-
-            ss_recog_context_pull(&ss_recog_context);
+        /* recognise constants from cells as if typed by user with current UI settings */
+        SS_RECOG_CONTEXT ss_recog_context;
+        ss_recog_context_push(&ss_recog_context);
+        ev_recog_constant_using_common_symbols(p_ss_data_res, quick_ublock_ustr_wr(&quick_ublock));
+        ss_recog_context_pull(&ss_recog_context);
 #else
-            PC_USTR ptr;
-            PC_USTR buffer = quick_ublock_ustr(&quick_ublock);
-            F64 f64 = ui_strtod(ustr_bptrc(buffer), &ptr);
+        PC_USTR ptr;
+        PC_USTR buffer = quick_ublock_ustr(&quick_ublock);
+        F64 f64 = ui_strtod(ustr_bptrc(buffer), &ptr);
 
-            if(0 != PtrDiffBytesU32(ptr, buffer))
-                ss_data_set_real_try_integer(p_ss_data_res, f64);
+        if(0 != PtrDiffBytesU32(ptr, buffer))
+            ss_data_set_real_try_integer(p_ss_data_res, f64);
 #endif
-        }
-
-        if(ss_data_is_blank(p_ss_data_res))
-            ss_data_set_integer(p_ss_data_res, 0); /* SKS 08sep97 now behaves as documented */
-
-        quick_ublock_dispose(&quick_ublock);
-
-        exec_func_status_return(p_ss_data_res, status);
     }
+
+    if(ss_data_is_blank(p_ss_data_res))
+        ss_data_set_integer(p_ss_data_res, 0); /* SKS 08sep97 now behaves as documented */
+
+    quick_ublock_dispose(&quick_ublock);
+
+    exec_func_status_return(p_ss_data_res, status);
+    } /*block*/
 }
 
 /* end of ev_fnstr.c */

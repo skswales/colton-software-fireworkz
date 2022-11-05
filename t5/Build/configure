@@ -2,10 +2,10 @@
 
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# Copyright (C) 1993-1998 Colton Software Limited
-# Copyright (C) 1998-2015 R W Colton
+# Copyright © 1993-1998 Colton Software Limited
+# Copyright © 1998-2015 R W Colton
 
 # Drag this file to !Amu on the toolbar to build Makefiles for Fireworkz family
 
@@ -15,7 +15,7 @@
 #   trunk or
 #   branch (e.g. for branches/fireworkz__2_10__branch use the leaf, fireworkz__2_10__branch) or
 #   tag (e.g. for tags/fireworkz__2016_06_26__2_10_00 use the leaf, fireworkz__2016_06_26__2_10_00).
-FIREWORKZ_TBT=fireworkz__2_31__branch
+FIREWORKZ_TBT=fireworkz__2_32__branch
 # FIREWORKZ_TBT=trunk
 
 # NB Substitute URD location as necessary

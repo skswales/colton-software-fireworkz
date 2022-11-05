@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1993-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -320,6 +320,10 @@ wndproc_splash(
  * This window will be removed after a given timeout.
  */
 
+extern HBITMAP
+gdiplus_load_bitmap_from_file(
+    _In_z_      PCWSTR wstr_filename);
+
 extern void
 splash_window_create(
     _HwndRef_opt_ HWND hwndParent,
@@ -374,7 +378,7 @@ splash_window_create(
         return;
 
 #if 0
-    g_h_bitmap_banner = gdiplus_load_bitmap_from_file(TEXT("c:\\Users\\sks\\Pictures\\wiki.png"));
+    g_h_bitmap_banner = gdiplus_load_bitmap_from_file(L("c:\\Users\\sks\\Pictures\\wiki.png"));
 #else
     void_WrapOsBoolChecking(NULL != (
     g_h_bitmap_banner = (HBITMAP)

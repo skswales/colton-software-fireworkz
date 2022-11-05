@@ -1,21 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2014-2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>SUM_XMY2</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 2014-2021 Stuart Swales -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="SUM_XMY2" />
-        <param name="Keyword" value="Functions, Mathematical, SUM_XMY2" />
+        <param name="Keyword" value="Spreadsheet functions, Mathematical, SUM_XMY2" />
         <param name="Keyword" value="Mathematical functions, sum of squares of difference of values" />
     </object>
 
@@ -23,34 +21,35 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        SUM_XMY2(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>,
-        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>)
+        SUM_XMY2(
+        <span class="csg-function-parameter">x&#8209;data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">y&#8209;data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span> )
     </p>
     <p>
         This function returns the sum of the squares of the difference of corresponding values from the
-        <span class="csg-function-parameter">x-data</span> <a href="../sg06/sg6_array_or_range.htm">array</a> (or range of cells) and the
-        <span class="csg-function-parameter">y-data</span> <a href="../sg06/sg6_array_or_range.htm">array</a> (or range of cells).
+        <span class="csg-function-parameter">x&#8209;data</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>) and the
+        <span class="csg-function-parameter">y&#8209;data</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>).
     </p>
 
     <p class="csg-function-subheading">Formula:</p>
     <p class="csg-function-formula">
         SUM_XMY2 =
-        <span class="csg-symbol-sum">&sum;</span><em><sup style="vertical-align: top;">i=n</sup></em>
-        (<em>x</em><em><sub>i</sub></em> &minus; <em>y</em><em><sub>i</sub></em>)<sup>2</sup>
+        <sub class="csg-math-symbol-limit-lower"><em>i</em>=1</sub><span class="csg-math-symbol-sum">&sum;</span><sup class="csg-math-symbol-limit-upper"><em>n</em></sup>
+        ( <em>x</em><sub><em>i</em></sub> &minus; <em>y</em><sub><em>i</em></sub> )<sup>2</sup>
     </p>
-    <p>where <em>n</em> is the number of values and <em>x</em><em><sub>i</sub></em> and <em>y</em><em><sub>i</sub></em> are the <em>i</em>-th pair of values.</p>
+    <p>where <span class="csg-function-formula-variable">n</span> is the number of values and <span class="csg-function-formula-variable">x<sub>i</sub></span> and <span class="csg-function-formula-variable">y<sub>i</sub></span> are the <span class="csg-function-formula-variable">i</span>&#8209;th pair of values.</p>
 
     <p class="csg-function-subheading">Revisions:</p>
     <p>This function was added in Fireworkz 2.00.</p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06s/sg6_SUM_X2PY2.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#mathematical_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06t/sg6_TRUNC.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06s/sg6_SUM_X2PY2.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_mathematical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06t/sg6_TRUNC.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

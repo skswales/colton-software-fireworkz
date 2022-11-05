@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -1620,18 +1620,25 @@ riscos_filesprite(
     {
     default:
         {
-        _kernel_swi_regs rs;
-
         if(FILETYPE_UNTYPED == t5_filetype)
             xstrkpy(sbstr_buf, elemof_buffer, "file_lxa");
         else
             consume_int(xsnprintf(sbstr_buf, elemof_buffer, "file_%.3x", t5_filetype));
 
         /* now to check if the sprite exists: do a sprite select on the Window Manager sprite pool */
+#if defined(NORCROFT_INLINE_SWIX_NOT_YET) /* not yet handled */
+        if( NULL ==
+            _swix(Wimp_SpriteOp, _IN(0)|_IN(2),
+            /*in*/  24, /* Select sprite */
+                    (int) sbstr_buf) )
+            return;
+#else
+        _kernel_swi_regs rs;
         rs.r[0] = 24; /* Select sprite */
         rs.r[2] = (int) sbstr_buf;
         if(NULL == _kernel_swi(Wimp_SpriteOp, &rs, &rs))
             return;
+#endif
 
         /* the sprite does not exist: use general don't-know icon. */
         } /*block*/

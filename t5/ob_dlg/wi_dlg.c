@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1994-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -1940,9 +1940,7 @@ dialog_onCommand_combo_xx_CBN_EDITUPDATE(
             switch(p_dialog_ictl->dialog_control_type)
             {
             default: default_unhandled();
-#if CHECKING
             case DIALOG_CONTROL_COMBO_TEXT:
-#endif
                 dialog_cmd_ctl_state_set.state.combo_text.ui_text = ui_text;
                 break;
             }
@@ -2323,14 +2321,7 @@ dialog_host_redraw_context_set_host_xform(
     p_host_xform->windows.pixels_per_inch.x = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSX);
     p_host_xform->windows.pixels_per_inch.y = GetDeviceCaps(p_redraw_context->windows.paintstruct.hdc, LOGPIXELSY);
 
-    p_host_xform->windows.pixels_per_metre.x = muldiv64(p_host_xform->windows.pixels_per_inch.x, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
-    p_host_xform->windows.pixels_per_metre.y = muldiv64(p_host_xform->windows.pixels_per_inch.y, INCHES_PER_METRE_MUL, INCHES_PER_METRE_DIV);
-
-    p_host_xform->windows.multiplier_of_pixels.x = PIXITS_PER_METRE * p_host_xform->scale.b.x;
-    p_host_xform->windows.multiplier_of_pixels.y = PIXITS_PER_METRE * p_host_xform->scale.b.y;
-
-    p_host_xform->windows.divisor_of_pixels.x = p_host_xform->windows.pixels_per_metre.x * p_host_xform->scale.t.x;
-    p_host_xform->windows.divisor_of_pixels.y = p_host_xform->windows.pixels_per_metre.y * p_host_xform->scale.t.y;
+    set_host_xform_windows_common_end(p_host_xform);
 }
 
 static void
@@ -2684,9 +2675,13 @@ dialog_onUdnDeltaPos(
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
             {
-          /*const BOOL adjust_clicked = host_ctrl_pressed();*/
-            const BOOL dec_button = (pNmUpDown->iDelta < 0);
-            status_assert(dialog_click_bump_xx(p_dialog, p_dialog_ictl, (!dec_button) /* ^ adjust_clicked */)); /* can't pass error back */
+            const BOOL decrement_button = (pNmUpDown->iDelta < 0);
+            const BOOL ctrl_pressed = host_ctrl_pressed();
+            const UI_DATA_INC_TYPE ui_data_inc =
+                decrement_button
+                ? (ctrl_pressed ? UI_DATA_IDT_MINIMUM : UI_DATA_IDT_DECREMENT)
+                : (ctrl_pressed ? UI_DATA_IDT_MAXIMUM : UI_DATA_IDT_INCREMENT);
+            status_assert(dialog_click_bump_xx(p_dialog, p_dialog_ictl, ui_data_inc)); /* can't pass error back */
             break;
             }
         }

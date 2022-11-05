@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1989-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -189,11 +189,11 @@ extern U16
 readval_U16(
     _In_reads_bytes_c_(sizeof(U16)) PC_ANY from)
 {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     return(readval_U16_BE(from));
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     return(readval_U16_LE(from));
-#endif /* BYTE_ORDER */
+#endif /* __BYTE_ORDER__ */
 }
 
 #endif /* readval_U16 */
@@ -256,11 +256,11 @@ extern U32
 readval_U32(
     _In_reads_bytes_c_(sizeof(U32)) PC_ANY from)
 {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     return(readval_U32_BE(from));
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     return(readval_U32_LE(from));
-#endif /* BYTE_ORDER */
+#endif /* __BYTE_ORDER__ */
 }
 
 #endif /* readval_U32 */
@@ -319,11 +319,11 @@ extern S16
 readval_S16(
     _In_reads_bytes_c_(sizeof(S16)) PC_ANY from)
 {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     return(readval_S16_BE(from));
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     return(readval_S16_LE(from));
-#endif /* BYTE_ORDER */
+#endif /* __BYTE_ORDER__ */
 }
 
 #endif /* readval_S16 */
@@ -386,11 +386,11 @@ extern S32
 readval_S32(
     _In_reads_bytes_c_(sizeof(S32)) PC_ANY from)
 {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     return(readval_S32_BE(from));
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     return(readval_S32_LE(from));
-#endif /* BYTE_ORDER */
+#endif /* __BYTE_ORDER__ */
 }
 
 #endif /* readval_S32 */
@@ -562,11 +562,11 @@ writeval_U16(
     _Out_bytecapcount_x_(sizeof(U16)) P_ANY to,
     _InVal_     U16 u16)
 {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     writeval_U16_BE(to, u16);
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     writeval_U16_LE(to, u16);
-#endif /* BYTE_ORDER */
+#endif /* __BYTE_ORDER__ */
 }
 
 #endif /* writeval_U16 */
@@ -631,11 +631,11 @@ writeval_U32(
     _Out_bytecapcount_x_(sizeof(U32)) P_ANY to,
     _InVal_     U32 u32)
 {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     writeval_U32_BE(to, u32);
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     writeval_U32_LE(to, u32);
-#endif /* BYTE_ORDER */
+#endif /* __BYTE_ORDER__ */
 }
 
 #endif /* writeval_U32 */
@@ -695,11 +695,11 @@ writeval_S16(
     _Out_bytecapcount_x_(sizeof(S16)) P_ANY to,
     _InVal_     S16 s16)
 {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     writeval_S16_BE(to, s16);
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     writeval_S16_LE(to, s16);
-#endif /* BYTE_ORDER */
+#endif /* __BYTE_ORDER__ */
 }
 
 #endif /* writeval_S16 */
@@ -763,11 +763,11 @@ writeval_S32(
     _Out_bytecapcount_x_(sizeof(S32)) P_ANY to,
     _InVal_     S32 s32)
 {
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     writeval_S32_BE(to, s32);
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     writeval_S32_LE(to, s32);
-#endif /* BYTE_ORDER */
+#endif /* __BYTE_ORDER__ */
 }
 
 #endif /* writeval_S32 */

@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -76,7 +76,7 @@ product_between_calc(
         /* keep product in integer where possible */
         while(i <= end)
         {   /* yes, the casts are important */
-            /* ARM Norcroft should generate a call to _ll_mulluu: "Create a 64-bit number by multiplying two uint32_t numbers" */
+            /* ARM Norcroft C should generate a call to _ll_mulluu: "Create a 64-bit number by multiplying two uint32_t numbers" */
             const uint64_t u64 = (uint64_t) (uint32_t) p_ss_data_res->arg.integer * (uint32_t) i;
 
             if(((uint64_t) (int32_t) u64) == u64)

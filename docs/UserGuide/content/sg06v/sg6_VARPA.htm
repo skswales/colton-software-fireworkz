@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>VARPA</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Statistical, VARPA" />
+        <param name="Keyword" value="Statistical functions, variance (population) (including text)" />
+    </object>
+
+    <h1><a name="varpa" id="varpa"></a>VARPA</h1>
+
+    <p>Calculates the population variance<sup><a href="#cite_note-1">[1]</a></sup> of the values in a data set.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        VARPA(
+        <span class="csg-function-parameter"><a href="../sg06/sg6_array_or_range_or_list.htm">list</a></span> )
+    </p>
+    <p>Returns the population variance of the values in the <span class="csg-function-parameter">list</span></p>
+    <p>
+        <span class="csg-function-parameter">list</span> may be a <a href="../sg06/sg6_ranges.htm">range</a> of cells,
+        an <a href="../sg06/sg6_arrays.htm">array</a>,
+        or a comma-separated list of values (which may contain cell references
+        and also <a href="../sg06/sg6_ranges.htm">ranges</a> of cells as one or more of its elements).
+    </p>
+    <p>Note that numeric values and text cells are included in the calculation - with text being treated as zero - but that blank elements still do not upset the average.</p>
+
+    <p class="csg-function-subheading">Formula:</p>
+    <p class="csg-function-formula">
+        VARPA, <span class="csg-math-symbol">&sigma;&sup2;</span> =
+        <span class="csg-function-formula-parentheses-1">(</span>
+            <em>n</em>&sdot;<sub class="csg-math-symbol-limit-lower"><em>i </em></sub><span class="csg-math-symbol-sum">&sum;</span><sub class="csg-math-symbol-limit-lower">1</sub><sup class="csg-math-symbol-limit-upper"><em>n</em></sup> (<em>x</em><sub><em>i</em></sub><sup>2</sup>)
+            &minus;
+            (<sub class="csg-math-symbol-limit-lower"><em>i </em></sub><span class="csg-math-symbol-sum">&sum;</span><sub class="csg-math-symbol-limit-lower">1</sub><sup class="csg-math-symbol-limit-upper"><em>n</em></sup> <em>x</em><sub><em>i</em></sub>)<sup>2</sup>
+        <span class="csg-function-formula-parentheses-1">)</span>
+         &#x2215; 
+        <em>n</em><sup>2</sup>
+    </p>
+    <p>where <span class="csg-function-formula-variable">n</span> is the number of values and <span class="csg-function-formula-variable">x<sub>i</sub></span> is the <span class="csg-function-formula-variable">i</span>&#8209;th value.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">VARPA(A1:A15)</pre>
+    <p>returns the population variance of the cells in the range <code>A1:A15</code>.</p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in Fireworkz 2.00.</p>
+
+    <div class="csg-line"><!-- ... --> </div>
+    <ol class="references">
+        <li id="cite_note-1">
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/about/author.html">Weisstein, Eric W.</a>
+            "Variance."
+            From <a class="external" target="_blank" href="https://mathworld.wolfram.com/">MathWorld</a>--A Wolfram Web Resource.
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/Variance.html">https://mathworld.wolfram.com/Variance.html</a>
+        </li>
+    </ol>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="../sg06v/sg6_VARP.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06w/sg6_WEIBULL_DIST.htm">Next</a></td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

@@ -1,22 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>INT</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="INT" />
-        <param name="Keyword" value="Functions, Mathematical, INT" />
+        <param name="Keyword" value="Spreadsheet functions, Mathematical, INT" />
         <param name="Keyword" value="Mathematical functions, integer part" />
     </object>
 
@@ -25,11 +23,14 @@
     <p>Returns the integer part of a number, truncated towards zero.</p>
 
     <p class="csg-function-subheading">Syntax:</p>
-    <p class="csg-function-declaration">INT(<span class="csg-function-parameter">number</span>)</p>
+    <p class="csg-function-declaration">
+        INT(
+        <span class="csg-function-parameter">number</span> )
+    </p>
 
     <p>
-        Note that this function is NOT compatible with Microsoft Excel for negative numbers.
-        If you require behaviour compatible with Microsoft Excel, use <a href="../sg06odf/sg6_ODF_INT.htm">ODF.INT()</a>.
+        Note that this function is NOT compatible with OpenDocument / Microsoft Excel <code>INT</code> for negative numbers.
+        If you require behaviour compatible with OpenDocument / Microsoft Excel, use <a href="../sg06odf/sg6_ODF_INT.htm">ODF.INT()</a>.
     </p>
 
     <p class="csg-function-subheading">Example:</p>
@@ -44,14 +45,14 @@
         Fireworkz can also yield (negative) serial numbers for dates before 01-Jan-1900, unlike Microsoft Excel.
     </p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06g/sg6_GCD.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#mathematical_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06l/sg6_LCM.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06g/sg6_GCD.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_mathematical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06l/sg6_LCM.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

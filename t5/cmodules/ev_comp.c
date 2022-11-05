@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1988-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -2467,7 +2467,7 @@ scan_next_symbol(void)
         /* read a string ? */
         else if((res = ss_recog_string(&compiler_context.data_cur, compiler_context.ip_pos.ustr)) > 0)
             compiler_context.ip_pos.p_u8 += res;
-        /* check for Logical */
+        /* check for Boolean */
         else if((res = ss_recog_logical(&compiler_context.data_cur, compiler_context.ip_pos.ustr)) > 0)
             compiler_context.ip_pos.p_u8 += res;
 

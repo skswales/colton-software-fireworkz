@@ -5,9 +5,9 @@
 
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# Copyright (C) 2001-2015 R W Colton
+# Copyright © 2001-2015 R W Colton
 
 BITS=32
 
@@ -15,16 +15,16 @@ BITS=32
 
 # --arm to allow assembly of UAL syntax code
 # -cpu 3M to allow assembly of UMULL
-ASflags_BASE=-I$.fireworkz.trunk.t5.common.Hdr --arm -cpu 3M -throwback
+ASflags_BASE=-I$(T5).common.Hdr --arm -cpu 3M -throwback
 ASflags=$(ASflags_BASE)
 
-# branches for release don't have function names
-# NB INC_RAM and _INC_2_ are substituted by configure
+# NB _INC_RAM and _INC_2 are substituted by configure
 # trunk has function names whereas branches for release don't
+CCflags_BASE=-c _INC_RAM_ -I$(T5) _INC_2_ -D$(NAME) -fafh -throwback
 # -arch 2 -cpu 3 gives code I prefer to look at e.g. STMs, multiple exit LDMs
-CCflags_BASE=-c _INC_RAM_ -I$(T5) _INC_2_ -D$(NAME) -fafh -arch 2 -cpu 3 -throwback
+#CCflags_BASE=-c _INC_RAM_ -I$(T5) _INC_2_ -D$(NAME) -fafh -throwback -arch 2 -cpu 3
 # -arch 3M to allow use of SMULL/UMULL with -Otime
-#CCflags_BASE=-c _INC_RAM_ -I$(T5) _INC_2_ -D$(NAME) -fafh -arch 3M -cpu 7 -DNORCROFT_ARCH_M -throwback
+#CCflags_BASE=-c _INC_RAM_ -I$(T5) _INC_2_ -D$(NAME) -fafh -throwback -arch 3M -cpu 7 -DNORCROFT_ARCH_M
 CCflags=$(CCflags_BASE) -Otime
 
 # -I$(T5).external.RISC_OSLib.rlib no longer need patched & pruned RISC_OSLib - explictly use AcornC/C++'s one

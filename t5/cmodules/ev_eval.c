@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -243,7 +243,7 @@ array_range_stat_block_init(
 
     switch(function_id)
     {
-    /* logical functions */
+    /* Boolean functions */
 
     case RPN_FNV_AND:
         p_stat_block->exec_array_range_id = ARRAY_RANGE_AND;
@@ -712,7 +712,7 @@ array_range_proc_number_KURT_or_SKEW(
     /* uniform processing - update values incrementally */
     /* For details consult Terriberry, Timothy B. (2007), Computing Higher-Order Moments Online */
     /* Substitute a singleton {x} for one of the two subsets in the pairwise update formulae and you will */
-    /* obtain this implementation (after http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance) */
+    /* obtain this implementation (after https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance) */
     F64 x = ss_data_get_real(p_ss_data); /* no need for an explicit - p_stat_block->shift_value as we subtract the running mean */
     S32 n = p_stat_block->count + 1; /* running total n including this value */
     S32 n_minus_1 = p_stat_block->count; /* n - 1 */

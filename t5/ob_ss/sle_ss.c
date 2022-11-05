@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1993-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -2802,7 +2802,7 @@ riscos_fonty_sle(
         {
             host_font_dispose(&host_font, P_REDRAW_CONTEXT_NONE);
 
-            host_font = sle_find_font( /*"\\E" "Latin1"*/ "\\F" "DejaVuSans.Mono", /*x16_size_x ? x16_size_x :*/ x16_size_y, x16_size_y);
+            host_font = sle_find_font("\\F" "DejaVuSans.Mono" /*current alphabet*/ , /*x16_size_x ? x16_size_x :*/ x16_size_y, x16_size_y);
 
             if(HOST_FONT_NONE != host_font)
             {

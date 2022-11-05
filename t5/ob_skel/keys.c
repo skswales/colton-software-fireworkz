@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -356,8 +356,11 @@ static KMAP_CODE
 cs_mutate_key(
     KMAP_CODE kmap_code)
 {
-    const KMAP_CODE shift_added = host_shift_pressed() ? KMAP_CODE_ADDED_SHIFT : 0;
-    const KMAP_CODE ctrl_added  = host_ctrl_pressed()  ? KMAP_CODE_ADDED_CTRL  : 0;
+    BOOL f_shift_pressed;
+    const BOOL f_ctrl_pressed = host_keyboard_status(&f_shift_pressed);
+
+    const KMAP_CODE shift_added = f_shift_pressed ? KMAP_CODE_ADDED_SHIFT : 0;
+    const KMAP_CODE ctrl_added  = f_ctrl_pressed  ? KMAP_CODE_ADDED_CTRL  : 0;
 
 #if CHECKING
     switch(kmap_code)
@@ -385,6 +388,9 @@ convert_ctrl_key(
 {
     KMAP_CODE kmap_code;
 
+    BOOL f_shift_pressed;
+    const BOOL f_ctrl_pressed = host_keyboard_status(&f_shift_pressed);
+
     if(ch_chode <= CTRL_Z)
     {
         kmap_code = (ch_chode - 1 + 'A') | KMAP_CODE_ADDED_ALT; /* Uppercase Alt-letter by default */
@@ -396,7 +402,7 @@ convert_ctrl_key(
         */
         if(ch_chode == CTRL_M)
             kmap_code = RISCOS_EKEY_RETURN;
-        else if((ch_chode == CTRL_H) && !host_ctrl_pressed())
+        else if( (ch_chode == CTRL_H) && !f_ctrl_pressed )
             kmap_code = RISCOS_EKEY_BACKSPACE;
     }
     else
@@ -409,7 +415,7 @@ convert_ctrl_key(
     {
     default:
         if(kmap_code & KMAP_CODE_ADDED_ALT)
-            if(host_shift_pressed())
+            if(f_shift_pressed)
                 kmap_code |= KMAP_CODE_ADDED_SHIFT;
         break;
 
@@ -445,6 +451,10 @@ convert_function_key(
     KMAP_CODE shift_added = 0;
     KMAP_CODE ctrl_added  = 0;
 
+    BOOL f_shift_pressed;
+    const BOOL f_ctrl_pressed = host_keyboard_status(&f_shift_pressed);
+    UNREFERENCED_LOCAL_VARIABLE(f_ctrl_pressed);
+
     /* remap RISC OS shift and control bits to our definitions */
     if(0 != (kmap_code & 0x10))
     {
@@ -478,7 +488,7 @@ convert_function_key(
     {
         if(shift_added && !ctrl_added)
         {
-            if(!host_shift_pressed())
+            if(!f_shift_pressed)
             {
                 kmap_code = (kmap_code == KMAP_FUNC_ARROW_UP) ? KMAP_FUNC_PAGE_UP : KMAP_FUNC_PAGE_DOWN;
                 shift_added = 0;
@@ -723,6 +733,15 @@ extern BOOL
 host_ctrl_pressed(void)
 {
     return(host_is_key_pressed(-2));
+}
+
+extern BOOL /*ctrl_pressed*/
+host_keyboard_status(
+    _OutRef_    P_BOOL p_shift_pressed)
+{
+    const int r = _kernel_osbyte(202, 0, 0xFF); /* X returned in bottom byte */
+    *p_shift_pressed = (0 != (r & (1 << 3)));
+    return(0 != (r & (1 << 6))); /*ctrl_pressed*/
 }
 
 #elif WINDOWS

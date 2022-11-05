@@ -2,7 +2,7 @@ REM ConfigGen - config file generator for Fireworkz family
 REM
 REM This Source Code Form is subject to the terms of the Mozilla Public
 REM License, v. 2.0. If a copy of the MPL was not distributed with this
-REM file, You can obtain one at http://mozilla.org/MPL/2.0/.
+REM file, You can obtain one at https://mozilla.org/MPL/2.0/.
 REM
 REM Copyright (C) 1993-1998 Colton Software Limited
 REM Copyright (C) 1998-2015 R W Colton
@@ -356,22 +356,22 @@ ELSE
   PROCma(f%,top_menu$,FNselect("Save","Enregister","Speichern"),"F3","Button:SAVE"+btn_alt$+asp$+"Button:SAVE"): REM Uses both command slots
   leaf$ = FNselect("Save as","Enregister sous","Speichern als")
   PROCmh(f%,top_menu$,leaf$,""): file_save_as_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-    PROCmd(f%,file_save_as_menu$,FNselect("Document","",""),"",FNcj("SaveAsIntro","0xBDF"))
+    PROCmd(f%,file_save_as_menu$,FNselect("Document","",""),"",FNcj("SaveAsIntro","0xBDF")): REM FILETYPE_T5_FIREWORKZ
     IF is_y% THEN
-    PROCmd(f%,file_save_as_menu$,FNselect("Embedded (OLE)","",""),"",FNcj("SaveAsIntro","0xA78"))
+    PROCmd(f%,file_save_as_menu$,FNselect("Embedded (OLE)","",""),"",FNcj("SaveAsIntro","0xA78")): REM FILETYPE_T5_HYBRID_DRAW
     ENDIF
     PROCmD(f%,file_save_as_menu$,FNselect("Template","Template","Template"),"","SaveAsTemplateIntro")
   leaf$ = FNselect("Export as","Exporter","Exportieren")
   PROCmh(f%,top_menu$,leaf$,""): file_export_menu$ = top_menu$+"."+FNeat_escape(leaf$)
-    PROCmd(f%,file_export_menu$,FNselect("Plain text","Texte",""),"",FNcj("SaveAsForeignIntro",FNsj("0xFFF",FNselect("TextFile","","TextDatei"))))
-    PROCmd(f%,file_export_menu$,FNselect("Rich text","",""),"",FNcj("SaveAsForeignIntro",FNsj("0xC32","RTF")))
-    PROCmd(f%,file_export_menu$,FNselect("Comma separated","Texte CSV",""),"",FNcj("SaveAsForeignIntro",FNsj("0xDFE","CSV")))
+    PROCmd(f%,file_export_menu$,FNselect("Plain text","Texte",""),"",FNcj("SaveAsForeignIntro",FNsj("0xFFF",FNselect("TextFile","","TextDatei")))): REM FILETYPE_TEXT
+    PROCmd(f%,file_export_menu$,FNselect("Rich text","",""),"",FNcj("SaveAsForeignIntro",FNsj("0xC32","RTF"))): REM FILETYPE_RTF
+    PROCmd(f%,file_export_menu$,FNselect("Comma separated","Texte CSV",""),"",FNcj("SaveAsForeignIntro",FNsj("0xDFE","CSV"))): REM FILETYPE_CSV
     IF is_y% THEN
-    PROCmd(f%,file_export_menu$,FNselect("Microsoft Excel","",""),"",FNcj("SaveAsForeignIntro",FNsj("0xBA6","Excel")))
+    PROCmd(f%,file_export_menu$,FNselect("Microsoft Excel","",""),"",FNcj("SaveAsForeignIntro",FNsj("0xBA6","Excel"))): REM FILETYPE_MS_XLS
     ENDIF
-    PROCmd(f%,file_export_menu$,FNselect("Lotus 1-2-3","",""),"",FNcj("SaveAsForeignIntro",FNsj("0xDB0","Lotus123")))
+    PROCmd(f%,file_export_menu$,FNselect("Lotus 1-2-3","",""),"",FNcj("SaveAsForeignIntro",FNsj("0xDB0","Lotus123"))): REM FILETYPE_LOTUS123
     PROCms(f%,file_export_menu$)
-    PROCmd(f%,file_export_menu$,FNselect("Drawfile","Draw","Draw"),"",FNcj("SaveAsDrawfileIntro",FNselect("DrawFile","","DrawDatei")))
+    PROCmd(f%,file_export_menu$,FNselect("Drawfile","Draw","Draw"),"",FNcj("SaveAsDrawfileIntro",FNselect("DrawFile","","DrawDatei"))): REM FILETYPE_DRAW
   PROCms(f%,top_menu$)
   PROCmD(f%,top_menu$,FNselect("Print","Imprimer","Drucken"),"Print","Button:PRINT")
 ENDIF
@@ -597,7 +597,7 @@ IF windows% THEN
   PROCma(f%,top_menu$,FNselect("Contents","Aide","Hilfe"),help_key$,FNcj("HelpContents","firewrkz.chm"))
   PROCmd(f%,top_menu$,FNselect("Search for Help On","Aide rechercher","Hilfe suchen"),"",FNcj("HelpSearchKeyword","firewrkz.chm"))
   PROCms(f%,top_menu$)
-  PROCmd(f%,top_menu$,FNselect("Fireworkz on the Web","Fireworkz en ligne","Fireworkz Webseite"),"",FNcj("HelpURL","http://groups.google.com/group/colton-software-fireworkz"))
+  PROCmd(f%,top_menu$,FNselect("Fireworkz on the Web","Fireworkz en ligne","Fireworkz Webseite"),"",FNcj("HelpURL","https://groups.google.com/group/colton-software-fireworkz"))
   PROCms(f%,top_menu$)
   PROCmd(f%,top_menu$,FNselect("About Fireworkz","À propos de Fireworkz","Über Fireworkz"),"","Info")
 ELSE
@@ -678,12 +678,12 @@ ELSE
   top_menu$ = root_menu$
 ENDIF
 PROCmD(f%,top_menu$,FNselect("&All","Toutes","&Alle"),"","Functions-S")
+PROCmD(f%,top_menu$,FNselect("B&oolean (logical)","L&ogique","B&oolesch"),"",FNcj("Functions-S","13"))
 PROCmD(f%,top_menu$,FNselect("&Custom control","","Allgemeine Ctrl"),"",FNcj("Functions-S","10"))
 PROCmD(f%,top_menu$,FNselect("&Database","","&Datenbank"),"",FNcj("Functions-S","1"))
 PROCmD(f%,top_menu$,FNselect("Dat&e and time","Date et Heure","Datum / &Zeit"),"",FNcj("Functions-S","2"))
 PROCmD(f%,top_menu$,FNselect("Eng&ineering","","Techni&k"),"",FNcj("Functions-S","0"))
 PROCmD(f%,top_menu$,FNselect("&Financial","&Financière","&Finanziel"),"",FNcj("Functions-S","3"))
-PROCmD(f%,top_menu$,FNselect("L&ogical","L&ogique","L&ogisch"),"",FNcj("Functions-S","13"))
 PROCmD(f%,top_menu$,FNselect("&Lookup","","&Lookup"),"",FNcj("Functions-S","11"))
 PROCmD(f%,top_menu$,FNselect("&Mathematical","&Mathématique","&Mathematik"),"",FNcj("Functions-S","4"))
 PROCmD(f%,top_menu$,FNselect("Mat&rix","Mat&rice","Mat&rix"),"",FNcj("Functions-S","5"))
@@ -716,30 +716,33 @@ DEF PROCbind_file_types(f%)
 colton_prefix$ = ""
 IF windows% THEN colton_prefix$ = "Colton Software "
 IF windows% THEN PROCbind_file_type(f%,"1","0","All files","*.*","*.*")
-PROCbind_file_type(f%,"1","0xBDF",colton_prefix$+"Fireworkz","*.fwk,*.fwkh","*.fwk"+semico$+"*.fwkh")
-PROCbind_file_type(f%,"2","0xBDF",colton_prefix$+"Fireworkz","*.fwk","*.fwk")
+PROCbind_file_type(f%,"1","0xBDF",colton_prefix$+"Fireworkz","*.fwk,*.fwkh","*.fwk"+semico$+"*.fwkh"): REM FILETYPE_T5_FIREWORKZ
+PROCbind_file_type(f%,"2","0xBDF",colton_prefix$+"Fireworkz","*.fwk","*.fwk"): REM FILETYPE_T5_FIREWORKZ
 IF is_y% THEN
-PROCbind_file_type(f%,"2","0xA78","Embedded (OLE)","*.fwkh","*.fwkh")
+PROCbind_file_type(f%,"2","0xA78","Embedded (OLE)","*.fwkh","*.fwkh"): REM FILETYPE_T5_HYBRID_DRAW
 ENDIF
-PROCbind_file_type(f%,"3","0xC1D",colton_prefix$+"Fireworkz template","*.fwt","*.fwt")
+PROCbind_file_type(f%,"3","0xC1D",colton_prefix$+"Fireworkz template","*.fwt","*.fwt"): REM FILETYPE_T5_TEMPLATE
+:
 PROCco(f%,"#:Foreign file formats")
-PROCbind_file_type(f%,"3","0xFFF","Plain text","*.txt","*.txt")
-PROCbind_file_type(f%,"3","0xC32","Rich text format","*.rtf","*.rtf")
-PROCbind_file_type(f%,"3","0xDFE","Comma separated values","*.csv","*.csv")
+PROCbind_file_type(f%,"3","0xFFF","Plain text","*.txt","*.txt"): REM FILETYPE_TEXT
+PROCbind_file_type(f%,"3","0xC32","Rich text format","*.rtf","*.rtf"): REM FILETYPE_RTF
+PROCbind_file_type(f%,"3","0xDFE","Comma separated values","*.csv","*.csv"): REM FILETYPE_CSV
+PROCbind_file_type(f%,"1","0xF0D","TAB separated values","*.tsv","*.tsv"): REM FILETYPE_TSV
 IF is_y% OR windows% THEN
-PROCbind_file_type(f%,"3","0xBA6","Microsoft Excel","*.xls","*.xls")
+PROCbind_file_type(f%,"3","0xBA6","Microsoft Excel","*.xls","*.xls"): REM FILETYPE_MS_XLS
 ELSE
-PROCbind_file_type(f%,"1","0xBA6","Microsoft Excel","*.xls","*.xls")
+PROCbind_file_type(f%,"1","0xBA6","Microsoft Excel","*.xls","*.xls"): REM FILETYPE_MS_XLS
 ENDIF
-PROCbind_file_type(f%,"1","0xDB0","Lotus 1-2-3","*.wk1,*.wk3.*.wks","*.wk1"+semico$+"*.wk3"+semico$+"*.wks")
-PROCbind_file_type(f%,"2","0xDB0","Lotus 1-2-3","*.wk1","*.wk1")
-PROCbind_file_type(f%,"1","0xDDE",colton_prefix$+"PipeDream","*.pd","*.pd")
+PROCbind_file_type(f%,"1","0xDB0","Lotus 1-2-3","*.wk1,*.wk3.*.wks","*.wk1"+semico$+"*.wk3"+semico$+"*.wks"): REM FILETYPE_LOTUS123
+PROCbind_file_type(f%,"2","0xDB0","Lotus 1-2-3","*.wk1","*.wk1"): REM FILETYPE_LOTUS123 (can only save vanilla WK1)
+PROCbind_file_type(f%,"1","0xDDE",colton_prefix$+"PipeDream","*.pd","*.pd"): REM FILETYPE_PIPEDREAM
 IF is_y% THEN
-  PROCbind_file_type(f%,"1","0xC27","R-Comp Datapower","*.dpf","*.dpf")
-  PROCbind_file_type(f%,"1","0xC28","R-Comp DatapowerQ","*.dpq","*.dpq")
+  PROCbind_file_type(f%,"1","0xC27","R-Comp Datapower","*.dpf","*.dpf"): REM FILETYPE_DATAPOWER
+  PROCbind_file_type(f%,"1","0xC28","R-Comp DatapowerQ","*.dpq","*.dpq"): REM FILETYPE_DATAPOWERGPH
 ENDIF
-PROCbind_file_type(f%,"1","0xAF8","GST 1st Word Plus","*.fwp","*.fwp")
-PROCbind_file_type(f%,"1","0xC7D","SID","*.sid","*.sid")
+PROCbind_file_type(f%,"1","0xAF8","GST 1st Word Plus","*.fwp","*.fwp"): REM FILETYPE_FWP
+PROCbind_file_type(f%,"1","0xC7D","SID","*.sid","*.sid"): REM FILETYPE_SID
+:
 PROCco(f%,"#:Image file formats")
 IF windows% THEN
   all_pictures_filter$ =                              "*.jpg"+semico$+"*.jpeg"
@@ -755,20 +758,20 @@ IF windows% THEN
   all_pictures_filter$ = all_pictures_filter$+semico$+"*.fwkh"
   PROCbind_file_type(f%,"4","0","All pictures","",all_pictures_filter$)
 ENDIF
-PROCbind_file_type(f%,"12","0xC85","JPEG/JFIF","*.jpg,*.jpeg","*.jpg"+semico$+"*.jpeg")
-PROCbind_file_type(f%,"12","0xB60","PNG","*.png","*.png")
-PROCbind_file_type(f%,"12","0xFF0","TIFF","*.tif,*.tiff","*.tif"+semico$+"*.tiff")
-PROCbind_file_type(f%,"12","0x695","Graphics Interchange Format","*.gif","*.gif")
-PROCbind_file_type(f%,"12","0xBE8","Kodak Photo CD","*.pcd","*.pcd")
-PROCbind_file_type(f%,"12","0x69C","Windows Bitmap","*.bmp,*.dib","*.bmp"+semico$+"*.dib")
-PROCbind_file_type(f%,"12","0x132","Windows Icon","*.ico","*.ico")
-PROCbind_file_type(f%,"12","0xB2F","Windows Metafile","*.emf,*.wmf","*.emf"+semico$+"*.wmf")
-PROCbind_file_type(f%,"12","0xFF9","RISC OS Sprite","*.ff9","*.ff9")
-PROCbind_file_type(f%,"14","0xAFF","RISC OS Draw","*.aff","*.aff")
+PROCbind_file_type(f%,"12","0xC85","JPEG/JFIF","*.jpg,*.jpeg","*.jpg"+semico$+"*.jpeg"): REM FILETYPE_JPEG
+PROCbind_file_type(f%,"12","0xB60","PNG","*.png","*.png"): REM FILETYPE_PNG
+PROCbind_file_type(f%,"12","0xFF0","TIFF","*.tif,*.tiff","*.tif"+semico$+"*.tiff"): REM FILETYPE_TIFF
+PROCbind_file_type(f%,"12","0x695","Graphics Interchange Format","*.gif","*.gif"): REM FILETYPE_GIF
+PROCbind_file_type(f%,"12","0xBE8","Kodak Photo CD","*.pcd","*.pcd"): REM FILETYPE_PCD
+PROCbind_file_type(f%,"12","0x69C","Windows Bitmap","*.bmp,*.dib","*.bmp"+semico$+"*.dib"): REM FILETYPE_BMP
+PROCbind_file_type(f%,"12","0x132","Windows Icon","*.ico","*.ico"): REM FILETYPE_ICO
+PROCbind_file_type(f%,"12","0xB2F","Windows Metafile","*.emf,*.wmf","*.emf"+semico$+"*.wmf"): REM FILETYPE_WMF
+PROCbind_file_type(f%,"12","0xFF9","RISC OS Sprite","*.ff9","*.ff9"): REM FILETYPE_SPRITE
+PROCbind_file_type(f%,"14","0xAFF","RISC OS Draw","*.aff","*.aff"): REM FILETYPE_DRAW
 IF windows% THEN
-  PROCbind_file_type(f%,"12","0xA78","Fireworkz [Embedded in RISC OS Draw]","*.fwkh","*.fwkh")
+  PROCbind_file_type(f%,"12","0xA78","Fireworkz [Embedded in RISC OS Draw]","*.fwkh","*.fwkh"): REM FILETYPE_T5_HYBRID_DRAW
 ELSE
-  PROCbind_file_type(f%,"12","0xA78","Embedded (OLE)","*.fwkh","*.fwkh")
+  PROCbind_file_type(f%,"12","0xA78","Embedded (OLE)","*.fwkh","*.fwkh"): REM FILETYPE_T5_HYBRID_DRAW
 ENDIF
 ENDPROC
 :
@@ -853,8 +856,8 @@ ENDPROC
 :
 :
 DEF PROCmpl(f%)
-PROCco(f%, FNcj("#","This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/."))
-PROCco(f%, FNcj("#","Copyright (C) 1993-1998 Colton Software Limited, Copyright (C) 1998-2015 R W Colton"))
+PROCco(f%, FNcj("#","This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/."))
+PROCco(f%, FNcj("#","Copyright "+CHR$(169)+" 1993-1998 Colton Software Limited, Copyright "+CHR$(169)+" 1998-2015 R W Colton"))
 ENDPROC
 :
 :
@@ -905,51 +908,52 @@ ENDPROC
 :
 DEF PROCObjectBindLoader(f%)
 PROCco(f%,FNcj("#",FNcj("ObjectBindLoader",FNaj("object-id",FNaj("file-type",FNaj("extension-suffix","foreign-template"))))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("0",FNaj("0xBDF","fwk"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("0",FNaj("0xA78","fwkh")))): REM FzDraw
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("0",FNaj("0xC1D","fwt"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("0",FNaj("0xBDF","fwk")))): REM FILETYPE_T5_FIREWORKZ
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("0",FNaj("0xA78","fwkh")))): REM FILETYPE_T5_HYBRID_DRAW
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("0",FNaj("0xC1D","fwt")))): REM FILETYPE_T5_TEMPLATE
 IF is_y% THEN
-  PROCco(f%,FNcj("ObjectBindLoader",FNaj("2",FNaj("0xC27","dpf"))))
-  PROCco(f%,FNcj("ObjectBindLoader",FNaj("2",FNaj("0xC28","dpq"))))
+  PROCco(f%,FNcj("ObjectBindLoader",FNaj("2",FNaj("0xC27","dpf")))): REM FILETYPE_DATAPOWER
+  PROCco(f%,FNcj("ObjectBindLoader",FNaj("2",FNaj("0xC28","dpq")))): REM FILETYPE_DATAPOWERGPH
 ENDIF
 PROCco(f%,FNcj("#","Foreign file formats"))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("20",FNaj("0xDDE","pd"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("23",FNaj("0xFFF","txt"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("24",FNaj("0xDFE","csv"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("24",FNaj("0xC7D","sid"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("25",FNaj("0xAF8","fwp"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("26",FNaj("0xBA6","xls"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("27",FNaj("0xDB0","wk1"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("27",FNaj("0xDB0","wk3"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("27",FNaj("0xDB0","wks"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("28",FNaj("0xC32","rtf"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("20",FNaj("0xDDE","pd")))): REM FILETYPE_PIPEDREAM
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("23",FNaj("0xFFF","txt")))): REM FILETYPE_TEXT
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("24",FNaj("0xDFE","csv")))): REM FILETYPE_CSV
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("24",FNaj("0xF0D","tsv")))): REM FILETYPE_TSV
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("24",FNaj("0xC7D","sid")))): REM FILETYPE_SID
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("25",FNaj("0xAF8","fwp")))): REM FILETYPE_FWP
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("26",FNaj("0xBA6","xls")))): REM FILETYPE_MS_XLS
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("27",FNaj("0xDB0","wk1")))): REM FILETYPE_LOTUS123
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("27",FNaj("0xDB0","wk3")))): REM FILETYPE_LOTUS123
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("27",FNaj("0xDB0","wks")))): REM FILETYPE_LOTUS123
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("28",FNaj("0xC32","rtf")))): REM FILETYPE_RTF
 PROCco(f%,FNcj("#","Image file formats"))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xAFF","aff"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xFF9","ff9"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xC85","jpg,jpeg"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0x69C","bmp,dib"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xAFF","aff")))): REM FILETYPE_DRAW
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xFF9","ff9")))): REM FILETYPE_SPRITE
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xC85","jpg,jpeg")))): REM FILETYPE_JPEG
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0x69C","bmp,dib")))): REM FILETYPE_BMP
 IF windows% THEN
-  PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xB2F","wmf"))))
+  PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xB2F","wmf")))): REM FILETYPE_WMF
 ENDIF
-PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xA77","pdc")))): REM PDChart
+PROCco(f%,FNcj("ObjectBindLoader",FNaj("4",FNaj("0xA77","pdc")))): REM FILETYPE_PD_CHART
 IF riscos% THEN PROCco(f%,FNcj("#","ChangeFSI may handle these on RISC OS"))
 cfsi$="4"
 REM wtf??? IF windows% THEN cfsi$="32"
-PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0x695","gif"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0xB60","png"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0xBE8","pcd"))))
-PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0xFF0","tif,tiff"))))
+PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0x695","gif")))): REM FILETYPE_GIF
+PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0xB60","png")))): REM FILETYPE_PNG
+PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0xBE8","pcd")))): REM FILETYPE_PCD
+PROCco(f%,FNcj("ObjectBindLoader",FNaj(cfsi$,FNaj("0xFF0","tif,tiff")))): REM FILETYPE_TIFF
 ENDPROC
 :
 :
 DEF PROCObjectBindSaver(f%)
 PROCco(f%,FNcj("#",FNcj("ObjectBindSaver",FNaj("object-id","file-type"+FNwindows(asp$+"clipboard-identifier")))))
-PROCco(f%,FNcj("ObjectBindSaver",FNaj("33","0xFFF"+FNwindows("")))): REM CF_TEXT doesn't need textual representation
-PROCco(f%,FNcj("ObjectBindSaver",FNaj("35","0xDFE"+FNwindows(asp$+"Csv"))))
-PROCco(f%,FNcj("ObjectBindSaver",FNaj("40","0xDB0"+FNwindows(asp$+"Wk1"))))
-PROCco(f%,FNcj("ObjectBindSaver",FNaj("41","0xC32"+FNwindows("")))): REM RTF still poor - don't use clipboard - Rich Text Format
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("33","0xFFF"+FNwindows("")))): REM FILETYPE_TEXT - CF_TEXT doesn't need textual representation
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("35","0xDFE"+FNwindows(asp$+"Csv")))): REM FILETYPE_CSV
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("40","0xDB0"+FNwindows(asp$+"Wk1")))): REM FILETYPE_LOTUS123
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("41","0xC32"+FNwindows("")))): REM FILETYPE_RTF - still poor - don't use clipboard - Rich Text Format
 IF is_y% OR windows% THEN
-PROCco(f%,FNcj("ObjectBindSaver",FNaj("42","0xBA6"+FNwindows(+asp$+"Biff5"))))
+PROCco(f%,FNcj("ObjectBindSaver",FNaj("42","0xBA6"+FNwindows(+asp$+"Biff5")))): REM FILETYPE_MS_XLS
 ENDIF
 ENDPROC
 :

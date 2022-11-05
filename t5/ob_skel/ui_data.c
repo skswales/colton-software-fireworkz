@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -527,9 +527,9 @@ ui_data_dispose(
 
 static void
 ui_data_inc_dec_f64(
-    _InVal_     S32 inc,
-    /*inout*/ P_UI_DATA p_ui_data,
-    _InRef_     PC_UI_CONTROL_F64 p_ui_control_f64)
+    _InoutRef_  P_UI_DATA p_ui_data,
+    _InRef_     PC_UI_CONTROL_F64 p_ui_control_f64,
+    _InVal_     UI_DATA_INC_TYPE ui_data_inc)
 {
     F64 f = p_ui_data->f64;
     F64 inc_dec_round;
@@ -546,15 +546,53 @@ ui_data_inc_dec_f64(
         bump_val = 1.0;
     }
 
-    if(inc_dec_round)
+    switch(ui_data_inc)
     {
-        F64 r = f * inc_dec_round;
-        F64 i;
+    case UI_DATA_IDT_MINIMUM:
+        if(NULL != p_ui_control_f64)
+            f = p_ui_control_f64->min_val;
+        break;
 
-        r = modf(r, &i);
-
-        if(inc)
+    case UI_DATA_IDT_DECREMENT:
+        if(inc_dec_round)
         {
+            F64 r = f * inc_dec_round;
+            F64 i;
+
+            r = modf(r, &i);
+
+            if(r < 0.01)
+            {
+                if(r < -0.99)
+                    /* already 'at' granularity so take one off */
+                    i -= 1.0;
+
+                r = i / inc_dec_round;
+
+                f = r - bump_val;
+            }
+            else
+            {
+                /* not already 'at' granularity so round down to this one */
+                r = i / inc_dec_round;
+
+                f = r;
+            }
+        }
+        else
+        {
+            f -= bump_val;
+        }
+        break;
+
+    case UI_DATA_IDT_INCREMENT:
+        if(inc_dec_round)
+        {
+            F64 r = f * inc_dec_round;
+            F64 i;
+
+            r = modf(r, &i);
+
             if(r > -0.01)
             {
                 if(r > 0.99)
@@ -575,34 +613,45 @@ ui_data_inc_dec_f64(
         }
         else
         {
-            if(r < 0.01)
-            {
-                if(r < -0.99)
-                    /* already 'at' granularity so take one off */
-                    i -= 1.0;
-
-                r = i / inc_dec_round;
-
-                f = r - bump_val;
-            }
-            else
-            {
-                /* not already 'at' granularity so round down to this one */
-                r = i / inc_dec_round;
-
-                f = r;
-            }
-        }
-    }
-    else
-    {
-        if(inc)
             f += bump_val;
-        else
-            f -= bump_val;
+        }
+        break;
+
+    case UI_DATA_IDT_MAXIMUM:
+        if(NULL != p_ui_control_f64)
+            f = p_ui_control_f64->max_val;
+        break;
     }
 
     p_ui_data->f64 = f;
+}
+
+static void
+ui_data_inc_dec_s32(
+    _InoutRef_  P_UI_DATA p_ui_data,
+    _InRef_     PC_UI_CONTROL_S32 p_ui_control_s32,
+    _InVal_     UI_DATA_INC_TYPE ui_data_inc)
+{
+    switch(ui_data_inc)
+    {
+    case UI_DATA_IDT_MINIMUM:
+        if(NULL != p_ui_control_s32)
+            p_ui_data->s32 = p_ui_control_s32->min_val;
+        break;
+
+    case UI_DATA_IDT_DECREMENT:
+        p_ui_data->s32 -= (p_ui_control_s32 && p_ui_control_s32->bump_val) ? p_ui_control_s32->bump_val : 1;
+        break;
+
+    case UI_DATA_IDT_INCREMENT:
+        p_ui_data->s32 += (p_ui_control_s32 && p_ui_control_s32->bump_val) ? p_ui_control_s32->bump_val : 1;
+        break;
+
+    case UI_DATA_IDT_MAXIMUM:
+        if(NULL != p_ui_control_s32)
+            p_ui_data->s32 = p_ui_control_s32->max_val;
+        break;
+    }
 }
 
 _Check_return_
@@ -611,9 +660,9 @@ ui_data_inc_dec(
     _InVal_     UI_DATA_TYPE ui_data_type,
     _InoutRef_  P_UI_DATA p_ui_data,
     /*in*/      const void /*UI_CONTROL*/ * const p_ui_control,
-    _InVal_     BOOL inc)
+    _InVal_     UI_DATA_INC_TYPE ui_data_inc)
 {
-    BOOL bcheck = 1;
+    BOOL bounds_check = TRUE;
 
     switch(ui_data_type)
     {
@@ -622,33 +671,27 @@ ui_data_inc_dec(
     case UI_DATA_TYPE_NONE:
     case UI_DATA_TYPE_TEXT:
 #endif
-        bcheck = 0;
+        bounds_check = FALSE;
         break;
 
     case UI_DATA_TYPE_ANY:
         {
-        PC_UI_CONTROL_ANY p = (PC_UI_CONTROL_ANY) p_ui_control;
-        if(p)
-            status_return((* p->data_inc_dec_proc) (p->data_inc_dec_handle, &p_ui_data->any, inc));
+        PC_UI_CONTROL_ANY p_ui_control_any = (PC_UI_CONTROL_ANY) p_ui_control;
+        if(NULL != p_ui_control_any)
+            status_return((* p_ui_control_any->data_inc_dec_proc) (p_ui_control_any->data_inc_dec_handle, &p_ui_data->any, ui_data_inc));
         break;
         }
 
     case UI_DATA_TYPE_F64:
-        ui_data_inc_dec_f64(inc, p_ui_data, (PC_UI_CONTROL_F64) p_ui_control);
+        ui_data_inc_dec_f64(p_ui_data, (PC_UI_CONTROL_F64) p_ui_control, ui_data_inc);
         break;
 
     case UI_DATA_TYPE_S32:
-        {
-        PC_UI_CONTROL_S32 p = (PC_UI_CONTROL_S32) p_ui_control;
-        if(inc)
-            p_ui_data->s32 += (p && p->bump_val) ? p->bump_val : 1;
-        else
-            p_ui_data->s32 -= (p && p->bump_val) ? p->bump_val : 1;
+        ui_data_inc_dec_s32(p_ui_data, (PC_UI_CONTROL_S32) p_ui_control, ui_data_inc);
         break;
-        }
     }
 
-    if(bcheck)
+    if(bounds_check)
         status_return(ui_data_bound_check(ui_data_type, p_ui_data, p_ui_control));
 
     return(STATUS_OK);

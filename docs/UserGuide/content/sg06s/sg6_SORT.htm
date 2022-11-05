@@ -1,22 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>SORT</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="SORT" />
-        <param name="Keyword" value="Functions, Miscellaneous, SORT" />
+        <param name="Keyword" value="Spreadsheet functions, Miscellaneous, SORT" />
         <param name="Keyword" value="Miscellaneous functions, sort rows of data" />
     </object>
 
@@ -26,11 +24,12 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        SORT(<span class="csg-function-parameter"><a href="../sg06/sg6_array_or_range.htm">array</a></span>,
-        <span class="csg-function-parameter">column_index</span>:<span class="csg-function-parameter-type">Number</span>)
+        SORT(
+        <span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">column_index</span>:<span class="csg-function-parameter-type">Number</span> )
     </p>
     <p>
-        Sorts rows of data in the <span class="csg-function-parameter"><a href="../sg06/sg6_array_or_range.htm">array</a></span> (or range of cells)
+        Sorts rows in the <span class="csg-function-parameter">data</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>)
         in ascending order based on the values in the column specified by <span class="csg-function-parameter">column_index</span>.
     </p>
 
@@ -45,14 +44,14 @@
 
     <p>Use <a href="../sg06t/sg6_TRANSPOSE.htm">TRANSPOSE</a>() prior to SORT() to sort by column based on values in rows.</p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06s/sg6_SET_VALUE.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#miscellaneous_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06t/sg6_TYPE.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06s/sg6_SET_VALUE.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_miscellaneous_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06t/sg6_TYPE.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

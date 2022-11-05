@@ -1,16 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" Content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
+
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+<!-- Copyright © 2016-2022 Stuart Swales -->
+
 <title>Fireworkz:!ReadMe</title>
 </head>
 <body>
-<!-- This Source Code Form is subject to the terms of the Mozilla Public
-   - License, v. 2.0. If a copy of the MPL was not distributed with this
-   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<!-- Copyright (C) 2016-2021 Stuart Swales -->
-
-<H1>Fireworkz:!ReadMe</H1>
+<h1>Fireworkz:!ReadMe</h1>
 
 <p>This directory contains most of Fireworkz's application resources.</p>
 

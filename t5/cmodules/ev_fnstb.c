@@ -2,9 +2,9 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2021 Stuart Swales */
+/* Copyright (C) 2014-2022 Stuart Swales */
 
 /* Statistical function routines for evaluator */
 
@@ -407,7 +407,7 @@ PROC_EXEC_PROTO(c_mode_sngl)
 /* calculate the percentile of a span of data in a one-dimensional vertical array - reused for quartile */
 
 /* Try estimating percentile using an Excel-compatible method */
-/* Credit: http://en.wikipedia.org/wiki/Percentile#Microsoft_Excel_method */
+/* Credit: https://en.wikipedia.org/wiki/Percentile#Microsoft_Excel_method */
 
 _Check_return_
 static F64

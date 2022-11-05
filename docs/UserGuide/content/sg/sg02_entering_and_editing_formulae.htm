@@ -1,36 +1,35 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>Entering and editing formulae</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
         <param name="Keyword" value="Entering and editing formulae" />
     </object>
-    <div class="navheader">
-        <table id="navheader" summary="Navigation header">
+    <nav class="navheader">
+        <table id="navheader">
             <tr>
-                <td class="navheader_PCN_L"><a href="../sg/sg01_entering_and_editing_numerical_data.htm">Prev</a> </td>
-                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
-                <td class="navheader_PCN_R"> <a href="../sg/sg03_number_formats_and_styles.htm">Next</a></td>
+                <td><a href="../sg/sg01_entering_and_editing_numerical_data.htm">Prev</a> </td>
+                <th>Fireworkz &amp; Fireworkz Pro</th>
+                <td> <a href="../sg/sg03_number_formats_and_styles.htm">Next</a></td>
             </tr>
             <tr>
-                <td class="navheader_PCN_L">Entering data in cells </td>
-                <th class="navheader_PCN_C">User Guide</th>
-                <td class="navheader_PCN_R"> Number formats</td>
+                <td>Entering data in cells </td>
+                <th>User Guide</th>
+                <td> Number formats</td>
             </tr>
         </table>
-    </div>
+    </nav>
 
     <h1><a name="entering_and_editing_formulae" id="entering_and_editing_formulae"></a><span class="csg-chapter-number">12 </span>Entering and editing formulae</h1>
 
@@ -52,7 +51,7 @@
 
     <p>
         A formula is anything you enter into a number cell.
-        <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+        <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button">
         You create and edit it in the formula line,
         and then enter it into the cell by clicking on the <span class="csg-toolbar-button">Tick</span> tool button on the toolbar
         (or pressing <span class="csg-key">Return&crarr;</span>).
@@ -96,7 +95,7 @@
     <ul>
         <li><a href="#arithmetic_operators">Arithmetic operators</a></li>
         <li><a href="#relational_operators">Relational operators</a></li>
-        <li><a href="#logical_operators">Logical operators</a></li>
+        <li><a href="#boolean_operators">Boolean (logical) operators</a></li>
     </ul>
     <p>See also the section <a href="#operator_precedence">Operator precedence</a>.</p>
 
@@ -105,8 +104,8 @@
     <div class="csg-page-padding-left">
         <table>
             <colgroup>
-                <col style="width: 4em;" />
-                <col />
+                <col style="width: 4em;">
+                <col>
             </colgroup>
             <tbody>
                 <tr><td style="width: 4em;">+</td><td>Add both sides</td></tr>
@@ -124,13 +123,13 @@
 
     <h3><a name="relational_operators" id="relational_operators"></a>Relational operators</h3>
     <p>The relational operators compare dates, strings and numbers, comparing the left-hand operand with the right-hand operand.</p>
-    <p>The result is a Logical value, <code>TRUE</code> or <code>FALSE</code> as appropriate.</p>
+    <p>The result is a Boolean value, <code>TRUE</code> or <code>FALSE</code> as appropriate.</p>
     <p>Note that both operands must be of the same type (e.g. both numbers) to gain a useful result.</p>
     <div class="csg-page-padding-left">
         <table>
             <colgroup>
-                <col style="width: 4em;" />
-                <col />
+                <col style="width: 4em;">
+                <col>
             </colgroup>
             <tbody>
                 <tr><td style="width: 4em;">&lt;</td><td>Less than</td></tr>
@@ -146,14 +145,14 @@
     <pre class="csg-sample-indent">B8&gt;10</pre>
     <p>
         will compare the contents of cell <code>B8</code> with the number 10.
-        If <code>B8</code> contains a number greater than 10, the result will be the Logical value <code>TRUE</code>.
+        If <code>B8</code> contains a number greater than 10, the result will be the Boolean value <code>TRUE</code>.
         If <code>B8</code> contains a number which is 10 or less, the result will be <code>FALSE</code>.
         If <code>B8</code> contains text or a date, the result will also be <code>FALSE</code>.
     </p>
     <p>
         Relational operators are useful for establishing the condition for the
         <a href="../sg06i/sg6_IF.htm"><code>IF</code></a> function,
-        and in <a href="../sg/sg05_function_reference.htm#database_functions">database functions</a>.
+        and in <a href="../sg/sg05_database_functions.htm">database functions</a>.
     </p>
     <p class="csg-function-subheading">Example:</p>
     <p>The following function displays the first text message in the cell if the condition is true, and the second if it is not true:</p>
@@ -164,8 +163,8 @@
     <div class="csg-page-padding-left">
         <table>
             <colgroup>
-                <col style="width: 4em;" />
-                <col />
+                <col style="width: 4em;">
+                <col>
             </colgroup>
             <tbody>
                 <tr><td style="width: 4em;">^?</td><td>Matches any single character not including space</td></tr>
@@ -176,32 +175,32 @@
     </div>
     <p class="csg-function-subheading">Example:</p>
     <pre class="csg-sample-indent">&quot;Venice&quot;=&quot;^#nice&quot;</pre>
-    <p>will return the Logical value <code>TRUE</code>.</p>
+    <p>will return the Boolean value <code>TRUE</code>.</p>
 
-    <h3><a name="logical_operators" id="logical_operators"></a>Logical operators</h3>
-    <p>The logical operators operate on Logical (Boolean) values.</p>
+    <h3><a name="boolean_operators" id="boolean_operators"></a>Boolean (logical) operators</h3>
+    <p>The Boolean (logical) operators operate on Boolean values.</p>
     <p class="csg-function-declaration"><span style="float: left; min-width: 3em;">&amp; </span>AND</p>
-    <p>If both sides of an AND operator are <code>TRUE</code>, the Logical value <code>TRUE</code> is returned; otherwise <code>FALSE</code> is returned.</p>
+    <p>If both sides of an AND operator are <code>TRUE</code>, the Boolean value <code>TRUE</code> is returned; otherwise <code>FALSE</code> is returned.</p>
     <p>Note that if the left-hand side of an AND operator in an expression is <code>FALSE</code>, the right-hand side is not evaluated.</p>
     <p class="csg-function-declaration"><span style="float: left; min-width: 3em;">!</span>unary NOT</p>
-    <p>The NOT operator returns the logical negation of the following expression.</p>
+    <p>The NOT operator returns the Boolean negation of the following expression.</p>
     <p class="csg-function-declaration"><span style="float: left; min-width: 3em;">|</span>OR</p>
-    <p>If either side of an OR operator is <code>TRUE</code>, the Logical value <code>TRUE</code> is returned; otherwise <code>FALSE</code> is returned.</p>
+    <p>If either side of an OR operator is <code>TRUE</code>, the Boolean value <code>TRUE</code> is returned; otherwise <code>FALSE</code> is returned.</p>
     <p>Note that if the left-hand side of an OR operator in an expression is <code>TRUE</code>, the right-hand side is not evaluated.</p>
-    <p>In Fireworkz, Logical values and numeric values are freely convertible:</p>
+    <p>In Fireworkz, Boolean values and numeric values are freely convertible:</p>
     <p>
-        When numeric values are used in operations that require Logical values,
-        Fireworkz always maps the number zero to the Logical value <code>FALSE</code>
-        and any non-zero number to the Logical value <code>TRUE</code>.
+        When numeric values are used in operations that require Boolean values,
+        Fireworkz always maps the number zero to the Boolean value <code>FALSE</code>
+        and any non-zero number to the Boolean value <code>TRUE</code>.
     </p>
     <p>
-        When Logical values are used in operations or calculations that require numeric values,
-        Fireworkz always maps the Logical value <code>FALSE</code> to the number zero
+        When Boolean values are used in operations or calculations that require numeric values,
+        Fireworkz always maps the Boolean value <code>FALSE</code> to the number zero
         and <code>TRUE</code> to the number one.
     </p>
     <p class="csg-function-subheading">Example:</p>
     <p>
-        Logical operators are often used to construct the condition required by the <code>IF</code> function.
+        Boolean operators are often used to construct the condition required by the <code>IF</code> function.
         The following function adds the contents of cells <code>A2</code> and <code>B2</code>
         only if the contents of both cells <code>A1</code> and <code>B1</code> match the specified criteria:
     </p>
@@ -220,9 +219,9 @@
     <div class="csg-page-padding-left">
         <table>
             <colgroup>
-                <col style="width: 4em;" />
-                <col style="width: 4em;" />
-                <col />
+                <col style="width: 4em;">
+                <col style="width: 4em;">
+                <col>
             </colgroup>
             <tbody class="csg-table-align-top">
                 <tr>
@@ -333,7 +332,7 @@
     <p>evaluates as</p>
     <pre class="csg-sample-indent">((-3)*2)-2</pre>
     <p>The answer is -8.</p>
-    <p>The following example shows how operator precedence affects relational and logical operators:</p>
+    <p>The following example shows how operator precedence affects relational and Boolean operators:</p>
     <pre class="csg-sample-indent">IF(A1=3 &amp; B1=4,SUM(A1:A10),0)</pre>
     <p>
         The formula first evaluates the expression <code>A1=3</code>;
@@ -368,7 +367,7 @@
     <ol>
         <li>Click on the cell in which you want to use the function.</li>
         <li>
-            <img class="csg-lhs-img" src="../common/images/toolbar/selfnc.png" alt="Function selector tool button" />
+            <img class="csg-lhs-img" src="../common/images/toolbar/selfnc.png" alt="Function selector tool button">
             Click the <span class="csg-toolbar-button">Function</span> tool button on the toolbar to the left of the formula line.
             The <span class="csg-menu">Function</span> menu will appear.
         </li>
@@ -394,7 +393,7 @@
             You can type over this or click on cells to insert cell references.
         </li>
         <li>
-            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button">
             When you have finished, click the <span class="csg-toolbar-button">Tick</span> button to enter your formula.
             The result will be displayed in the cell, and whenever you select the cell you will see the formula on the formula line.
         </li>
@@ -415,7 +414,7 @@
             if the blank cells are at the right, the numbers in the rows will be added.
         </li>
         <li>
-            <img class="csg-lhs-img" src="../common/images/toolbar/sum.png" alt="Autosum tool button" />
+            <img class="csg-lhs-img" src="../common/images/toolbar/sum.png" alt="Autosum tool button">
             Click the <span class="csg-toolbar-button">Autosum</span> tool button on the toolbar.
         </li>
         <li>
@@ -518,7 +517,7 @@
         <li>Click in the formula line.</li>
         <li>Enter the range A1:B3 either by typing in the reference or by pointing at cell A1 and then dragging to B3 to select the range.</li>
         <li>
-            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button">
             Click the <span class="csg-toolbar-button">Tick</span> button
             (or press <span class="csg-key">Return&crarr;</span>).
         </li>
@@ -537,7 +536,7 @@
         <li>Enter further numbers as required.</li>
         <li>Enter a closing brace to indicate the end of the array.</li>
         <li>
-            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button">
             Click the <span class="csg-toolbar-button">Tick</span> button
             (or press <span class="csg-key">Return&crarr;</span>)
             to enter the finished array constant in the cell.
@@ -557,7 +556,7 @@
             This writes the contents of an array held in cell A1 into cells E1 to F5
         </li>
         <li>
-            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button" />
+            <img class="csg-lhs-img" src="../common/images/toolbar/tick.png" alt="Tick tool button">
             Click the <span class="csg-toolbar-button">Tick</span> button
             (or press <span class="csg-key">Return&crarr;</span>).
         </li>
@@ -586,9 +585,9 @@
     </p>
     <table style="margin-left: 6em; border-collapse: collapse;">
         <colgroup>
-            <col style="width: 2.2em;" />
-            <col style="width: 2.2em;" />
-            <col style="width: 2.2em;" />
+            <col style="width: 2.2em;">
+            <col style="width: 2.2em;">
+            <col style="width: 2.2em;">
         </colgroup>
         <tbody>
             <tr>
@@ -684,19 +683,19 @@
         <li>They are not case-sensitive, so VAT and vat are identical.</li>
     </ul>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg01_entering_and_editing_numerical_data.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg/sg03_number_formats_and_styles.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg/sg01_entering_and_editing_numerical_data.htm">Prev</a> </td>
+                <td> </td>
+                <td> <a accesskey="n" href="../sg/sg03_number_formats_and_styles.htm">Next</a></td>
             </tr>
             <tr>
-                <td class="navfooter_PUN_L">Entering data in cells </td>
-                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
-                <td class="navfooter_PUN_R"> Number formats</td>
+                <td>Entering data in cells </td>
+                <td><a accesskey="h" href="../index.htm">Home</a></td>
+                <td> Number formats</td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

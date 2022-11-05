@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -43,7 +43,7 @@ typedef U8 EV_DOCNO;
 #define EV_DOCNO_BITS       8
 #endif
 
-typedef S32 EV_COL; /* really restricted to S16 for packing in EV_SLR but ARM Norcroft makes poor code for signed 16-bit accesses */
+typedef S32 EV_COL; /* really restricted to S16 for packing in EV_SLR but ARM Norcroft C makes poor code for signed 16-bit accesses */
 #define EV_COL_BITS         16
 #define EV_COL_SBF          SBF
 
@@ -102,7 +102,7 @@ typedef struct EV_SLR
 }
 EV_SLR, * P_EV_SLR; typedef const EV_SLR * PC_EV_SLR;
 
-#define EV_SLR_INIT { 0 /*...*/ } /* this aggregate initialiser gives poor code on ARM Norcroft */
+#define EV_SLR_INIT { 0 /*...*/ } /* this aggregate initialiser gives poor code on ARM Norcroft C */
 
 #define ev_slr_init(p_ev_slr) \
     zero_struct_ptr(p_ev_slr)
@@ -507,32 +507,32 @@ error definition
     ? 1 \
     : 0 )
 
-#if RISCOS || 0
-
-#if 0
-struct _F64_AS_WORDS
-{
-    U32 u32[2];
-};
-#endif
+#if RISCOS && !defined(APCS_SOFTPCS)
+/* avoid going via f.p. registers if possible */
 
 static inline void
 f64_copy_words(
     _OutRef_    P_F64 p_f64_out,
     _InRef_     PC_F64 p_f64_in)
 {
-#if 0 /* causes compiler fault in ev_matr.c */
-    * (struct _F64_AS_WORDS *) p_f64_out = * (const struct _F64_AS_WORDS *) p_f64_in;
-#else
     P_U32 p_u32_out = (P_U32) p_f64_out;
     PC_U32 p_u32_in = (PC_U32) p_f64_in;
     p_u32_out[0] = p_u32_in[0];
     p_u32_out[1] = p_u32_in[1];
-#endif
 }
 
 #define f64_copy(lval, f64) f64_copy_words(&(lval), &(f64))
 #else
+static inline void
+f64_copy_words(
+    _OutRef_    P_F64 p_f64_out,
+    _InRef_     PC_F64 p_f64_in)
+{
+    P_U64 p_u64_out = (P_U64) p_f64_out;
+    PC_U64 p_u64_in = (PC_U64) p_f64_in;
+    *p_u64_out = *p_u64_in;
+}
+
 #define f64_copy(lval, f64) (lval) = (f64)
 #endif
 
@@ -671,88 +671,6 @@ extern STATUS
 ss_recog_number(
     _OutRef_    P_SS_DATA p_ss_data,
     _In_z_      PC_USTR in_str_in);
-
-_Check_return_ _Success_(return > 0)
-extern STATUS
-ss_recog_string(
-    _OutRef_    P_SS_DATA p_ss_data,
-    _In_z_      PC_USTR in_str);
-
-_Check_return_
-extern STATUS
-ss_string_allocate(
-    _OutRef_    P_SS_DATA p_ss_data,
-    _InVal_     U32 len);
-
-_Check_return_
-extern BOOL
-ss_string_is_blank(
-    _InRef_     PC_SS_DATA p_ss_data);
-
-_Check_return_
-extern STATUS
-ss_string_dup(
-    _OutRef_    P_SS_DATA p_ss_data_out,
-    _InRef_     PC_SS_DATA p_ss_data_src);
-
-_Check_return_
-extern STATUS
-ss_string_make_uchars(
-    _OutRef_    P_SS_DATA p_ss_data,
-    _In_reads_opt_(uchars_n) PC_UCHARS uchars,
-    _InVal_     U32 uchars_n);
-
-_Check_return_
-extern STATUS
-ss_string_make_ustr(
-    _OutRef_    P_SS_DATA p_ss_data,
-    _In_z_      PC_USTR ustr);
-
-_Check_return_
-extern U32
-ss_string_skip_leading_whitespace(
-    _InRef_     PC_SS_DATA p_ss_data);
-
-_Check_return_
-extern U32
-ss_string_skip_leading_whitespace_uchars(
-    _In_reads_(uchars_n) PC_UCHARS uchars,
-    _InRef_     U32 uchars_n);
-
-_Check_return_
-extern U32
-ss_string_skip_internal_whitespace_uchars(
-    _In_reads_(uchars_n) PC_UCHARS uchars,
-    _InRef_     U32 uchars_n,
-    _InVal_     U32 uchars_idx);
-
-_Check_return_
-extern U32
-ss_string_skip_trailing_whitespace_uchars(
-    _In_reads_(uchars_n) PC_UCHARS uchars,
-    _InRef_     U32 uchars_n);
-
-_Check_return_
-static inline PC_UCHARS
-ss_string_trim_leading_whitespace_uchars(
-    _In_reads_(*p_uchars_n) PC_UCHARS uchars,
-    _InoutRef_  P_U32 p_uchars_n)
-{
-    const U32 wss = ss_string_skip_internal_whitespace_uchars(uchars, *p_uchars_n, 0U);
-    *p_uchars_n -= wss;
-    return(PtrAddBytes(PC_UCHARS, uchars, wss));
-}
-
-_Check_return_
-static inline PC_UCHARS
-ss_string_trim_trailing_whitespace_uchars(
-    _In_reads_(*p_uchars_n) PC_UCHARS uchars,
-    _InoutRef_  P_U32 p_uchars_n)
-{
-    const U32 wss = ss_string_skip_trailing_whitespace_uchars(uchars, *p_uchars_n);
-    *p_uchars_n -= wss;
-    return(uchars);
-}
 
 /*
 two_nums_type_match result values
@@ -1322,6 +1240,92 @@ uint32_multiply_check_overflow(
     _In_        const uint32_t multiplicand_a,
     _In_        const uint32_t multiplicand_b,
     _OutRef_    P_UINT64_WITH_UINT32_OVERFLOW p_uint64_with_uint32_overflow);
+
+/*
+ss_string.c
+*/
+
+_Check_return_
+extern STATUS
+ss_string_allocate(
+    _OutRef_    P_SS_DATA p_ss_data,
+    _InVal_     U32 len);
+
+_Check_return_
+extern STATUS
+ss_string_dup(
+    _OutRef_    P_SS_DATA p_ss_data_out,
+    _InRef_     PC_SS_DATA p_ss_data_src);
+
+_Check_return_
+extern STATUS
+ss_string_make_uchars(
+    _OutRef_    P_SS_DATA p_ss_data,
+    _In_reads_opt_(uchars_n) PC_UCHARS uchars,
+    _InVal_     U32 uchars_n);
+
+_Check_return_
+extern STATUS
+ss_string_make_ustr(
+    _OutRef_    P_SS_DATA p_ss_data,
+    _In_z_      PC_USTR ustr);
+
+_Check_return_
+extern BOOL
+ss_string_is_blank(
+    _InRef_     PC_SS_DATA p_ss_data);
+
+_Check_return_
+extern U32
+ss_string_skip_leading_whitespace(
+    _InRef_     PC_SS_DATA p_ss_data);
+
+_Check_return_
+extern U32
+ss_string_skip_leading_whitespace_uchars(
+    _In_reads_(uchars_n) PC_UCHARS uchars,
+    _InVal_     U32 uchars_n);
+
+_Check_return_
+extern U32
+ss_string_skip_internal_whitespace_uchars(
+    _In_reads_(uchars_n) PC_UCHARS uchars,
+    _InVal_     U32 uchars_n,
+    _InVal_     U32 uchars_idx);
+
+_Check_return_
+extern U32
+ss_string_skip_trailing_whitespace_uchars(
+    _In_reads_(uchars_n) PC_UCHARS uchars,
+    _InVal_     U32 uchars_n);
+
+_Check_return_
+static inline PC_UCHARS
+ss_string_trim_leading_whitespace_uchars(
+    _In_reads_(*p_uchars_n) PC_UCHARS uchars,
+    _InoutRef_  P_U32 p_uchars_n)
+{
+    const U32 wss = ss_string_skip_internal_whitespace_uchars(uchars, *p_uchars_n, 0U);
+    *p_uchars_n -= wss;
+    return(PtrAddBytes(PC_UCHARS, uchars, wss));
+}
+
+_Check_return_
+static inline PC_UCHARS
+ss_string_trim_trailing_whitespace_uchars(
+    _In_reads_(*p_uchars_n) PC_UCHARS uchars,
+    _InoutRef_  P_U32 p_uchars_n)
+{
+    const U32 wss = ss_string_skip_trailing_whitespace_uchars(uchars, *p_uchars_n);
+    *p_uchars_n -= wss;
+    return(uchars);
+}
+
+_Check_return_ _Success_(return > 0)
+extern STATUS
+ss_recog_string(
+    _OutRef_    P_SS_DATA p_ss_data,
+    _In_z_      PC_USTR in_str);
 
 #endif /* __ss_const_h */
 

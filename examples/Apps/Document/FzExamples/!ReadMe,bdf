@@ -1,0 +1,70 @@
+{Version:2.31;10 Sep 2021;Fireworkz;;;Alphabet-Latin1}
+{BaseSingleCol:1}
+{Flow:10}
+{Block:0;0;;32;3;20;;32;3;20}
+{Style:BaseLetter;{ColWidth:11164}{ColName:#}{RowHeight:0}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:566}{MarginRight:562}{MarginPara:0}{Tablist:L1134 L2268 L3402 L4536 L5670 L6804 L7938 L9072 L10206}{Background:255;255;255}{ParaStart:68}{ParaEnd:45}{LineSpace:0;72}{Justify:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy}{NumformSE:@}{BorderColour:0;187;255}{Border:0}{GridLeftColour:0;187;255}{GridTopColour:0;187;255}{GridRightColour:0;187;255}{GridBottomColour:0;187;255}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Typeface:Times}{Fontx:0}{Fonty:280}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{StyleBase:BaseLetter}
+{Style:Indented paragraph;{MarginLeft:1700}{MarginPara:-623}{Tablist:L0}}
+{Style:Heading;{ParaStart:397}{ParaEnd:397}{Justify:1}{Typeface:Helvetica}{Fonty:360}}
+{Style:Subheading;{ParaStart:283}{Fonty:320}{Bold:1}}
+{Style:Indented List;{MarginLeft:2834}{MarginRight:562}{MarginPara:-1700}{Tablist:L0}}
+{Paper:Default A4;0;16840;11900;460;460;360;360;0;0;0;0;32;;0}
+{PaperScale:100}
+{PrintQuality:0}
+{StartOfData}
+{S:X;X;0;0;Fireworkz Examples - {ITLN-X} file}
+{S:X;X;0;1;What's in this directory?}
+{S:X;X;0;2;Tutorial{ITT-X}a directory of files used in the Fireworkz Getting Started Guide examples.}
+{S:X;X;0;3;NewFeature{ITT-X}notes on some newer features of Fireworkz.}
+{S:X;X;0;4;Examples directory:}
+{S:X;X;0;5;Chars {ITT-X}a table showing the characters available in a typeface.}
+{S:X;X;0;6;Charts {ITT-X}examples of Fireworkz' different chart types.}
+{S:X;X;0;7;Commands{ITT-X}sketchy details of the command language (for intrepid venturers only) can be found here.}
+{S:X;X;0;8;Custom {ITT-X}examples of custom functions.}
+{S:X;X;0;9;Draft {ITT-X}templates for character printing from Fireworkz.}
+{S:X;X;0;10;Functions{ITT-X}examples of spreadsheet functions.}
+{S:X;X;0;11;Keystrokes{ITT-X}list of keyboard shortcuts for Fireworkz.}
+{S:X;X;0;12;Labels{ITT-X}useful templates for label printing.}
+{S:X;X;0;13;Minesweep{ITT-X}fun game to play with Fireworkz' spreadsheet.}
+{S:X;X;0;14;Monthplan{ITT-X}specify the month and year and Fireworkz gives you a month planner.}
+{S:X;X;0;15;Numforms{ITT-X}examples of different number and date formats.}
+{S:X;X;0;16;PipeDream{ITT-X}notes on new features of Fireworkz which PipeDream doesn't have, and how to load your PipeDream files.}
+{S:X;X;0;17;Pupils{ITT-X}example database.}
+{S:X;X;0;18;Styles{ITT-X}some example templates containing simple styles you can use.}
+{S:X;X;0;19;Yearplan{ITT-X}is a year planner which you can print out, sellotape together, hang on your wall, admire, and even use. It is based on a large table spanning four pages with a cell for each day. The numbers were inserted by putting 1 in C6, a formula such as C6+1 in C7, and then Fill down was used to copy the formula down the column. Fill right was used to copy the numbers over the following eleven columns. Some of the cells need to be text cells, in order to add the text for the bank holidays, and so Make constant followed by Make text were used to turn all of the cells into text cells.  Styles are used to display day numbers, grey backgrounds, cell borders and so on.}
+{BR:;;;;;;;;1;1;{StyleHandle:BaseLetter}}
+{BR:;;;;;;;;1;1;{ColWidth:0}}
+{BR:0;;;;1;;;;1;0;{StyleHandle:BaseLetter}}
+{R:0;0;;32;1;1;;32;0;0;{StyleHandle:Heading}}
+{R:0;5;;32;1;6;5;3;0;0;{Bold:1}}
+{R:0;6;;32;1;7;6;3;0;0;{Bold:1}}
+{R:0;8;;32;1;9;6;3;0;0;{Bold:1}}
+{R:0;14;;32;1;15;9;3;0;0;{Bold:1}}
+{R:0;15;;32;1;16;8;3;0;0;{Bold:1}}
+{R:0;16;;32;1;17;9;3;0;0;{Bold:1}}
+{R:0;18;;32;1;19;6;3;0;0;{Bold:1}}
+{R:0;19;;32;1;20;8;3;0;0;{Bold:1}}
+{R:0;11;;32;1;12;10;3;0;0;{Bold:1}}
+{R:0;12;;32;1;13;6;3;0;0;{Bold:1}}
+{R:0;13;;32;1;14;9;3;0;0;{Bold:1}}
+{R:0;1;;32;1;2;;32;0;0;{StyleHandle:Subheading}}
+{R:0;4;;32;1;5;;32;0;0;{Bold:1}}
+{R:0;2;;32;1;3;;32;0;0;{Bold:1}}
+{R:0;2;14;3;1;3;;32;0;0;{Bold:0}}
+{R:0;5;;32;1;20;;32;0;0;{StyleHandle:Indented List}}
+{R:0;2;57;3;1;3;78;3;0;0;{Italic:1}}
+{R:0;9;;32;1;10;5;3;0;0;{Bold:1}}
+{R:0;10;;32;1;11;9;3;0;0;{Bold:1}}
+{R:0;17;;32;1;18;6;3;0;0;{Bold:1}}
+{R:0;7;;32;1;8;8;3;0;0;{Bold:1}}
+{R:0;2;;32;1;4;;32;0;0;{StyleHandle:Indented List}}
+{R:0;3;;32;1;4;10;3;0;0;{Bold:1}}
+{R:0;19;531;3;1;20;540;3;0;0;{Italic:1}}
+{R:0;19;505;3;1;20;518;3;0;0;{Italic:1}}
+{PageHefoBreakValues-H:0;0;0;;1;0;68;0;;;0;;;1;0;228;0;;;0}
+{HD-H:0;2}
+{HBR-H:0;2;;32;;32;{StyleHandle:BaseLetter}}
+{HD-H:0;3}
+{HBR-H:0;3;;32;;32;{StyleHandle:BaseLetter}}
+{EndOfData}
+{CmdGroup:{ViewCreate:5952;15168;11568;14544}{ViewControl:100;2;0;0;0;0;0;2048;0;2048}{CurrentPosition:0;0;0;3;0}}

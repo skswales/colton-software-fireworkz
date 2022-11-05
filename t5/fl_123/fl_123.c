@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1988-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -61,13 +61,6 @@ lotus123_decode_formula(
     _InoutRef_  P_QUICK_UBLOCK p_quick_ublock /*appended*/,
     /*in*/      PC_BYTE p_formula_size,
     _InRef_     PC_SLR p_slr);
-
-_Check_return_
-static U32 /* length out */
-text_from_f64(
-    _Out_writes_z_(elemof_buffer) P_USTR buffer,
-    _InVal_     U32 elemof_buffer,
-    _InVal_     F64 f64);
 
 enum SEARCH_TYPES
 {
@@ -522,13 +515,9 @@ lotus123_load_all_cells_wk1(
             if(status == 1)
                 is_date_format = TRUE;
             else if(status == 0)
-            {
-                UCHARZ buffer[50];
-                const U32 len = text_from_f64(ustr_bptr(buffer), elemof32(buffer), f64);
-                status = quick_ublock_uchars_add(&quick_ublock_result, ustr_bptr(buffer), len);
-            }
+                status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
 
-            if(opcode == L_FORMULA)
+            if( status_ok(status) && (opcode == L_FORMULA) )
                 status = lotus123_decode_formula(&quick_ublock_formula, p_data + 8, &slr);
 
             break;
@@ -567,10 +556,10 @@ lotus123_load_all_cells_wk1(
         }
 
         /* need to CH_NULL-terminate to pass via insert_cell_contents_foreign */
-        if(status_ok(status) && (0 != quick_ublock_bytes(&quick_ublock_result)))
+        if( status_ok(status) && (0 != quick_ublock_bytes(&quick_ublock_result)) )
             status = quick_ublock_nullch_add(&quick_ublock_result);
 
-        if(status_ok(status) && (0 != quick_ublock_bytes(&quick_ublock_formula)))
+        if( status_ok(status) && (0 != quick_ublock_bytes(&quick_ublock_formula)) )
             status = quick_ublock_nullch_add(&quick_ublock_formula);
 
         if(status_ok(status))
@@ -782,13 +771,9 @@ lotus123_load_all_cells_wk3(
             if(status == 1)
                 is_date_format = TRUE;
             else if(status == 0)
-            {
-                UCHARZ buffer[50];
-                const U32 len = text_from_f64(ustr_bptr(buffer), elemof32(buffer), f64);
-                status = quick_ublock_uchars_add(&quick_ublock_result, ustr_bptr(buffer), len);
-            }
+                status = quick_ublock_printf(&quick_ublock_result, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
 
-            if((opcode == LWK3_FORMULA) && (lf_version == 1))
+            if( status_ok(status) && (opcode == LWK3_FORMULA) && (lf_version == 1) )
                 status = lotus123_decode_formula(&quick_ublock_formula, p_data + 8, &slr);
 
             break;
@@ -1245,55 +1230,6 @@ slr_convert(
 
 /******************************************************************************
 *
-* convert floating point number to string
-*
-******************************************************************************/
-
-_Check_return_
-static U32 /* length out */
-text_from_f64(
-    _Out_writes_z_(elemof_buffer) P_USTR buffer,
-    _InVal_     U32 elemof_buffer,
-    _InVal_     F64 f64)
-{
-    U32 len = ustr_xsnprintf(buffer, elemof_buffer, USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
-    PC_USTR ustr_exp;
-
-    /* search for exponent and remove leading zeros because
-     * they confuse the Z88; remove the + for good measure
-    */
-    if(NULL != (ustr_exp = ustrchr(buffer, 'e')))
-    {
-        U8 sign;
-        P_USTR ustr_exps;
-
-        ustr_IncByte(ustr_exp);
-        sign = PtrGetByte(ustr_exp);
-        ustr_exps = de_const_cast(P_USTR, ustr_exp);
-
-        if(CH_PLUS_SIGN == sign)
-        {
-            ustr_IncByte(ustr_exp);
-        }
-        else if(CH_MINUS_SIGN__BASIC == sign)
-        {
-            ustr_IncByte(ustr_exp);
-            ustr_IncByte_wr(ustr_exps);
-        }
-
-        while(CH_DIGIT_ZERO == PtrGetByte(ustr_exp))
-            ustr_IncByte(ustr_exp);
-
-        memcpy32(ustr_exps, ustr_exp, ustrlen32(ustr_exp));
-        len -= PtrDiffBytesU32(ustr_exp, ustr_exps);
-        PtrPutByteOff(buffer, len, CH_NULL);
-    }
-
-    return(len);
-}
-
-/******************************************************************************
-*
 * convert constant to a string
 *
 ******************************************************************************/
@@ -1316,7 +1252,7 @@ const_convert(
     case LF_CONST:
         {
         F64 f64 = lotus123_read_F64(p_u8_const);
-        len = text_from_f64(ustr_bptr(buffer), elemof32(buffer), f64);
+        len = ustr_xsnprintf(ustr_bptr(buffer), elemof32(buffer), USTR_TEXT("%." stringize(DBL_DECIMAL_DIG) "g"), f64);
         break;
         }
 
@@ -1345,7 +1281,12 @@ const_convert(
         U8 ch;
         buffer[len++] = CH_QUOTATION_MARK;
         while((ch = *p_u8_in++) != CH_NULL)
+        {
             buffer[len++] = ch;
+
+            if(len >= (elemof32(buffer) -1/*Q.M.*/ -1/*CH_NULL*/)) /* defend against malformed files overrunning buffer */
+                break;
+        }
         buffer[len++]= CH_QUOTATION_MARK;
         break;
         }

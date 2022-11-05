@@ -2,7 +2,7 @@ REM Windows RC file generator for Fireworkz
 REM
 REM This Source Code Form is subject to the terms of the Mozilla Public
 REM License, v. 2.0. If a copy of the MPL was not distributed with this
-REM file, You can obtain one at http://mozilla.org/MPL/2.0/.
+REM file, You can obtain one at https://mozilla.org/MPL/2.0/.
 REM
 REM Copyright (C) 1993-1998 Colton Software Limited
 REM Copyright (C) 1998-2015 R W Colton
@@ -67,7 +67,7 @@ LOCAL env%, ptr%, buflen%
 SYS "OS_GetEnv" TO env%
 :
 buflen% = 511
-DIM buffer% LOCAL buflen%
+DIM buffer% buflen%
 :
 IF FALSE THEN
   REM For testing
@@ -372,10 +372,10 @@ ENDPROC
 DEF PROCmpl(f%)
 PROCo(f%, "// This Source Code Form is subject to the terms of the Mozilla Public")
 PROCo(f%, "// License, v. 2.0. If a copy of the MPL was not distributed with this")
-PROCo(f%, "// file, You can obtain one at http://mozilla.org/MPL/2.0/.")
+PROCo(f%, "// file, You can obtain one at https://mozilla.org/MPL/2.0/.")
 PROCo(f%, "//")
-PROCo(f%, "// Copyright (C) 1993-1998 Colton Software Limited")
-PROCo(f%, "// Copyright (C) 1998-2015 R W Colton")
+PROCo(f%, "// Copyright "+FNtransform_tbs_char(169)+" 1993-1998 Colton Software Limited")
+PROCo(f%, "// Copyright "+FNtransform_tbs_char(169)+" 1998-2015 R W Colton")
 PROCo(f%, "//")
 ENDPROC
 :

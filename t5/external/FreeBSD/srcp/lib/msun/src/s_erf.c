@@ -114,7 +114,7 @@ __FBSDID("$FreeBSD: head/lib/msun/src/s_erf.c 268593 2014-07-13 17:05:03Z kargl 
  */
 
 
-#include "math.h"
+#include "openlibm-math.h"
 #include "math_private.h"
 
 /* XXX Prevent compilers from erroneously constant folding: */

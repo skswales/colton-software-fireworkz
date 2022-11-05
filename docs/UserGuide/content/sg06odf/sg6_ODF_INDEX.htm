@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>ODF.INDEX</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Compatibility, Miscellaneous, ODF.INDEX" />
+        <param name="Keyword" value="Compatibility functions, miscellaneous - indexed element of array" />
+    </object>
+
+    <h1><a name="odf_index" id="odf_index"></a>ODF.INDEX</h1>
+
+    <p>OpenDocument / Microsoft Excel compatible function.</p>
+
+    <p>As Fireworkz <code>INDEX</code> spreadsheet function but with different parameter list order.</p>
+
+    <p class="csg-function-declaration">
+        ODF.INDEX(
+        <span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">row</span>:<span class="csg-function-parameter-type">Integer</span>,
+        <span class="csg-function-parameter">column</span>:<span class="csg-function-parameter-type">Integer</span> )
+    </p>
+    <p>
+        Returns the element of the <span class="csg-function-parameter">data</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>)
+        specified by the <span class="csg-function-parameter">row</span> and <span class="csg-function-parameter">column</span> parameters.
+    </p>
+    <p>Row and column numbers start at 1.</p>
+    <p>
+        If the row number is zero, the whole of the specified column is returned.<br />
+        If the column number is zero, the whole of the specified row is returned.
+    </p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">ODF.INDEX(B1:D20, 3, 2)</pre>
+    <p>returns <code>C3</code>.</p>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td> </td>
+                <td><a accesskey="u" href="../sg/sg05_compatibility_functions.htm">Up</a></td>
+                <td> </td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

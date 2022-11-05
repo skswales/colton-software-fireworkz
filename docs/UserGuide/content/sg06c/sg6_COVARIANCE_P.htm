@@ -1,22 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2014-2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>COVARIANCE.P</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 2014-2021 Stuart Swales -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="COVARIANCE.P" />
-        <param name="Keyword" value="Statistical functions, COVARIANCE.P" />
-        <param name="Keyword" value="Statistical functions, population covariance" />
+        <param name="Keyword" value="Spreadsheet functions, Statistical, COVARIANCE.P" />
+        <param name="Keyword" value="Statistical functions, covariance (population)" />
     </object>
 
     <h1><a name="covariance_p" id="covariance_p"></a>COVARIANCE.P</h1>
@@ -26,42 +24,52 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        COVARIANCE.P(<span class="csg-function-parameter">x-data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>,
-        <span class="csg-function-parameter">y-data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>)
+        COVARIANCE.P(
+        <span class="csg-function-parameter">x&#8209;data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">y&#8209;data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span> )
     </p>
 
     <p class="csg-function-subheading">Formula:</p>
     <p class="csg-function-formula">
         COVARIANCE.P =
         <span class="csg-function-formula-parentheses-1">(</span>
-        <span class="csg-math-symbol-sum">&sum;<em><sup class="csg-math-symbol-limit-upper">i=n</sup></em></span>
-        (<em>x</em><em><sub>i</sub></em> &minus; <em><span style="text-decoration: overline">x</span></em>) &sdot;
-        (<em>y</em><em><sub>i</sub></em> &minus; <em><span style="text-decoration: overline">y</span></em>)
+            <sub class="csg-math-symbol-limit-lower"><em>i </em></sub><span class="csg-math-symbol-sum">&sum;</span><sub class="csg-math-symbol-limit-lower">1</sub><sup class="csg-math-symbol-limit-upper"><em>n</em></sup>
+            (<em>x</em><sub><em>i</em></sub> &minus; <em><span style="text-decoration: overline">x</span></em>) &sdot;
+            (<em>y</em><sub><em>i</em></sub> &minus; <em><span style="text-decoration: overline">y</span></em>)
         <span class="csg-function-formula-parentheses-1">)</span>
-        &divide;
+         &#x2215; 
         <em>n</em>
     </p>
     <p>
-        where <em>n</em> is the number of values,
-        <em>x</em><em><sub>i</sub></em> is the <em>i</em>-th value in the <span class="csg-function-parameter">x-data</span> and
-        <em>y</em><em><sub>i</sub></em> is the <em>i</em>-th value in the <span class="csg-function-parameter">y-data</span>,
+        where <span class="csg-function-formula-variable">n</span> is the number of values,
+        <span class="csg-function-formula-variable">x</em><sub>i</sub></span> is the <span class="csg-function-formula-variable">i</span>&#8209;th value in the <span class="csg-function-parameter">x&#8209;data</span>,
+        <span class="csg-function-formula-variable" style="text-decoration: overline">x</span> is the arithmetic mean of the <span class="csg-function-parameter">x&#8209;data</span>,
+        <span class="csg-function-formula-variable">y</em><sub>i</sub></span> is the <span class="csg-function-formula-variable">i</span>&#8209;th value in the <span class="csg-function-parameter">y&#8209;data</span>, and
+        <span class="csg-function-formula-variable" style="text-decoration: overline">y</span> is the arithmetic mean of the <span class="csg-function-parameter">y&#8209;data</span>.
     </p>
 
     <p class="csg-function-subheading">Example:</p>
     <pre class="csg-sample-indent">COVARIANCE.P(A1:A15, B1:B15)</pre>
-    <p>returns the population covariance of the contents of cells in the range <code>A1:A15</code> and <code>B1:B15</code>.</p>
+    <p>returns the population covariance of the contents of cells in the range <code>A1:A15</code> and those in <code>B1:B15</code>.</p>
+
+    <p class="csg-function-subheading">Note:</p>
+    <p>
+        <code>COVARIANCE.P()</code> is implemented using a two-pass approach, first independently computing the mean values,
+        then computing intermediate values (such as the sum of the squares, products) using the difference between each value and the corresponding mean value.
+        This approach helps avoid many round-off errors and is also employed by Microsoft Excel 2003 and later.
+    </p>
 
     <p class="csg-function-subheading">Revisions:</p>
     <p>This function was added in Fireworkz 2.00.</p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06c/sg6_COUNTBLANK.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#statistical_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06c/sg6_COVARIANCE_S.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06c/sg6_COUNTBLANK.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06c/sg6_COVARIANCE_S.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

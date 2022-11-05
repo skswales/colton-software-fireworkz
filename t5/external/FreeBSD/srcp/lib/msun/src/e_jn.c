@@ -18,8 +18,10 @@ __pragma(warning(disable:4127)) /* conditional expression is constant */
 __pragma(warning(disable:4701)) /* potentially uninitialized local variable 'temp' used */
 __pragma(warning(disable:4723)) /* potential divide by 0 */
 #else /* COLTON_SOFTWARE */
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/lib/msun/src/e_jn.c 215237 2010-11-13 10:54:10Z uqs $");
+#include "cdefs-compat.h"
+//__FBSDID("$FreeBSD: src/lib/msun/src/e_jn.c,v 1.11 2010/11/13 10:54:10 uqs Exp $");
+
+//__FBSDID("$FreeBSD: head/lib/msun/src/e_jn.c 215237 2010-11-13 10:54:10Z uqs $");
 #endif /* COLTON_SOFTWARE */
 
 /*
@@ -48,7 +50,7 @@ __FBSDID("$FreeBSD: head/lib/msun/src/e_jn.c 215237 2010-11-13 10:54:10Z uqs $")
  *	
  */
 
-#include "math.h"
+#include "openlibm-math.h"
 #include "math_private.h"
 
 static const double
@@ -58,7 +60,7 @@ one   =  1.00000000000000000000e+00; /* 0x3FF00000, 0x00000000 */
 
 static const double zero  =  0.00000000000000000000e+00;
 
-double
+OLM_DLLEXPORT double
 __ieee754_jn(int n, double x)
 {
 	int32_t i,hx,ix,lx, sgn;
@@ -222,7 +224,7 @@ __ieee754_jn(int n, double x)
 	if(sgn==1) return -b; else return b;
 }
 
-double
+OLM_DLLEXPORT double
 __ieee754_yn(int n, double x)
 {
 	int32_t i,hx,ix,lx;

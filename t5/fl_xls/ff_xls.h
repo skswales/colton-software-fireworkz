@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1994-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -372,7 +372,7 @@ typedef enum _BIFF_function_number
 BIFF_function_number;
 
 /*
-Excel record types (see http://sc.openoffice.org/excelfileformat.pdf)
+Excel record types (see https://www.openoffice.org/sc/excelfileformat.pdf)
 */
 
 typedef U16 XLS_OPCODE; typedef XLS_OPCODE * P_XLS_OPCODE;
@@ -568,7 +568,7 @@ typedef U16 XLS_OPCODE; typedef XLS_OPCODE * P_XLS_OPCODE;
 #define X_FORCEFULLCALCULATION  0x8A3
 
 /*
-Excel Tokens (see http://sc.openoffice.org/excelfileformat.pdf)
+Excel Tokens (see https://www.openoffice.org/sc/excelfileformat.pdf)
 */
 
 #define tNotUsed        0x00

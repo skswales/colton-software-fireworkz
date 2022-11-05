@@ -50,7 +50,7 @@ __FBSDID("$FreeBSD: head/lib/msun/src/k_sin.c 176408 2008-02-19 12:54:14Z bde $"
  *		sin(x) = x + (S1*x + (x *(r-y/2)+y))
  */
 
-#include "math.h"
+#include "openlibm-math.h"
 #include "math_private.h"
 
 static const double

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>Engineering functions</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Engineering" />
+        <param name="Keyword" value="Engineering functions" />
+        <param name="Keyword" value="Spreadsheet functions, Engineering, Complex Number" />
+        <param name="Keyword" value="Complex number functions" />
+        <param name="Keyword" value="Spreadsheet functions, Engineering, Other" />
+    </object>
+    <nav class="navheader">
+        <table id="navheader">
+            <tr>
+                <td><a href="sg05_date_time_functions.htm">Prev</a> </td>
+                <th>Fireworkz &amp; Fireworkz Pro</th>
+                <td> <a href="sg05_financial_functions.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td>Date and time functions </td>
+                <th>User Guide</th>
+                <td> Financial functions</td>
+            </tr>
+        </table>
+    </nav>
+
+    <h1><a name="engineering_functions" id="engineering_functions"></a><span class="csg-chapter-sub-number">14.4 </span>Engineering functions</h1>
+
+    <h2>Complex number functions</h2>
+    <p>
+        Complex number functions provide arithmetic, mathematical and trigonometrical functions for use with
+        <a href="../sg06/sg6_complex_numbers.htm">complex numbers</a>, i.e. numbers which have both real and imaginary components.
+    </p>
+    <p>In Fireworkz complex numbers must be expressed as</p>
+    <ul>
+        <li>a 1&times;2 <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>);</li>
+        <li>composed using the <code><a href="../sg06cn/sg6_C_COMPLEX.htm">C_COMPLEX</a></code> function;</li>
+        <li>as an OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number string</a>.</li>
+    </ul>
+    <ul style="list-style: none;">
+        <li>
+            <a href="../sg06cn/sg6_C_ACOS.htm">
+            C_ACOS</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ACOSEC.htm">
+            C_ACOSEC</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ACOSECH.htm">
+            C_ACOSECH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ACOSH.htm">
+            C_ACOSH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ACOT.htm">
+            C_ACOT</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ACOTH.htm">
+            C_ACOTH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ADD.htm">
+            C_ADD</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_addend_1</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_addend_2</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ASEC.htm">
+            C_ASEC</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ASECH.htm">
+            C_ASECH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ASIN.htm">
+            C_ASIN</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ASINH.htm">
+            C_ASINH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ATAN.htm">
+            C_ATAN</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ATANH.htm">
+            C_ATANH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_COMPLEX.htm">
+            C_COMPLEX</a>(
+            <span class="csg-function-parameter">real part</span>
+            {, <span class="csg-function-parameter">imaginary part</span>} )
+            <em>also</em><br>
+            <a href="../sg06cn/sg6_C_COMPLEX.htm">
+            C_COMPLEX</a>(
+            <span class="csg-function-parameter">real part</span>,
+            <span class="csg-function-parameter">imaginary part</span>,
+            <span class="csg-function-parameter">suffix</span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_CONJUGATE.htm">
+            C_CONJUGATE</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_COS.htm">
+            C_COS</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_COSEC.htm">
+            C_COSEC</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_COSECH.htm">
+            C_COSECH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_COSH.htm">
+            C_COSH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_COT.htm">
+            C_COT</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_COTH.htm">
+            C_COTH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_DIV.htm">
+            C_DIV</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_dividend</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_divisor</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_EXP.htm">
+            C_EXP</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_IMAGINARY.htm">
+            C_IMAGINARY</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_LN.htm">
+            C_LN</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_MUL.htm">
+            C_MUL</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_multiplicand_1</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_multiplicand_2</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_POWER.htm">
+            C_POWER</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number_1</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number_2</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_RADIUS.htm">
+            C_RADIUS</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_REAL.htm">
+            C_REAL</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_ROUND.htm">
+            C_ROUND</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span>
+            {, <span class="csg-function-parameter">digits</span>} )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_SEC.htm">C_SEC</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_SECH.htm">C_SECH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_SIN.htm">
+            C_SIN</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_SINH.htm">
+            C_SINH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_SQRT.htm">
+            C_SQRT</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_SUB.htm">
+            C_SUB</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_minuend</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_subtrahend</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_TAN.htm">
+            C_TAN</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_TANH.htm">
+            C_TANH</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+        <li>
+            <a href="../sg06cn/sg6_C_THETA.htm">
+            C_THETA</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers.htm">complex_number</a></span> )
+        </li>
+    </ul>
+
+    <h2>Miscellaneous engineering functions</h2>
+    <p>All parameters are of type <span class="csg-function-parameter-type">Number</span>.</p>
+    <ul style="list-style: none;">
+        <li>
+            <a href="../sg06b/sg6_BESSELI.htm">
+            BESSELI</a>(
+            <span class="csg-function-parameter">x</span>,
+            <span class="csg-function-parameter">n</span> )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BESSELJ.htm">
+            BESSELJ</a>(
+            <span class="csg-function-parameter">x</span>,
+            <span class="csg-function-parameter">n</span> )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BESSELK.htm">
+            BESSELK</a>(
+            <span class="csg-function-parameter">x</span>,
+            <span class="csg-function-parameter">n</span> )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BESSELY.htm">
+            BESSELY</a>(
+            <span class="csg-function-parameter">x</span>,
+            <span class="csg-function-parameter">n</span> )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BIN2DEC.htm">
+            BIN2DEC</a>(
+            <span class="csg-function-parameter">number</span> )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BIN2HEX.htm">
+            BIN2HEX</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">places</span>} )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BIN2OCT.htm">
+            BIN2OCT</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">places</span>} )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BITAND.htm">
+            BITAND</a>(
+            <span class="csg-function-parameter">number_1</span>,
+            <span class="csg-function-parameter">number_2</span> )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BITLSHIFT.htm">
+            BITLSHIFT</a>(
+            <span class="csg-function-parameter">number</span>,
+            <span class="csg-function-parameter">shift</span> )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BITOR.htm">
+            BITOR</a>(
+            <span class="csg-function-parameter">number_1</span>,
+            <span class="csg-function-parameter">number_2</span> )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BITRSHIFT.htm">
+            BITRSHIFT</a>(
+            <span class="csg-function-parameter">number</span>,
+            <span class="csg-function-parameter">shift</span> )
+        </li>
+        <li>
+            <a href="../sg06b/sg6_BITXOR.htm">
+            BITXOR</a>(
+            <span class="csg-function-parameter">number_1</span>,
+            <span class="csg-function-parameter">number_2</span> )
+        </li>
+        <li>
+            <a href="../sg06d/sg6_DEC2BIN.htm">
+            DEC2BIN</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">places</span>} )
+        </li>
+        <li>
+            <a href="../sg06d/sg6_DEC2HEX.htm">
+            DEC2HEX</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">places</span>} )
+        </li>
+        <li>
+            <a href="../sg06d/sg6_DEC2OCT.htm">
+            DEC2OCT</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">places</span>} )
+        </li>
+        <li>
+            <a href="../sg06d/sg6_DELTA.htm">
+            DELTA</a>(
+            <span class="csg-function-parameter">number_1</span>
+            {, <span class="csg-function-parameter">number_2</span>} )
+        </li>
+        <li>
+            <a href="../sg06e/sg6_ERF.htm">
+            ERF</a>(
+            <span class="csg-function-parameter">limit</span>,
+            {, <span class="csg-function-parameter">upper_limit</span>} )
+        </li>
+        <li>
+            <a href="../sg06e/sg6_ERFC.htm">
+            ERFC</a>(
+            <span class="csg-function-parameter">lower_limit</span> )
+        </li>
+        <li>
+            <a href="../sg06g/sg6_GESTEP.htm">
+            GESTEP</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">step</span>} )
+        </li>
+        <li>
+            <a href="../sg06h/sg6_HEX2HEX.htm">
+            HEX2BIN</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">places</span>} )
+        </li>
+        <li>
+            <a href="../sg06h/sg6_HEX2DEC.htm">
+            HEX2DEC</a>(
+            <span class="csg-function-parameter">number</span> )
+        </li>
+        <li>
+            <a href="../sg06h/sg6_HEX2OCT.htm">
+            HEX2OCT</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">places</span>} )
+        </li>
+        <li>
+            <a href="../sg06o/sg6_OCT2BIN.htm">
+            OCT2BIN</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">places</span>} )
+        </li>
+        <li>
+            <a href="../sg06o/sg6_OCT2DEC.htm">
+            OCT2DEC</a>(
+            <span class="csg-function-parameter">number</span> )
+        </li>
+        <li>
+            <a href="../sg06o/sg6_OCT2HEX.htm">
+            OCT2HEX</a>(
+            <span class="csg-function-parameter">number</span>
+            {, <span class="csg-function-parameter">places</span>} )
+        </li>
+    </ul>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="sg05_date_time_functions.htm">Prev</a> </td>
+                <td><a accesskey="u" href="sg05_function_reference.htm">Up</a></td>
+                <td> <a accesskey="n" href="sg05_financial_functions.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td>Date and time functions </td>
+                <td><a accesskey="h" href="../index.htm">Home</a></td>
+                <td> Financial functions</td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

@@ -5,10 +5,10 @@ OBJID=00
 
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# Copyright (C) 1993-1998 Colton Software Limited
-# Copyright (C) 1998-2015 R W Colton
+# Copyright © 1993-1998 Colton Software Limited
+# Copyright © 1998-2015 R W Colton
 
 $(BUILD_DIR).ob_skel.o.arglist: $(T5).ob_skel.c.arglist
  $(CC) -o $@ $(ccflags) $?
@@ -146,6 +146,8 @@ $(BUILD_DIR).ob_skel.modules.o.list: $(T5).cmodules.c.list
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.mrofmun: $(T5).cmodules.c.mrofmun
  $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.muldiv64: $(T5).cmodules.c.muldiv64
+ $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.myassert: $(T5).cmodules.c.myassert
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.numform: $(T5).cmodules.c.numform
@@ -167,6 +169,8 @@ $(BUILD_DIR).ob_skel.modules.o.sprites: $(T5).cmodules.c.sprites
 $(BUILD_DIR).ob_skel.modules.o.ss_const: $(T5).cmodules.c.ss_const
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.ss_date: $(T5).cmodules.c.ss_date
+ $(CC) -o $@ $(ccflags) $?
+$(BUILD_DIR).ob_skel.modules.o.ss_string: $(T5).cmodules.c.ss_string
  $(CC) -o $@ $(ccflags) $?
 $(BUILD_DIR).ob_skel.modules.o.typepack: $(T5).cmodules.c.typepack
  $(CC) -o $@ $(ccflags) $?
@@ -251,7 +255,6 @@ $(BUILD_DIR).ob_skel.riscos.o.ho_xform \
 $(BUILD_DIR).ob_skel.riscos.o.main \
 $(BUILD_DIR).ob_skel.riscos.o.ho_dll \
 $(BUILD_DIR).ob_skel.riscos.o.ho_sqush \
-$(BUILD_DIR).ob_skel.riscos.o.muldivas \
 $(BUILD_DIR).ob_skel.riscos.o.myrand \
 
 SKEL_SB=\
@@ -328,6 +331,7 @@ $(BUILD_DIR).ob_skel.modules.o.im_cache \
 $(BUILD_DIR).ob_skel.modules.o.im_convert \
 $(BUILD_DIR).ob_skel.modules.o.list \
 $(BUILD_DIR).ob_skel.modules.o.mrofmun \
+$(BUILD_DIR).ob_skel.modules.o.muldiv64 \
 $(BUILD_DIR).ob_skel.modules.o.myassert \
 $(BUILD_DIR).ob_skel.modules.o.numform \
 $(BUILD_DIR).ob_skel.modules.o.quickblk \
@@ -338,6 +342,7 @@ $(BUILD_DIR).ob_skel.modules.o.report \
 $(BUILD_DIR).ob_skel.modules.o.resource \
 $(BUILD_DIR).ob_skel.modules.o.ss_const \
 $(BUILD_DIR).ob_skel.modules.o.ss_date \
+$(BUILD_DIR).ob_skel.modules.o.ss_string \
 $(BUILD_DIR).ob_skel.modules.o.typepack \
 $(BUILD_DIR).ob_skel.modules.o.utf8 \
 $(BUILD_DIR).ob_skel.modules.o.utf8str \

@@ -2,7 +2,7 @@
 
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 // Copyright (C) 1993-1998 Colton Software Limited
 // Copyright (C) 1998-2015 R W Colton
@@ -128,7 +128,7 @@ BEGIN
             VALUE "FileDescription", "Colton Fireworkz for Windows [Deutschland]\0"
             VALUE "FileVersion", VER_FILEVERSION_STR
             VALUE "InternalName", "firewrkz\0"
-            VALUE "LegalCopyright", "Copyright (C) 1992-2021 Colton Software. "
+            VALUE "LegalCopyright", "Copyright (C) 1992-2022 Colton Software. "
                                     "Weitere Informationen zum Urheberrecht finden Sie unter RelNotes.htm\0"
             VALUE "LegalTrademarks", "Alle Markeninformationen finden Sie unter RelNotes.htm\0"
             VALUE "OriginalFilename", "1031.dll\0"

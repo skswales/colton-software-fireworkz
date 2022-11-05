@@ -1,22 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>NPV</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="NPV" />
-        <param name="Keyword" value="Functions, Financial, NPV" />
+        <param name="Keyword" value="Spreadsheet functions, Financial, NPV" />
         <param name="Keyword" value="Financial functions, net present value" />
     </object>
 
@@ -27,42 +25,55 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        NPV(<span class="csg-function-parameter">interest</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter"><a href="../sg06/sg6_ranges.htm">range</a></span>)
+        NPV(
+        <span class="csg-function-parameter">interest</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter"><a href="../sg06/sg6_ranges.htm">range</a></span> )
     </p>
     <p>where:</p>
-    <table>
-        <tr>
-            <td class="csg-function-parameter">interest</td>
-            <td>is the interest rate;</td>
-        </tr>
-        <tr>
-            <td class="csg-function-parameter"><a href="../sg06/sg6_ranges.htm">range</a></td>
-            <td>is the range of cells containing the amounts of the receipts.</td>
-        </tr>
-    </table>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 6em;">
+                <col>
+            </colgroup>
+            <tr>
+                <td class="csg-function-parameter">interest</td>
+                <td>is the interest rate;</td>
+            </tr>
+            <tr>
+                <td class="csg-function-parameter"><a href="../sg06/sg6_ranges.htm">range</a></td>
+                <td>is the range of cells containing the amounts of the receipts.</td>
+            </tr>
+        </table>
+    </div>
 
     <p class="csg-function-subheading">Formula:</p>
     <p class="csg-function-formula">
         NPV =
-        <span class="csg-math-symbol-sum">&sum;<em><sup class="csg-math-symbol-limit-upper">i=n</sup></em></span>
+        <sub class="csg-math-symbol-limit-lower"><em>i </em></sub><span class="csg-math-symbol-sum">&sum;</span><sub class="csg-math-symbol-limit-lower">1</sub><sup class="csg-math-symbol-limit-upper"><em>n</em></sup>
         <span class="csg-function-formula-parentheses-1">(</span>
-        <em>x</em><em><sub>i</sub></em>
-        &divide;
+        <em>x</em><sub><em>i</em></sub>
+         &#x2215; 
         (1 + <span class="csg-function-parameter">interest</span>)<em><sup>i</sup></em>
         <span class="csg-function-formula-parentheses-1">)</span>
     </p>
     <p>where:</p>
-    <table>
-        <tr>
-            <td><em>n</em></td>
-            <td>is the number of cash flows (i.e. the number of elements in the range);</td>
-        </tr>
-        <tr>
-            <td><em>x</em><em><sub>i</sub></em></td>
-            <td>is the amount received at the end of the <em>i</em>-th period.</td>
-        </tr>
-    </table>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 4em;">
+                <col>
+            </colgroup>
+            <tr>
+                <td><em>n</em></td>
+                <td>is the number of cash flows (i.e. the number of elements in the range);</td>
+            </tr>
+            <tr>
+                <td><em>x</em><sub><em>i</em></sub></td>
+                <td>is the amount received at the end of the <em>i</em>&#8209;th period.</td>
+            </tr>
+        </table>
+    </div>
 
     <p class="csg-function-subheading">Example:</p>
     <p>
@@ -72,14 +83,14 @@
     <pre class="csg-sample-indent">NPV(0.10, B10:B14)</pre>
     <p>returns the number <code>500.38</code> (pounds), the present value of the future receipts.</p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06n/sg6_NPER.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#financial_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06p/sg6_PMT.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06n/sg6_NPER.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_financial_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06p/sg6_PMT.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

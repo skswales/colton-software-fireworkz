@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>PEARSON</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Statistical, PEARSON" />
+        <param name="Keyword" value="Statistical functions, Pearson-r correlation coefficient" />
+    </object>
+
+    <h1><a name="pearson" id="pearson"></a>PEARSON</h1>
+
+    <p>Returns the Pearson-r correlation coefficient<sup><a href="#cite_note-1">[1]</a></sup> of the values in two data sets.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        PEARSON(
+        <span class="csg-function-parameter">x&#8209;data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">y&#8209;data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span> )
+    </p>
+
+    <p class="csg-function-subheading">Formula:</p>
+    <p class="csg-function-formula">
+        PEARSON, <em>r</em> =
+        <span class="csg-function-formula-parentheses-1">(</span>
+            <sub class="csg-math-symbol-limit-lower"><em>i </em></sub><span class="csg-math-symbol-sum">&sum;</span><sub class="csg-math-symbol-limit-lower">1</sub><sup class="csg-math-symbol-limit-upper"><em>n</em></sup>
+            (<em>x</em><sub><em>i</em></sub> &minus; <em><span style="text-decoration: overline">x</span></em>) &sdot;
+            (<em>y</em><sub><em>i</em></sub> &minus; <em><span style="text-decoration: overline">y</span></em>)
+        <span class="csg-function-formula-parentheses-1">)</span>
+         &#x2215; 
+        <span class="csg-function-formula-parentheses-1">(</span>
+            &Sqrt;
+            <sub class="csg-math-symbol-limit-lower"><em>i </em></sub><span class="csg-math-symbol-sum">&sum;</span><sub class="csg-math-symbol-limit-lower">1</sub><sup class="csg-math-symbol-limit-upper"><em>n</em></sup>
+            (<em>x</em><sub><em>i</em></sub> &minus; <em><span style="text-decoration: overline">x</span></em>)<sup>2</sup> &sdot;
+            (<em>y</em><sub><em>i</em></sub> &minus; <em><span style="text-decoration: overline">y</span></em>)<sup>2</sup>
+        <span class="csg-function-formula-parentheses-1">)</span>
+    </p>
+    <p>
+        where <span class="csg-function-formula-variable">n</span> is the number of values,
+        <span class="csg-function-formula-variable">x</em><sub>i</sub></span> is the <span class="csg-function-formula-variable">i</span>&#8209;th value in the <span class="csg-function-parameter">x&#8209;data</span>,
+        <span class="csg-function-formula-variable" style="text-decoration: overline">x</span> is the arithmetic mean of the <span class="csg-function-parameter">x&#8209;data</span>,
+        <span class="csg-function-formula-variable">y</em><sub>i</sub></span> is the <span class="csg-function-formula-variable">i</span>&#8209;th value in the <span class="csg-function-parameter">y&#8209;data</span>, and
+        <span class="csg-function-formula-variable" style="text-decoration: overline">y</span> is the arithmetic mean of the <span class="csg-function-parameter">y&#8209;data</span>.
+    </p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">PEARSON(A1:A15, B1:B15)</pre>
+    <p>returns the Pearson-r correlation coefficient of the contents of cells in the range <code>A1:A15</code> and those in <code>B1:B15</code>.</p>
+
+    <p class="csg-function-subheading">Note:</p>
+    <p>
+        <code>PEARSON()</code> is implemented using a two-pass approach, first independently computing the mean values,
+        then computing intermediate values (such as the sum of the squares, products) using the difference between each value and the corresponding mean value.
+        This approach helps avoid many round-off errors and is also employed by Microsoft Excel 2003 and later.
+        The <code>CORREL()</code> function was introduced in Microsoft Excel 97 as the implementation of
+        the <code>PEARSON()</code> function in earlier versions gave a less accurate result.
+    </p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in Fireworkz 2.00.</p>
+
+    <div class="csg-line"><!-- ... --> </div>
+    <ol class="references">
+        <li id="cite_note-1">
+            "Values of the Pearson Correlation."
+            <a class="external" target="_blank" href="https://onlinestatbook.com/2/describing_bivariate_data/pearson.html">Chapter IV, Section B</a>,
+            Online Statistics Education: A Multimedia Course of Study
+            (<a class="external" target="_blank" href="http://onlinestatbook.com/">http://onlinestatbook.com/</a>).
+            Project Leader: David M. Lane, Rice University.
+        </li>
+    </ol>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="../sg06n/sg6_NORM_S_INV.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06p/sg6_PERCENTILE_EXC.htm">Next</a></td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

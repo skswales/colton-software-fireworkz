@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -460,7 +460,7 @@ extern STATUS
 dialog_click_bump_xx(
     P_DIALOG p_dialog,
     P_DIALOG_ICTL p_dialog_ictl,
-    _InVal_     BOOL inc);
+    _InVal_     UI_DATA_INC_TYPE ui_data_inc);
 
 _Check_return_
 extern STATUS

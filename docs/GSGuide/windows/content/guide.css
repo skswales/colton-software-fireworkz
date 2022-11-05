@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 /* --------------------------------------------------- */
 /* CSS for Fireworkz Getting Started Guide for Windows */
 /* --------------------------------------------------- */
@@ -6,10 +8,10 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 1994-1998 Colton Software Limited
- * Copyright (C) 1998-2015 R W Colton */
+/* Copyright © 1994-1998 Colton Software Limited
+ * Copyright © 1998-2015 R W Colton */
 
 /* ----- General ----- */
 body {
@@ -244,13 +246,15 @@ blockquote {
     font-family: monospace;
 }
 
-.navheader {
+nav.navheader {
 }
 
-#navheader {
+nav.navheader table {
     width: 100%;
 }
 
+.navheader td:nth-child(1),
+.navheader th:nth-child(1),
 .navheader_PCN_L {
     width: 35%;
     text-align: left;
@@ -258,12 +262,16 @@ blockquote {
     vertical-align: top;
 }
 
+.navheader td:nth-child(2),
+.navheader th:nth-child(2),
 .navheader_PCN_C {
     width: 30%;
     text-align: center;
     vertical-align: top;
 }
 
+.navheader td:nth-child(3),
+.navheader th:nth-child(3),
 .navheader_PCN_R {
     width: 35%;
     text-align: right;
@@ -271,19 +279,18 @@ blockquote {
     vertical-align: top;
 }
 
-.navfooter {
-}
-
-div.navfooter {
+nav.navfooter {
     border-top: 1px solid #888;
     padding-top: 8pt;
     margin-top: 24pt;
 }
 
-#navfooter {
+nav.navfooter table {
     width: 100%;
 }
 
+.navfooter td:nth-child(1),
+.navfooter th:nth-child(1),
 .navfooter_PUN_L {
     width: 40%;
     text-align: left;
@@ -291,12 +298,16 @@ div.navfooter {
     vertical-align: top;
 }
 
+.navfooter td:nth-child(2),
+.navfooter th:nth-child(2),
 .navfooter_PUN_C {
     width: 20%;
     text-align: center;
     vertical-align: top;
 }
 
+.navfooter td:nth-child(3),
+.navfooter th:nth-child(3),
 .navfooter_PUN_R {
     width: 40%;
     text-align: right;

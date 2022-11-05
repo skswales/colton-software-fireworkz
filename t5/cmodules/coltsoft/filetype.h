@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -59,6 +59,7 @@ typedef enum T5_FILETYPE
     FILETYPE_PROARTISAN  = 0xDE2,
     FILETYPE_WATFORD_DFA = 0xDFA,
     FILETYPE_CSV         = 0xDFE,
+    FILETYPE_TSV         = 0xF0D,
     FILETYPE_WAP         = 0xF8F,
     FILETYPE_DOS         = 0xFE4,
     FILETYPE_VIEW        = 0xFE9,

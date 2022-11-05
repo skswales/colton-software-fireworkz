@@ -3,10 +3,10 @@
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #
-# Copyright (C) 1993-1998 Colton Software Limited
-# Copyright (C) 1998-2015 R W Colton
+# Copyright © 1993-1998 Colton Software Limited
+# Copyright © 1998-2015 R W Colton
 #
 # ob_ss messages: keep consistent with ob_ss/resource/resource.h
 #
@@ -23,24 +23,24 @@
 #
 # Toolbar button help
 #
-# UK r90:Fill down (or ADJUST to Fill up)
-r90:Fill down (or ADJUST to Fill up)
+# UK r90:Click Select to fill selected cells down from the top. Click Adjust to fill selected cells up from the bottom
+r90:Click Select to fill selected cells down from the top. Click Adjust to fill selected cells up from the bottom
 # UK w90:Fill down (or Ctrl-click to Fill up)
 w90:Fill down (or Ctrl-click to Fill up)
-# UK r91:Fill right (or ADJUST to Fill left)
-r91:Fill right (or ADJUST to Fill left)
+# UK r91:Click Select to fill selected cells towards the right. Click Adjust to fill selected cells towards the left
+r91:Click Select to fill selected cells towards the right. Click Adjust to fill selected cells towards the left
 # UK w91:Fill right (or Ctrl-click to Fill left)
 w91:Fill right (or Ctrl-click to Fill left)
-# UK 92:Auto sum
-92:Auto sum
-# UK 93:Create chart
-93:Create chart
-# UK 94:Function selector
-94:Function selector
-# UK 95:Cancel formula line editing
-95:Cancel formula line editing
-# UK 96:Enter formula as new cell contents
-96:Enter formula as new cell contents
+# UK 92:Click Select to insert an Auto sum. Click Adjust for short function list
+92:Click Select to insert an Auto sum. Click Adjust for short function list
+r93:Click Select for the Chart menu
+w93:Create chart
+r94:Click Select for the Function selector menu
+w94:Function selector
+r95:Click Select to cancel editing in the formula line
+w95:Cancel formula line editing
+r96:Click Select to enter the formula as new cell contents
+w96:Enter formula as new cell contents
 # UK 97:This is the formula line
 97:This is the formula line
 #
@@ -113,8 +113,8 @@ w91:Fill right (or Ctrl-click to Fill left)
 12:Lookup and reference
 # UK 13:Custom
 13:Custom
-# UK 14:Logical
-14:Logical
+# UK 14:Boolean (logical)
+14:Boolean (logical)
 # UK 15:Compatibility
 15:Compatibility
 # UK 16:Names
@@ -152,8 +152,8 @@ w91:Fill right (or Ctrl-click to Fill left)
 76:sg/sg05_lookup_functions.htm
 # UK 77:sg/sg07_custom_functions.htm
 77:sg/sg07_custom_functions.htm
-# UK 78:sg/sg05_logical_functions.htm
-78:sg/sg05_logical_functions.htm
+# UK 78:sg/sg05_boolean_functions.htm
+78:sg/sg05_boolean_functions.htm
 # UK 79:sg/sg05_compatibility_functions.htm
 79:sg/sg05_compatibility_functions.htm
 # UK 80:ug/ug09_adding_a_name_to_a_number_cell.htm
@@ -234,7 +234,7 @@ w507:acoth
 w508:age
 109:Dialogue box displaying a |message:Text string displayed in dialogue box| and at least one |1button:Label| with an optional |2{second button}:Label|
 w509:alert
-110:Logical AND of |list:List of Boolean values (or array, or range of cells)| of Boolean values
+110:Boolean (logical) AND of |list:List of Boolean values (or range of cells, or array)| of Boolean values
 w510:and
 111:Arc secant of |number:Real number, modulus >= 1|
 w511:asec
@@ -250,16 +250,16 @@ w515:atan
 w516:atan_2
 117:Inverse hyperbolic tangent of |number:Real number, modulus <= 1|
 w517:atanh
-118:Average deviation of the numbers in |list:List of numbers (or array, or range of cells)| from their arithmetic mean
+118:Average deviation of the numbers in |list:List of numbers (or range of cells, or array)| from their arithmetic mean
 w518:avedev
-119:Average of the numbers in |list:List of numbers (or array, or range of cells)|
+119:Average of the numbers in |list:List of numbers (or range of cells, or array)|
 w519:avg
 #
 120:Beta function for |a:Real number| and |1b:Real number|
 w520:beta
-121:Frequencies in |data array:Array of data (or range of cells)| given bin values in |1bin array:Array of bin limit values (or range of cells)|. Useful for histogram
+121:Frequencies in |data:Data range of cells (or array)| given bin values in |1bins:Bin limit values range of cells (or array)|. Useful for histogram
 w521:bin
-122:Break out of |n:Optional number of loops| loops in custom function
+122:Break out of |{n}:Optional number of loops| loops in custom function
 w522:break
 #
 123:Inverse cosine of |complex number:1*2 array or range|
@@ -269,7 +269,7 @@ w524:c_acosec
 125:Inverse hyperbolic cosecant of |complex number:1*2 array or range|
 w525:c_acosech
 126:Inverse hyperbolic cosine of |complex number:1*2 array or range|
-w526:c_acos
+w526:c_acosh
 127:Inverse cotangent of |complex number:1*2 array or range|
 w527:c_acot
 128:Inverse hyperbolic cotangent of |complex number:1*2 array or range|
@@ -312,7 +312,7 @@ w545:c_ln
 w546:c_mul
 147:|complex number 1:1*2 array or range| raised to the power of |1complex number 2:1*2 array or range|
 w547:c_power
-148:Absolute value (modulus, radius) of |complex number:1*2 array or range|
+148:Modulus (absolute value, radius) of |complex number:1*2 array or range|
 w548:c_radius
 149:Secant of |complex number:1*2 array or range|
 w549:c_sec
@@ -335,15 +335,15 @@ w556:c_theta
 w557:ceiling
 158:Convert ASCII |value:ASCII number| to character
 w558:char
-159:Choose |n:Index of element in list|th item from |1list:List to be selected from|
+159:Choose |n:Index of element in list|-th item from |1list:List to be selected from|
 w559:choose
-160:Cleans |string:Text string or reference to text cell| by removing non-printing characters
+160:Cleans |string:Text string, or reference to text cell| by removing non-printing characters
 w560:clean
-161:ASCII value of |character:Text string or reference to text cell|
+161:ASCII value of |character:Text string, or reference to text cell|
 w561:code
 162:Column number of |cell reference:Cell reference| (or cell containing col formula)
 w562:col
-163:Number of columns in worksheet or |{array}:Array (or range of cells)|
+163:Number of columns in worksheet or |{array}:Range of cells (or array)|
 w563:cols
 164:Number of combinations of |n:Number of unlike things - positive integer| unlike things taken |1k:Number of things to be taken at a time - positive integer, k < n| at a time
 w564:combin
@@ -394,7 +394,7 @@ w585:ddb
 w586:deg
 187:Dereferences (calculates value of) a |cell reference:Cell reference|
 w587:deref
-188:Sum of squares of the deviation of the numbers in the |list:List of numbers (or array, or range of cells)| from their arithmetic mean
+188:Sum of squares of the deviation of the numbers in the |list:List of numbers (or range of cells, or array)| from their arithmetic mean
 w588:devsq
 189:Maximum of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20="Mark"
 w589:dmax
@@ -440,7 +440,7 @@ w607:false
 w608:find
 209:Converts |number:Real number| into a string with the given number of |1digits:Integer| decimal places and thousands separators (unless optional |2{no commas}| is TRUE)
 w609:fixed
-210:Flip |array:Array (or range of cells)| vertically
+210:Flip |data:Range of cells (or array)| vertically
 w610:flip
 211:Rounds |number:Real number| to given |1multiple:Real number| towards -infinity (or towards zero, if both are negative)
 w611:floor
@@ -457,7 +457,7 @@ w616:odf.fv
 #
 217:Natural logarithm of the gamma function for |n:Real number|
 w617:gammaln
-218:Geometric mean of the numbers in |list:List of numbers (or array, or range of cells)|
+218:Geometric mean of the numbers in |list:List of numbers (or range of cells, or array)|
 w618:geomean
 219:GOTO |cell reference:Cell reference| in custom function
 w619:goto
@@ -466,9 +466,9 @@ w620:grand
 221:Predict y values given |logest:Output from logest function| data and |1x| data
 w621:growth
 #
-222:Harmonic mean of the numbers in |list:List of numbers (or array, or range of cells)|
+222:Harmonic mean of the numbers in |list:List of numbers (or range of cells, or array)|
 w622:harmean
-223:Look for |key:Key value| in horizontal |1target:Horizontally-arranged, array (or range of cells e.g. B1:J3)| data set (sorted in ascending order) and return corresponding element from |2row index:Integer|-th row in target array
+223:Look for |key:Key value| in horizontal |1lookup data:Horizontally-arranged range of cells (e.g. B1:J3, or array)| data set (sorted in ascending order) and return corresponding element from |2row index:Integer|-th row in data set
 w623:hlookup
 224:Hour part of |time:Time in form hh:mm:ss|
 w624:hour
@@ -477,13 +477,13 @@ w624:hour
 w625:if
 226:First part of IF(|condition:Expression returning Boolean value|)ŒENDIF, use only in custom functions
 w626:if
-227:Element in |array| at position |1x:Column of array, starting 1|, |2y:Row of array, starting 1| or sub-array starting at x,y with dimensions |3{x_size}|,|4{y_size}|
+227:Element in |data| at position |1x:Column of data, starting 1|, |2y:Row of data, starting 1| or sub-array starting at x,y with dimensions |3{x_size}|,|4{y_size}|
 w627:index
 228:Dialogue box displaying a |caption:Text string| requesting input for |1"name":Name to be written back to|, with at least one |2button:Label| and an optional |3{second button}:Label|
 w628:input
 229:Integer part of |number:Real number|
 w629:int
-230:Internal rate of return given |guess:Initial guessed interest rate, e.g. 0.01| and |1array:Array of numbers (or range of cells) representing cashflows| of cashflows
+230:Internal rate of return given |guess:Initial guessed interest rate, e.g. 0.01| and |1cashflows:Range of cells (or array) of numbers representing cashflows|
 w630:irr
 231:Returns Boolean value TRUE if |value| refers to an empty cell, FALSE otherwise. Unlike Excel, an empty string also returns TRUE
 w631:isblank
@@ -508,56 +508,56 @@ w640:isref
 241:Returns Boolean value TRUE if |value| refers to a text cell or string, FALSE otherwise
 w641:istext
 #
-242:Joins |list:List of strings (or array, or range of cells)| of strings together
+242:Joins |list:List of strings (or range of cells, or array)| of strings together
 w642:join
 #
-243:Kurtosis of the numbers in |list:List of numbers (or array, or range of cells)|
+243:Kurtosis of the numbers in |list:List of numbers (or range of cells, or array)|
 w643:kurt
 #
-244:Returns the |1k:Integer|-th largest item in |array|
+244:Returns the |1k:Integer|-th largest item in |data|
 w644:large
-245:Left part of |string:Text string or reference to text cell| to |1n:Positive integer| characters
+245:Left part of |string:Text string, or reference to text cell| to |1n:Positive integer| characters
 w645:left
-246:Length of |string:Text string or reference to text cell|
+246:Length of |string:Text string, or reference to text cell|
 w646:length
-247:Linest of |y-array:Array of y-values (or range of cells)| and optional |1{x-array}:Array of x-values (or range of cells)|
+247:Linest of |y-data:Range of cells (or array) of y-values| and optional |1{x-data}:Range of cells (or array) of x-values|
 w647:linest
-248:Returns array of numbers of entries in |array:Array of values to be counted (or range of cells)| with optional |1amounts:Corresponding numeric amounts to be summed|. Useful for histogram
+248:Returns array of numbers of entries in |data:Range of cells (or array) of values to be counted| with optional |1amounts:Corresponding numeric amounts to be summed|. Useful for histogram
 w648:listcount
 249:Natural logarithm of |number:Real number > 0|
 w649:ln
-250:Logarithm to base |1{b}:Number, default 10| of |x:Real number > 0|
+250:Logarithm to base |1{b}:Real number, default 10| of |x:Real number > 0|
 w650:log
-251:Logest of |y-array:Array of y-values (or range of cells)| and optional |1{x-array}:Array of x-values (or range of cells)|
+251:Logest of |y-data:Range of cells (or array) of y-values| and optional |1{x-data}:Range of cells (or array) of x-values|
 w651:logest
-252:Look for exact match of |key:Key - any value| in |1target:Target array (or range of cells)| and return corresponding element(s) from |2result array:Array (or range of cells)|
+252:Look for exact match of |key:Key - any value| in |1lookup data:Target range of cells (or array)| and return corresponding element(s) from |2result data:Range of cells (or array)|
 w652:lookup
-253:Converts |string:Text string or reference to text cell| to lower-case
+253:Converts |string:Text string, or reference to text cell| to lower-case
 w653:lower
 #
-254:Determinant of |matrix:Square array (or range of cells)|
+254:Determinant of |matrix:Square range of cells (or array)|
 w654:m_determ
-255:Inverse of |matrix:Square array (or range of cells)|
+255:Inverse of |matrix:Square range of cells (or array)|
 w655:m_inverse
-256:Multiply |matrix_1:Array (or range of cells)| by |1matrix_2:Array (or range of cells)|
+256:Multiply |matrix 1:Range of cells (or array)| of dimensions a*b by |1matrix 2:Range of cells (or array)| of dimensions b*c
 w656:m_mul
-257:Looks up |key:Key - any value| in |1array:Target array (or range of cells)| using |2type: -1=smallest value bigger than key,0=exact match,1=largest value below key| and returns cell reference
+257:Looks up |key:Key - any value| in |1lookup data:Range of cells (or array)| using |2type: -1=smallest value bigger than key,0=exact match,1=largest value below key| and returns cell reference
 w657:match
-258:Maximum value in |list:List of values (or array, or range of cells)|
+258:Maximum value in |list:List of values (or range of cells, or array)|
 w658:max
-259:Median value of |list:List of values (or array, or range of cells)|
+259:Median value of |list:List of values (or range of cells, or array)|
 w659:median
-260:Middle part of |string:Text tring or reference to text cell| starting at |1offset:Offset in string, starts 1| and of given |2length:Length of string requird|
+260:Middle part of |string:Text string, or reference to text cell| starting at |1offset:Offset in string, starts 1| and of given |2length:Length of string requird|
 w660:mid
-261:Minimum value in |list:List of values (or array, or range of cells)|
+261:Minimum value in |list:List of values (or range of cells, or array)|
 w661:min
 262:Minute part of |time:Time in form hh:mm:ss|
 w662:minute
-263:Modified irr given |cashflow:Array of cashflows (or range of cells)|, |1rate_1:Interest rate of borrowed finance|, |2rate_2:Interest rate of invested finance|
+263:Modified irr given |cashflows:Range of cells (or array) of cashflows|, |1rate_1:Interest rate of borrowed finance|, |2rate_2:Interest rate of invested finance|
 w663:mirr
-264:Remainder of |dividend:Real number| divided by |1quotient:Real number <> 0|
+264:Remainder of |dividend:Real number| divided by |1quotient:Real non-zero number|
 w664:mod
-265:Mode of |array:Array of values (or range of cells)|
+265:Mode of |data:Range of cells (or array) of values|
 w665:mode.sngl
 266:Month part of |date:Date in form dd.mm.yyyy|
 w666:month
@@ -568,29 +568,29 @@ w668:monthname
 269:Rounds |number:Real number| to given |1multiple:Real number|
 w669:mround
 #
-270:|number|
+270:|value|
 w670:n
 271:Next loop in FOR statement: use only in custom functions
 w671:next
-272:Logical NOT of |Boolean value|
+272:Boolean (logical) NOT of |Boolean value|
 w672:not
 273:Current date and time
 w673:now
 274:OpenDocument/Excel-compatible TERM given interest |rate:Rate of interest|, |1payment:Payment per term| and |2present value|
 w674:nper
-275:Net present value given interest |rate:Rate of interest| and range of |1cashflows:Array of cashflows (or range of cells)|
+275:Net present value given interest |rate:Rate of interest| and range of |1cashflows:Range of cells (or array) of cashflows|
 w675:npv
 #
 276:Rounds |number:Real number| up to the next odd integer, away from zero
 w676:odd
-277:Logical OR of |list:List of Boolean values (or array, or range of cells)| of Boolean values
+277:Boolean (logical) OR of |list:List of Boolean values (or range of cells, or array)| of Boolean values
 w677:or
 #
 278:Current page number or page containing |cell reference:Cell reference|
 w678:page
 279:Number of pages in worksheet in either |direction:0 gives pages across document, 1 gives pages down|
 w679:pages
-280:Returns the |1percentile:Real number|-th value in the given |array|
+280:Returns the |1percentile:Real number|-th value in the given |data|
 w680:percentile.inc
 281:Number of permutations of |n:Number of unlike things - positive integer| unlike things taken |1k:Number of things to be taken at a time - positive integer, k < n| at a time
 w681:permut
@@ -602,25 +602,25 @@ w683:pmt
 w684:odf.pmt
 285:|number1:Real number| raised to the power of |1number2:Real number|
 w685:power
-286:Product of numbers in |list:List of numbers (or array, or range of cells)|
+286:Product of numbers in |list:List of numbers (or range of cells, or array)|
 w686:product
-287:Convert |string:Text string or reference to text cell| to Initial Capitals
+287:Convert |string:Text string, or reference to text cell| to Initial Capitals
 w687:proper
 288:Present value given |payment|, interest |1rate| and |2term|
 w688:pv
 #
-289:Returns the |1quartile:Integer, where 0=0%(MIN), 1=25%, 2=50%(MEDIAN), 3=75%, 4=100%(MAX)|-th value in the given |array|
+289:Returns the |1quartile:Integer, where 0=0%(MIN), 1=25%, 2=50%(MEDIAN), 3=75%, 4=100%(MAX)|-th value in the given |data|
 w689:quartile.inc
 #
 290:Convert |angle:Angle in degrees| from degrees to radians
 w690:rad
-291:Random number from 0 to 1 with optional |seed:Real number to be used as seed|
+291:Random number from 0 to 1 with optional |{seed}:Real number to be used as seed|
 w691:rand
 292:Random integer in the interval |lower:Integer|..|1upper:Integer|
 w692:randbetween
-293:Gives ranking corresponding to |array:Array of values to be ranked (or range of cells)|
+293:Gives ranking corresponding to |data:Range of cells (or array) of values to be ranked|
 w693:rank
-294:Returns the rank of |number| in the given |1array|
+294:Returns the rank of |number| in the given |1data|
 w694:rank.eq
 295:Interest rate given |future value|, |1present value| and |2term:Number of periods|
 w695:rate
@@ -628,13 +628,13 @@ w695:rate
 w696:repeat
 297:Replace text at |1offset:Offset in text string string_1| of given |2length:Length of text to replace| in |source:Text string being changed| string with |3replacement:Text string being inserted| string
 w697:replace
-298:Repeat |string:Text string or reference to text cell| |1n:Number of times to repeat - positive integer| times
+298:Repeat |string:Text string, or reference to text cell| |1n:Number of times to repeat - positive integer| times
 w698:rept
 299:RETURN |value:Any value or formula| as result of custom function
 w699:return
-300:Reverse order of |string:Text string or reference to text cell|
+300:Reverse order of |string:Text string, or reference to text cell|
 w700:reverse
-301:Right part of |string:Text string or reference to text cell| to |1n:Positive integer| characters
+301:Right part of |string:Text string, or reference to text cell| to |1n:Positive integer| characters
 w701:right
 302:Rounds |number:Real number| to |1decimal places:Integer|
 w702:round
@@ -644,7 +644,7 @@ w703:rounddown
 w704:roundup
 305:Row number of |cell reference:Cell reference| (or cell containing row formula)
 w705:row
-306:Number of rows in worksheet or |{array}:Array (or range of cells)|
+306:Number of rows in worksheet or |{array}:Range of cells (or array)|
 w706:rows
 #
 307:Secant of |number:Real number|
@@ -663,31 +663,31 @@ w712:sgn
 w713:sin
 314:Hyperbolic sine of |number:Real number|
 w714:sinh
-315:Skewness of the numbers in |list:List of numbers (or array, or range of cells)|
+315:Skewness of the numbers in |list:List of numbers (or range of cells, or array)|
 w715:skew
 316:Straight line depreciation given |cost:Cost at start|, |1salvage:Salvage value at end| and |2lifetime:Lifetime as number of periods|
 w716:sln
-317:Returns the |1k:Integer|-th smallest item in |array|
+317:Returns the |1k:Integer|-th smallest item in |data|
 w717:small
-318:Sort |array:Array of data to be sorted (or range of cells)| in ascending order, with optional |1{column number:1 if omitted}|
+318:Sort |data:Range of cells (or array) of data to be sorted| in ascending order, with optional |1{column number:1 if omitted}|
 w718:sort
-319:Spearman's rank correlation coefficient for |array_1:First array, can be output from rank() | and |1array_2:Second array, can be output from rank()|
+319:Spearman's rank correlation coefficient for |data 1:First array, can be output from RANK() | and |1data 2:Second array, can be output from RANK()|
 w719:spearman
 320:Square root of |number:Real number|. Number must be >= 0
 w720:sqr
-321:Standardizes the value |x:Number| to the distribution with given |1mean:Number| and |2standard deviation:Number|
+321:Standardizes the value |x:Real number| to the distribution with given |1mean:Real number| and |2standard deviation:Real number > 0|
 w721:standardize
-322:Standard deviation of the numbers in |list:List of numbers (or array, or range of cells)|
+322:Standard deviation of the numbers in |list:List of numbers (or range of cells, or array)|
 w722:std
-323:Population standard deviation of the numbers in |list:List of numbers (or array, or range of cells)|
+323:Population standard deviation of the numbers in |list:List of numbers (or range of cells, or array)|
 w723:stdp
 324:Converts |number:Number to be converted| to string with optional |1{digits}:Integer| decimal places
 w724:string
 325:Substitutes |1old text:Text string| with |2new text:Text string| in the |string:Text string|
 w725:substitute
-326:Sum of the values in |list:List of numbers (or array, or range of cells)|
+326:Sum of the values in |list:List of numbers (or range of cells, or array)|
 w726:sum
-327:Sum of the squares of the numbers in |list:List of numbers (or array, or range of cells)|
+327:Sum of the squares of the numbers in |list:List of numbers (or range of cells, or array)|
 w727:sumsq
 328:Sum-of-years' depreciation during the given |3period:Period of calculation| with |cost:Cost at start|, |1salvage:Salvage value at end|, |2lifetime:Number of periods|
 w728:syd
@@ -708,13 +708,13 @@ w734:time
 w735:timevalue
 336:Today's date
 w736:today
-337:Transpose |matrix:Array of data to be transposed (or range of cells)|
+337:Transpose |matrix:Range of cells (or array) of data to be transposed|
 w737:transpose
 338:Predict y-values given |linest:Output from linest function| data and |1x-data:Value or array to generate y-values from|
 w738:trend
-339:Trims leading, trailing and multiple spaces from |string:Text string or reference to text cell|
+339:Trims leading, trailing and multiple spaces from |string:Text string, or reference to text cell|
 w739:trim
-340:Arithmetic mean value of the interior of the data in |array:Array of values (or range of cells)| when the lowest and highest |1percent:Real number, 0 <= percent <= 0.5| values are excluded
+340:Arithmetic mean value of the interior of the data in |data:Range of cells (or array) of values| when the lowest and highest |1percent:Real number, 0 <= percent <= 0.5| values are excluded
 w740:trimmean
 341:Boolean value TRUE (one)
 w741:true
@@ -725,18 +725,18 @@ w743:type
 #
 344:REPEATŒUNTIL(|condition:Expression returning Boolean value|) in custom function
 w744:until
-345:Converts |string:Text string or reference to text cell| to upper-case
+345:Converts |string:Text string, or reference to text cell| to upper-case
 w745:upper
 #
-346:Converts |string:Text string or reference to text cell| to number
+346:Converts |string:Text string, or reference to text cell| to number
 w746:value
-347:Variance of the numbers in |list:List of numbers (or array, or range of cells)|
+347:Variance of the numbers in |list:List of numbers (or range of cells, or array)|
 w747:var
-348:Population variance of the numbers in |list:List of numbers (or array, or range of cells)|
+348:Population variance of the numbers in |list:List of numbers (or range of cells, or array)|
 w748:varp
 349:Version of Fireworkz
 w749:version
-350:Look for |key:Key value| in vertical |1target:Vertically-arranged array (or range of cells e.g. B1:D20)| data set (sorted in ascending order) and return corresponding element from |2column index:Integer|-th column in target array
+350:Look for |key:Key value| in vertical |lookup data:Vertically-arranged range of cells (e.g. B1:D20, or array)| data set (sorted in ascending order) and return corresponding element from |2column index:Integer|-th column in data set
 w750:vlookup
 #
 351:Weekday of |date:Date in form dd.mm.yyyy|. Sunday is 1, 2=MondayŒ, controlled by optional |1{mode}|
@@ -751,196 +751,196 @@ w754:year
 #
 # New functions should go here (in the order they appear in ev_eval.h and in RPNDEF) until we have another big sort-out
 #
-355:Sum of the product of each of the corresponding values from all the |array_1| .. |1array_n| parameters
+355:Sum of the product of each of the corresponding values from all the |array 1| .. |1array n| parameters
 w755:sumproduct
-356:Sum of the difference of the squares of corresponding values from |x-data:Array| and |1y-data:Array|
+356:Sum of the difference of the squares of corresponding values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 w756:sum_x2my2
-357:Sum of the sum of the squares of the corresponding values from |x-data:Array| and |1y-data:Array|
+357:Sum of the sum of the squares of the corresponding values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 w757:sum_x2py2
-358:Sum of the squares of the difference of the corresponding values from |x-data:Array| and |1y-data:Array|
+358:Sum of the squares of the difference of the corresponding values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 w758:sum_xmy2
 359:OpenDocument/Excel-compatible number representing the type of |parameter|
 w759:odf.type
 360:Count of the number of blank cells (or empty text strings) in |range|
 w760:countblank
-361:Population covariance of the values from |x-data:Array| and |1y-data:Array|
+361:Population covariance of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 w761:covariance.p
-362:Pearson-r correlation coefficient of the values from |x-data:Array| and |1y-data:Array|
+362:Pearson-r correlation coefficient of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 w762:pearson
-363:Square of Pearson-r of the values from |x-data:Array| and |1y-data:Array|
+363:Square of Pearson-r of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 w763:rsq
-364:Slope of the linear regression line to |y-array:Array of y-values (or range of cells)| and |1x-array:Array of x-values (or range of cells)|
+364:Slope of the linear regression line to |y-data:Range of cells (or array) of y-values| and |1x-data:Range of cells (or array) of x-values|
 w764:slope
-365:Intercept of the linear regression line to |y-array:Array of y-values (or range of cells)| and |1x-array:Array of x-values (or range of cells)|
+365:Intercept of the linear regression line to |y-data:Range of cells (or array) of y-values| and |1x-data:Range of cells (or array) of x-values|
 w765:intercept
-366:Forecast y-value corresponding to the given |x-value:Number| of the linear regression line to |1y-array:Array of y-values (or range of cells)| and |2x-array:Array of x-values (or range of cells)|
+366:Forecast y-value corresponding to the given |x-value:Real number| of the linear regression line to |1y-data:Range of cells (or array) of y-values| and |2x-data:Range of cells (or array) of x-values|
 w766:forecast
-367:Standard error of the predicted y-values for |y-array:Array of y-values (or range of cells)| and |1x-array:Array of x-values (or range of cells)|
+367:Standard error of the predicted y-values for |y-data:Range of cells (or array) of y-values| and |1x-data:Range of cells (or array) of x-values|
 w767:steyx
-368:Population skewness of the numbers in |list:List of numbers (or array, or range of cells)|
+368:Population skewness of the numbers in |list:List of numbers (or range of cells, or array)|
 w768:skew.p
-369:|1n:Number|-th order Bessel function of the first kind. Jn(|x:Number|)
+369:|1n:Positive integer|-th order Bessel function of the first kind. Jn(|x:Real number|)
 w769:besselj
-370:|1n:Number|-th order Bessel function of the second kind. Yn(|x:Number|)
+370:|1n:Positive integer|-th order Bessel function of the second kind. Yn(|x:Real number|)
 w770:bessely
-371:Average of all the values in |list:List of values (or array, or range of cells)|
+371:Average of all the values in |list:List of values (or range of cells, or array)|
 w771:averagea
-372:Minimum of all the values in |list:List of values (or array, or range of cells)|
+372:Minimum of all the values in |list:List of values (or range of cells, or array)|
 w772:mina
-373:Maximum of all the values in |list:List of values (or array, or range of cells)|
+373:Maximum of all the values in |list:List of values (or range of cells, or array)|
 w773:maxa
-374:Standard deviation of all the values in |list:List of values (or array, or range of cells)|
+374:Standard deviation of all the values in |list:List of values (or range of cells, or array)|
 w774:stdeva
-375:Population standard deviation of all the values in |list:List of values (or array, or range of cells)|
+375:Population standard deviation of all the values in |list:List of values (or range of cells, or array)|
 w775:stdevpa
-376:Variance of all the values in |list:List of values (or array, or range of cells)|
+376:Variance of all the values in |list:List of values (or range of cells, or array)|
 w776:vara
-377:Population variance of all the values in |list:List of values (or array, or range of cells)|
+377:Population variance of all the values in |list:List of values (or range of cells, or array)|
 w777:varpa
-378:Percentage rank (in 0.0..1.0 inclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places
+378:Percentage rank (in 0.0..1.0 inclusive) of the |1value:Number| in the |data set:Range of cells (or array)| to the optional |2{digits}:Number| decimal places
 w778:percentrank.inc
-379:Error function integrated between zero and |lower limit:Number|, or between lower limit and the optional |1{upper limit}:Number|
+379:Error function integrated between zero and |lower limit:Real number|, or between lower limit and the optional |1{upper limit}:Real number|
 w779:erf
-380:Error function integrated between |x:Number| and +infinity. This is the complementary error function
+380:Error function integrated between |x:Real number| and +infinity. This is the complementary error function
 w780:erfc
-381:Sample covariance of the values from |x-data:Array| and |1y-data:Array|
+381:Sample covariance of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 w781:covariance.s
-382:Logical Exclusive-OR of |list:List of Boolean values (or array, or range of cells)| of Boolean values
+382:Boolean (logical) Exclusive-OR of |list:List of Boolean values (or range of cells, or array)| of Boolean values
 w782:xor
-383:Create complex number string from |real part:Number| and |1imaginary part:Number| with optional |2{suffix}:Text string|
+383:Create complex number string from |real part:Real number| and |1imaginary part:Real number| with optional |2{suffix}:Text string|
 w783:c_complex
-384:Create cell reference from |row:Number| number and |1column:Number| number
+384:Create cell reference from |row:Positive integer| number and |1column:Positive integer| number
 w784:address
 385:Fixed-declining balance depreciation during the given |3period:Number| with |cost:Cost at start|, |1salvage:Salvage value at end| and |2lifetime:Lifetime as number of periods|
 w785:db
-386:Calculates the future value of |principal:Number| given the series of compounded interest |1rates:Array|
+386:Calculates the future value of |principal:Number| given the series of compounded interest |1rates:Range of cells (or array)|
 w786:fvschedule
-387:Truncates the result of |numerator:Number| divided by |1denominator:Number| to an integer, always towards zero
+387:Truncates the result of |numerator:Real number| divided by |1denominator:Real number| to an integer, always towards zero
 w787:quotient
-388:Value of the PDF or CDF for the exponential distribution for |x:Number| and |1lambda:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+388:Value of the CDF or PDF for the exponential distribution for |x:Real number| and |1lambda:Real number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w788:expon.dist
 389:Number of combinations of |1m:Positive integer| objects out of |n:Positive integer| possible ones with repetitions allowed
 w789:combina
 390:Double factorial of |n:Positive integer|
 w790:factdouble
-391:Sum of |3coefficients:Array| times |x:Number| to the power of |1n:Number|, n + |2m:Number| Œ
+391:Sum of |3coefficients:Range of cells (or array)| times |x:Real number| to the power of |1n:Number|, n + |2m:Number| Œ
 w791:seriessum
-392:Value of the PDF or CDF for the hypergeometric distribution for |sample_s:Number|uccesses, |1sample_n:Number|umber, |2pop_s:Number|uccesses, |3pop_n:Number|umber. |4{cumulative}:Boolean|=TRUE selects CDF, else PDF (default)
+392:Value of the CDF or PMF for the hypergeometric distribution for |sample_s:Number|uccesses, |1sample_n:Number|umber, |2pop_s:Number|uccesses, |3pop_n:Number|umber. |4{cumulative}:Boolean|=TRUE selects CDF, else PMF (default)
 w792:hypgeom.dist
-393:Value of the PDF or CDF for the Weibull distribution for |x:Number|, |1shape:Number|, and |2scale:Number|. |3cumulative:Boolean|=TRUE selects CDF, else PDF
+393:Value of the CDF or PDF for the Weibull distribution for |x:Real number|, |1shape:Real number|, and |2scale:Real number|. |3cumulative:Boolean|=TRUE selects CDF, else PDF
 w793:weibull.dist
-394:Value of the PDF or CDF for the Poisson distribution for |x:Number| and |1lambda:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+394:Value of the CDF or PMF for the Poisson distribution for |x:Real number| and |1lambda:Real number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PMF
 w794:poisson.dist
-395:Value of the PMF or CDF for the binomial distribution for number of |successes:Integer| in |1trials:Integer| and the |2probability:Number| of success for each trial. |3cumulative:Boolean|=TRUE selects CDF, else PMF
+395:Value of the CDF or PMF for the binomial distribution for number of |successes:Integer| in |1trials:Integer| and the |2probability:Real number| of success for each trial. |3cumulative:Boolean|=TRUE selects CDF, else PMF
 w795:binom.dist
-396:Probability of a trial result using binomial distribution. Number of |trials:Integer|, the |1probability:Number| of success for each trial, and number of successful trials |2S:Integer| and |3{S2}:Integer|
+396:Probability of a trial result using binomial distribution. Number of |trials:Integer|, the |1probability:Real number| of success for each trial, and number of successful trials |2S:Integer| and |3{S2}:Integer|
 w796:binom.dist.range
-397:Fisher transformation at |x:Number|
+397:Fisher transformation at |x:Real number|
 w797:fisher
-398:Inverse Fisher transformation for |y:Number|
+398:Inverse Fisher transformation for |y:Real number|
 w798:fisherinv
-399:Multinomial of all the values in |list:List of values (or array, or range of cells)|
+399:Multinomial of all the values in |list:List of values (or range of cells, or array)|
 w799:multinomial
-400:|1n:Number|-th order modified Bessel function of the first kind. In(|x:Number|)
+400:|1n:Positive integer|-th order modified Bessel function of the first kind. In(|x:Real number|)
 w800:besseli
-401:|1n:Number|-th order modified Bessel function of the second kind. Kn(|x:Number|)
+401:|1n:Positive integer|-th order modified Bessel function of the second kind. Kn(|x:Real number|)
 w801:besselk
-402:Value of the PDF or CDF for the normal distribution with given |1mean:Number| and |2standard deviation:Number| for the value |x:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+402:Value of the CDF or PDF for the normal distribution with given |1mean:Real number| and |2standard deviation:Real number| for the value |x:Real number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w802:norm.dist
-403:Value of the PDF or CDF for the standard normal distribution for the (standardized) value |z:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+403:Value of the CDF or PDF for the standard normal distribution for the (standardized) value |z:Real number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w803:norm.s.dist
-404:Value of the PDF or CDF for the log-normal distribution with given |1{mean}:Number, default zero| and |2{standard deviation}:Number, default one| for the value |x:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+404:Value of the CDF or PDF for the log-normal distribution with given |1{mean}:Real number, default zero| and |2{standard deviation}:Real number, default one| for the value |x:Real number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w804:lognorm.dist
-405:Value of the PDF for the standard normal distribution for the (standardized) value |z:Number|
+405:Value of the PDF for the standard normal distribution for the (standardized) value |z:Real number|
 w805:phi
-406:Returns the value 1 if |number_1:Number| == |1{number_2}:Number, default zero|, else 0
+406:Returns the value 1 if |number 1:Real number| == |1{number 2}:Real number, default zero|, else 0
 w806:delta
-407:Returns the value 1 if |number| >= |1{step}:Number, default zero|, else 0
+407:Returns the value 1 if |number| >= |1{step}:Real number, default zero|, else 0
 w807:gestep
 408:Rounds |number| down to the nearest integer, towards -infinity (OpenDocument/Excel-compatible behaviour)
 w808:odf.int
-409:Frequencies in |data array:Array of data (or range of cells)| given bin values in |1bins array:Array of bin limit values (or range of cells)|. Ignores blank cells and text
+409:Frequencies in |data:Data range of cells (or array)| given bin values in |1bins:Bin limit values range of cells (or array)|. Ignores blank cells and text
 w809:frequency
-410:Unit matrix of dimension |n:Number|
+410:Identity matrix of dimension |n:Number|
 w810:m_unit
-411:OpenDocument/Excel-compatible internal rate of return given |array:Array of numbers (or range of cells) representing cashflows| of cashflows and |1{guess}:Number, default 0.1. Initial guessed interest rate, e.g. 0.01|
+411:OpenDocument/Excel-compatible internal rate of return given |cashflows:Range of cells (or array) of numbers representing cashflows| and |1{guess}:Number, default 0.1. Initial guessed interest rate, e.g. 0.01|
 w811:odf.irr
-412:Find the value in the CDF for the normal distribution with given |1mean:Number| and |2standard deviation:Number| matching the given |probability:Number, [0,1]|
+412:Find the value in the CDF for the normal distribution with given |1mean:Real number| and |2standard deviation:Real number| matching the given |probability:Real number, [0,1]|
 w812:norm.inv
-413:Find the value in the CDF for the standard normal distribution matching the given |probability:Number, [0,1]|
+413:Find the value in the CDF for the standard normal distribution matching the given |probability:Real number, [0,1]|
 w813:norm.s.inv
 414:Log to base 10 of |number:Real number > 0|
 w814:odf.log10
 415:Gamma function for |n:Real number|
 w815:gamma
-416:Value of the PMF or CDF for the negative binomial distribution with |n failures:Integer| before the |1n successes:Integer| and the |2probability:Number| of success. |3{cumulative}:Boolean, default FALSE|=TRUE selects CDF, else PMF
+416:Value of the CDF or PMF for the negative binomial distribution with |n failures:Integer| before the |1n successes:Integer| and the |2probability:Real number| of success. |3{cumulative}:Boolean, default FALSE|=TRUE selects CDF, else PMF
 w816:negbinom.dist
-417:Element in |array| at position |1row:Number|, |2column:Number|
+417:Element in |data| at position |1row:Positive integer|, |2column:Positive integer|
 w817:odf.index
-418:Value of the PDF or CDF for the gamma distribution for |x:Number|, |1shape:Number|, and |2scale:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+418:Value of the CDF or PDF for the gamma distribution for |x:Real number|, |1shape:Real number|, and |2scale:Real number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w818:gamma.dist
-419:Find the value in the CDF for the gamma distribution with given |shape:Number| and |2scale:Number| matching the given |probability:Number, [0,1]|
+419:Find the value in the CDF for the gamma distribution with given |shape:Real number| and |2scale:Real number| matching the given |probability:Real number, [0,1]|
 w819:gamma.inv
-420:Value of the PDF or CDF for the beta distribution for |x:Number|, |1alpha:Number|, and |2beta:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF. |4{a}:Number| and |5{b}:Number| shift and scale
+420:Value of the CDF or PDF for the beta distribution for |x:Real number|, |1alpha:Real number|, and |2beta:Real number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF. |4{a}:Real number| and |5{b}:Real number| shift and scale
 w820:beta.dist
-421:Value of the PDF or CDF for the beta distribution for |x:Number|, |1alpha:Number|, and |2beta:Number|. |3{a}:Number| and |4{b}:Number| shift and scale. |5{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+421:Value of the CDF or PDF for the beta distribution for |x:Real number|, |1alpha:Real number|, and |2beta:Real number|. |3{a}:Real number| and |4{b}:Real number| shift and scale. |5{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w821:odf.betadist
-422:Find the value in the CDF for the beta distribution with given |1alpha:Number| and |2beta:Number| matching the given |probability:Number, [0,1]|. |3{a}:Number| and |4{b}:Number| shift and scale
+422:Find the value in the CDF for the beta distribution with given |1alpha:Real number| and |2beta:Real number| matching the given |probability:Real number, [0,1]|. |3{a}:Real number| and |4{b}:Real number| shift and scale
 w822:beta.inv
-423:Pearson-r correlation coefficient of the values from |x-data:Array| and |1y-data:Array|
+423:Pearson-r correlation coefficient of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 w823:correl
 424:Returns the error value #N/A (not available)
 w824:na
-425:Value of the PDF or CDF for the chi-squared distribution with |1degrees of freedom:Number, > 0, truncated| for |x:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+425:Value of the CDF or PDF for the chi-squared distribution with |1degrees of freedom:Positive integer| for |x:Real number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w825:chisq.dist
-426:Find the value in the CDF for the chi-squared distribution with given |1degrees of freedom:Number, > 0, truncated| matching the given |probability:Number, [0,1]|
+426:Find the value in the CDF for the chi-squared distribution with given |1degrees of freedom:Positive integer| matching the given |probability:Real number, [0,1]|
 w826:chisq.inv
-427:Right-tailed probability for the chi-squared distribution and |degrees of freedom:Number, > 0, truncated| for |x:Number|
+427:Right-tailed probability for the chi-squared distribution and |degrees of freedom:Positive integer| for |x:Real number|
 w827:chisq.dist.rt
-428:Find the value for the chi-squared distribution with given |1k:degrees of freedom, > 0, truncated| matching the given right-tailed |probability:Number, [0,1]|
+428:Find the value for the chi-squared distribution with given |1k:degrees of freedom, positive integer| matching the given right-tailed |probability:Real number, [0,1]|
 w828:chisq.inv.rt
-429:Value of the PDF or CDF for the F-distribution for |x:Number| and |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+429:Value of the CDF or PDF for the F-distribution for |x:Real number| and |1numerator d.o.f.:Positive integer|, |2denominator d.o.f.:Positive integer|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w829:f.dist
-430:Find the value in the CDF for the F-distribution with given |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated| matching the given |probability:Number, [0,1]|
+430:Find the value in the CDF for the F-distribution with given |1numerator d.o.f.:Positive integer| and |2denominator d.o.f.:Positive integer| matching the given |probability:Real number, [0,1]|
 w830:f.inv
-431:Right-tailed probability for the F-distribution for |x:Number| and |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated|
+431:Right-tailed probability for the F-distribution for |x:Real number| and |1numerator d.o.f.:Positive integer|, |2denominator d.o.f.:Positive integer|
 w831:f.dist.rt
-432:Find the value for the F-distribution with given |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated| matching the given right-tailed |probability:Number, [0,1]|
+432:Find the value for the F-distribution with given |1numerator d.o.f.:Positive integer| and |2denominator d.o.f.:Positive integer| matching the given right-tailed |probability:Real number, [0,1]|
 w832:f.inv.rt
-433:Value of the PDF or CDF for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+433:Value of the CDF or PDF for the Student's t-distribution for |x:Real number| and |1degrees of freedom:Positive integer|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 w833:t.dist
-434:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Number, > 0, truncated| matching the given |probability:Number, [0,1]|
+434:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Positive integer| matching the given |probability:Real number, [0,1]|
 w834:t.inv
-435:Two-tailed probability for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated|
+435:Two-tailed probability for the Student's t-distribution for |x:Real number| and |1degrees of freedom:Positive integer|
 w835:t.dist.2t
-436:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Number, > 0, truncated| matching the given two-tailed |probability:Number, [0,1]|
+436:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Positive integer| matching the given two-tailed |probability:Real number, [0,1]|
 w836:t.inv.2t
-437:Right-tailed probability for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated|
+437:Right-tailed probability for the Student's t-distribution for |x:Real number| and |1degrees of freedom:Positive integer|
 w837:t.dist.rt
-438:One- or two-tailed probability for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated| and |2number of tails:Number, 1 or 2|
+438:One- or two-tailed probability for the Student's t-distribution for |x:Real number| and |1degrees of freedom:Positive integer| and |2number of tails:Number, 1 or 2|
 w838:odf.tdist
-439:Confidence interval for a population mean given significance level |alpha:Number| for the normal distribution with given |1standard deviation:Real number, > 0| and a |2sample size:Number, > 0, truncated|
+439:Confidence interval for a population mean given significance level |alpha:Real number in (0,1)| for the normal distribution with given |1standard deviation:Real number > 0| and a |2sample size:Positive integer|
 w839:confidence.norm
-440:Confidence interval for a population mean given significance level |alpha:Number| for a Student's t-distribution with given |1standard deviation:Real number, > 0| and a |2sample size:Number, > 0, truncated|
+440:Confidence interval for a population mean given significance level |alpha:Real number in (0,1)| for a Student's t-distribution with given |1standard deviation:Real number > 0| and a |2sample size:Positive integer|
 w840:confidence.t
-441:Returns the |1percentile:Real number|-th value in the given |array|, exclusive of 0 and 1
+441:Returns the |1percentile:Real number|-th value in the given |data|, exclusive of 0 and 1
 w841:percentile.exc
-442:Returns the |1quartile:Integer, where 1=25%, 2=50%(MEDIAN), 3=75%|-th value in the given |array|, exclusive of 0 and 1
+442:Returns the |1quartile:Integer, where 1=25%, 2=50%(MEDIAN), 3=75%|-th value in the given |data|, exclusive of 0 and 1
 w842:quartile.exc
-443:Find the lowest value in the CDF for the binomial distribution with number |trials:Integer| and the |1probability:Number| of success for each trial that is greater than or equal to the given probability |2alpha:Number, [0,1]|
+443:Find the lowest value in the CDF for the binomial distribution with number |trials:Integer| and the |1probability:Real number| of success for each trial that is greater than or equal to the given probability |2alpha:Real number, [0,1]|
 w843:binom.inv
-444:z-test using the values from |data:Array| with |1hypothesised mean:Number|. |2{standard deviation}:Number| may be given, otherwise it is calculated from the sample data
+444:z-test using the values from |data:Range of cells (or array)| with |1hypothesised mean:Real number|. |2{standard deviation}:Real number| may be given, otherwise it is calculated from the sample data
 w844:z.test
-445:Probability that values are between two limits given |x range:Array| of data and |1associated probabilities:Array|. Sums probabilities from |2lower limit:Number| to optional |3{upper limit}:Number
+445:Probability that values are between two limits given |x range:Range of cells (or array)| of data and |1associated probabilities:Range of cells (or array)|. Sums probabilities from |2lower limit:Number| to optional |3{upper limit}:Number|
 w845:prob
-446:Chi-squared value of corresponding values from |actual data:Array| and |1expected data:Array|
+446:Chi-squared value of corresponding values from |actual data:Range of cells (or array)| and |1expected data:Range of cells (or array)|
 w846:chisq.test
-447:F-test for data from |array_1:Array| and |1array_2:Array|
+447:F-test for data from |data 1:Range of cells (or array)| and |1data 2:Range of cells (or array)|
 w847:f.test
-448:t-test for data from |array_1:Array| and |1array_2:Array| with number of |2tails:Number, 1 or 2| and |3type:Number|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic
+448:t-test for data from |data 1:Range of cells (or array)| and |1data 2:Range of cells (or array)| with number of |2tails:Number, 1 or 2| and |3type:Number|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic
 w848:t.test
 #
-449:Absolute value (modulus) of |complex number|
+449:Modulus (absolute value) of |complex number|
 w849:odf.imabs
 450:Imaginary part of |complex number|
 w850:odf.imaginary
@@ -1009,15 +1009,15 @@ w869:c_sqrt
 #
 470:Create complex number string from |real part:Number| and |1imaginary part:Number| with optional |2{suffix}:Text string|
 w870:odf.complex
-471:Find the value in the CDF for the log-normal distribution with given |1mean:Number| and |2standard deviation:Number| matching the given |probability:Number, [0,1]|. |3{a}:Number| and |4{b}:Number| shift and scale
+471:Find the value in the CDF for the log-normal distribution with given |1mean:Real number| and |2standard deviation:Real number| matching the given |probability:Real number, [0,1]|
 w871:lognorm.inv
-472:Percentage rank (in 0.0..1.0 exclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places
+472:Percentage rank (in 0.0..1.0 exclusive) of the |1value:Number| in the |data set:Range of cells (or array)| to the optional |2{digits}:Number| decimal places
 w872:percentrank.exc
 473:Returns the date that is the specified number of |1months:Number| before or after the given |start_date:Date in form dd.mm.yyyy|
 w873:edate
 474:Returns the date that is the the last day of the month for the specified number of |1months:Number| before or after the given |start_date:Date in form dd.mm.yyyy|
 w874:eomonth
-475:Remainder of |dividend:Real number| divided by |1quotient:Real number <> 0| (OpenDocument/Excel-compatible behaviour)
+475:Remainder of |dividend:Real number| divided by |1quotient:Real non-zero number| (OpenDocument/Excel-compatible behaviour)
 w875:odf.mod
 476:Converts binary |number:Text string| to decimal
 w876:bin2dec
@@ -1059,9 +1059,9 @@ w892:bitxor
 w893:base
 494:Converts |number:Positive integer| from the given |1radix:Positive integer| to its corresponding decimal value
 w894:decimal
-495:Returns the greatest common denominator of all the values in |list:List of numbers (or array, or range of cells)|
+495:Returns the greatest common denominator of all the values in |list:List of numbers (or range of cells, or array)|
 w895:gcd
-496:Returns the least common multiple of all the values in |list:List of numbers (or array, or range of cells)|
+496:Returns the least common multiple of all the values in |list:List of numbers (or range of cells, or array)|
 w896:lcm
 497:Week number of |date:Date in form dd.mm.yyyy| (ISO 8601)
 w897:isoweeknum

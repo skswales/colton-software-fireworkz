@@ -1,9 +1,9 @@
 | This Source Code Form is subject to the terms of the Mozilla Public
 | License, v. 2.0. If a copy of the MPL was not distributed with this
-| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+| file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-| Copyright (C) 1993-1998 Colton Software Limited
-| Copyright (C) 1998-2015 R W Colton
+| Copyright © 1993-1998 Colton Software Limited
+| Copyright © 1998-2015 R W Colton
 
 If "<where>"="" then error 0 'where' is not set
 
@@ -55,8 +55,8 @@ X %Wipe <t5$Build$Dir>.ob_toolb
 X %Wipe <t5$Build$Dir>.firewrkz.!Fireworkz
 X %Remove <t5$Build$Dir>.firewrkz.!RunDB
 X %Remove <t5$Build$Dir>.firewrkz.Makefile
-X %Remove <t5$Build$Dir>.firewrkz.France-Mf
-X %Remove <t5$Build$Dir>.firewrkz.Germany-Mf
+X %Remove <t5$Build$Dir>.firewrkz.Mf-France
+X %Remove <t5$Build$Dir>.firewrkz.Mf-Germany
 X %Wipe <t5$Build$Dir>.firewrkz.binaries
 X %Wipe <t5$Build$Dir>.firewrkz.o
 
@@ -67,8 +67,8 @@ X %Wipe <t5$Build$Dir>.fs_xls
 X %Wipe <t5$Build$Dir>.fprowrkz.!Fireworkz
 X %Remove <t5$Build$Dir>.fprowrkz.!RunDB
 X %Remove <t5$Build$Dir>.fprowrkz.Makefile
-X %Remove <t5$Build$Dir>.fprowrkz.France-Mf
-X %Remove <t5$Build$Dir>.fprowrkz.Germany-Mf
+X %Remove <t5$Build$Dir>.fprowrkz.Mf-France
+X %Remove <t5$Build$Dir>.fprowrkz.Mf-Germany
 X %Wipe <t5$Build$Dir>.fprowrkz.binaries
 X %Wipe <t5$Build$Dir>.fprowrkz.o
 

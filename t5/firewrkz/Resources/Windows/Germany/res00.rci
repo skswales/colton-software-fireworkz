@@ -3,10 +3,10 @@
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -17,10 +17,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_skel/resource/resource.h
 //
@@ -36,11 +36,11 @@ BEGIN
 // The definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	L"2.30.02"
+	0x1,	L"2.32"
 // UK 2:dd mmm yyyy
-	0x2,	L"30 Aug. 2021"
+	0x2,	L"05 Nov. 2022"
 //
-	0x3,	L"© 1992-2021 Colton Software"
+	0x3,	L"© 1992-2022 Colton Software"
 // UK w1037:The product uses the following components
 	0x40D,	L"Das Produkt verwendet die folgenden Komponenten"
 // UK w1031:Drawfile rendering DLLs © 1994-2005 Dial Solutions

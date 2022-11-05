@@ -2,11 +2,11 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Compound File Binary Format (COM / OLE 2 Structured Storage) access functions */
 
-/* Copyright (C) 2014-2021 Stuart Swales */
+/* Copyright (C) 2014-2022 Stuart Swales */
 
 #include "common/gflags.h"
 
@@ -170,7 +170,9 @@ patch_header_standard( /* one sector of StructuredStorageHeader plus two sectors
     _InVal_     U32 n_bytes)
 {
     const U32 sector_size = (U32) 1 << p_structured_storage_header->_uSectorShift;
+#if CHECKING
     const U32 FAT_entries_per_sector = sector_size / sizeof32(CFBF_SECT);
+#endif
     const P_ANY p_data_sectors = PtrAddBytes(P_ANY, p_structured_storage_header, sector_size); /* data lives in sectors beyond the sector containing the header */
     P_StructuredStorageDirectoryEntry file_dir;
     P_U32 p_next_sector_number;

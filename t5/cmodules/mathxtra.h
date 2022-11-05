@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -208,6 +208,13 @@ static inline double
 log2(_InVal_ double d)
 {
     return(log(d) * _log2_e);
+}
+
+_Check_return_
+static inline double
+fma(_InVal_ double x, _InVal_ double y, _InVal_ double z)
+{
+    return((x * y) + z);
 }
 
 #endif /* OS */

@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -76,13 +76,41 @@ create_error_from_kernel_oserror(
 #define bbc_move(x, y) \
     os_plot(0x00 /*bbc_SolidBoth*/ + 4 /*bbc_MoveCursorAbs*/, x, y)
 
+#if defined(NORCROFT_INLINE_SWIX)
+_Check_return_
+_Ret_maybenull_
+static inline _kernel_oserror *
+os_writeN(
+    _In_reads_(count) const char * s,
+    _InVal_     U32 count)
+{
+    return(
+        _swix(OS_WriteN, _INR(0, 1),
+        /*in*/  s, count) );
+}
+#else
 _Check_return_
 _Ret_maybenull_
 extern _kernel_oserror *
 os_writeN(
     _In_reads_(count) const char * s,
     _InVal_     U32 count);
+#endif
 
+#if defined(NORCROFT_INLINE_SWIX)
+_Check_return_
+_Ret_maybenull_
+static inline _kernel_oserror *
+os_plot(
+    _InVal_     int code,
+    _InVal_     int x,
+    _InVal_     int y)
+{
+    return(
+        _swix(OS_Plot, _INR(0, 2),
+        /*in*/  code, x, y) );
+}
+#else
 _Check_return_
 _Ret_maybenull_
 extern _kernel_oserror *
@@ -90,6 +118,7 @@ os_plot(
     _InVal_     int code,
     _InVal_     int x,
     _InVal_     int y);
+#endif
 
 _Check_return_
 _Ret_maybenull_

@@ -1,36 +1,35 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>BIN</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="BIN" />
-        <param name="Keyword" value="Statistical functions, BIN" />
-        <param name="Keyword" value="Organising data to make a histogram" />
+        <param name="Keyword" value="Spreadsheet functions, Statistical, BIN" />
+        <param name="Keyword" value="Statistical functions, organising data to make a histogram (Fireworkz)" />
     </object>
 
     <h1><a name="bin" id="bin"></a>BIN</h1>
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        BIN(<span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>,
-        <span class="csg-function-parameter">bins</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>)
+        BIN(
+        <span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">bins</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span> )
     </p>
     <p>
-        The <span class="csg-function-parameter">bins</span> <a href="../sg06/sg6_array_or_range.htm">array</a> (or range of cells)
+        The <span class="csg-function-parameter">bins</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>)
         defines a set of bins into which the values from the
-        <span class="csg-function-parameter">data</span> <a href="../sg06/sg6_array_or_range.htm">array</a> (or range of cells) is counted.
+        <span class="csg-function-parameter">data</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>) is counted.
     </p>
     <p>
         For example, if <span class="csg-function-parameter">bins</span> is {20,40,60,80},
@@ -38,7 +37,7 @@
         <span class="csg-function-parameter">data</span> that have:
     </p>
     <ul style="list-style-type: none;">
-        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value &le;20</li>
+        <li>        value &le;20</li>
         <li>20&lt; value &le;40</li>
         <li>40&lt; value &le;60</li>
         <li>60&lt; value &le;80</li>
@@ -46,8 +45,12 @@
     </ul>
     <p>
         The returned <a href="../sg06/sg6_arrays.htm">array</a> will therefore always have one more element than the
-        <span class="csg-function-parameter">bins</span> <a href="../sg06/sg6_array_or_range.htm">array</a> (or range of cells).
-        Neither data nor bins need be sorted.
+        <span class="csg-function-parameter">bins</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>).
+        Neither <span class="csg-function-parameter">data</span> nor <span class="csg-function-parameter">bins</span> need be sorted.
+    </p>
+    <p>
+        Unlike the FREQUENCY() spreadsheet function, BIN() can compare non-numeric values,
+        e.g. <span class="csg-function-parameter">bins</span> {"A","B","C","D","E"} is valid.
     </p>
     <p>One common use of this function is to organise data for making a histogram.</p>
 
@@ -61,18 +64,18 @@
 
     <p class="csg-function-subheading">Revisions:</p>
     <p>
-        Starting with 2.00, all the supplied arbitrary dimensioned data array (or range of cells) is binned.<br />
+        Starting with 2.00, all the supplied arbitrary dimensioned <span class="csg-function-parameter">data</span> range of cells (or array) is binned.
         Prior to that only the first column of this data would have been binned.
     </p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06b/sg6_BETA.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#statistical_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06c/sg6_COUNT.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06b/sg6_BETA_INV.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06b/sg6_BINOM_DIST.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

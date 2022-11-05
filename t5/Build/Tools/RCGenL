@@ -2,7 +2,7 @@ REM Windows RC file generator for Fireworkz
 REM
 REM This Source Code Form is subject to the terms of the Mozilla Public
 REM License, v. 2.0. If a copy of the MPL was not distributed with this
-REM file, You can obtain one at http://mozilla.org/MPL/2.0/.
+REM file, You can obtain one at https://mozilla.org/MPL/2.0/.
 REM
 REM Copyright (C) 1993-1998 Colton Software Limited
 REM Copyright (C) 1998-2015 R W Colton
@@ -182,7 +182,8 @@ PROCno(f%, "//")
 IF FNsLEN(line_$) < 128 THEN
   PROCno(f%, FNtransform_line_shrt(FNsGET(line_$), J%))
 ELSE
-  PROCno_(f%, FNtransform_line_long(line_$, J%))
+  REM PROCno_(FNtransform_line_long(line_$, J%))
+  void%=FNtransform_line_long(f%, line_$, J%)
 ENDIF
 ENDPROC
 :
@@ -204,7 +205,8 @@ PROCno(f%, quotes$)
 IF FNsLEN(line_$) < 128 THEN
   PROCno(f%, FNtransform_line_shrt(FNsGET(line_$), I%+1))
 ELSE
-  PROCno_(f%, FNtransform_line_long(line_$, I%+1))
+  REM PROCno_(FNtransform_line_long(line_$, I%+1))
+  void%=FNtransform_line_long(f%, line_$, I%+1)
 ENDIF
 PROCno(f%, quotes$)
 ENDPROC
@@ -212,7 +214,7 @@ ENDPROC
 :
 REM escape quotes and process any top bit set characters encountered (long lines)
 :
-DEF FNtransform_line_long(line_$, J%): REM returns long string
+DEF FNtransform_line_long(f%, line_$, J%): REM outputs transformed long string
 LOCAL result_$, C%, I%, L%, P%, Q%, T%, temp_line$
 REM PRINT"PROCtransformline_ ";J%;" ";: PROCsPRINT(line_$): PRINT
 :
@@ -232,26 +234,31 @@ ELSE
     IF C% AND &80 THEN T%=TRUE
   NEXT
 ENDIF
-IF NOT (Q% OR T%) THEN
-  REM nothing to process
-  IF J% = 1 THEN =line_$
-  =FNs_MID2(line_$, J%)
-ENDIF
+REM hard to bypass now
+REM IF NOT (Q% OR T%) THEN
+REM   REM nothing to process
+REM   IF J% = 1 THEN =line_$
+REM   =FNs_MID2(line_$, J%)
+REM ENDIF
 :
 FOR I% = J% TO L%
   C% = ASC(FNsGET(FNsMID(line_$, I%, 1)))
 REM PRINT I%,C%
   IF T% AND (C% AND &80) THEN
-    PROCsLET(result_$,result_$+ FNtransform_tbs_char(C%))
+    REM PROCsLET(result_$,result_$+ FNtransform_tbs_char(C%))
+    BPUT#f%,FNtransform_tbs_char(C%);
   ELSE
     IF Q% AND (C% = quote%) THEN
-      PROCsLET(result_$,result_$+ quotes$+quotes$)
+      REM PROCsLET(result_$,result_$+ quotes$+quotes$)
+      BPUT#f%,quote%: BPUT#f%,quote%
     ELSE
-      PROCsLET(result_$,result_$+ CHR$(C%))
+      REM PROCsLET(result_$,result_$+ CHR$(C%))
+      BPUT#f%,C%
     ENDIF
   ENDIF
 NEXT
-=result_$
+REM =result_$
+=0
 :
 :
 REM escape quotes and process any top bit set characters encountered (short lines)
@@ -431,10 +438,10 @@ ENDPROC
 DEF PROCmpl(f%)
 PROCo(f%, "// This Source Code Form is subject to the terms of the Mozilla Public")
 PROCo(f%, "// License, v. 2.0. If a copy of the MPL was not distributed with this")
-PROCo(f%, "// file, You can obtain one at http://mozilla.org/MPL/2.0/.")
+PROCo(f%, "// file, You can obtain one at https://mozilla.org/MPL/2.0/.")
 PROCo(f%, "//")
-PROCo(f%, "// Copyright (C) 1993-1998 Colton Software Limited")
-PROCo(f%, "// Copyright (C) 1998-2015 R W Colton")
+PROCo(f%, "// Copyright "+FNtransform_tbs_char(169)+" 1993-1998 Colton Software Limited")
+PROCo(f%, "// Copyright "+FNtransform_tbs_char(169)+" 1998-2015 R W Colton")
 PROCo(f%, "//")
 ENDPROC
 :

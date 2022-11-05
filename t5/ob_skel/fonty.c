@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -1767,18 +1767,19 @@ fontmap_host_font_spec_from_font_spec(
 
     if(for_riscos_utf8)
     {
-        /* \EUTF8\Ffontname */
-        status_return(al_tstr_set(&p_host_font_spec->h_host_name_tstr, TEXT("\\E") TEXT("UTF8") TEXT("\\F")));
+        /* (\F)fontname\EUTF8 */
+        status_return(al_tstr_set(&p_host_font_spec->h_host_name_tstr, tstr));
 
-        return(al_tstr_append(&p_host_font_spec->h_host_name_tstr, tstr));
+        return(al_tstr_append(&p_host_font_spec->h_host_name_tstr, TEXT("\\E") TEXT("UTF8")));
     }
 
 #if 0 /* <<< Bodge for Draw export - old Draw interpreters don't like font identifiers */
     /* NO!!! protect against evil-doers who might set UTF8 alphabet before we are ready for it! */
-    /* \ELatin1\Ffontname */
-    status_return(al_tstr_set(&p_host_font_spec->h_host_name_tstr, /*TEXT("\\E") TEXT("Latin1")*/ TEXT("\\F")));
+    /* (\F)fontname\ELatin1 */
+    status_return(al_tstr_set(&p_host_font_spec->h_host_name_tstr, tstr));
 
-    return(al_tstr_append(&p_host_font_spec->h_host_name_tstr, tstr));
+    /* A pedant would use Service_International(3) here */
+    return(al_tstr_append(&p_host_font_spec->h_host_name_tstr, TEXT("\\E") TEXT("Latin1")));
 #else
     return(al_tstr_set(&p_host_font_spec->h_host_name_tstr, tstr));
 #endif

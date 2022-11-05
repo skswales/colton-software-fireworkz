@@ -2,9 +2,9 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2012-2021 Stuart Swales */
+/* Copyright (C) 2012-2022 Stuart Swales */
 
 #ifndef __target_riscos_host_windows_h
 #define __target_riscos_host_windows_h
@@ -106,7 +106,7 @@ __pragma(warning(disable:4820)) /* padding added after data member */
 typedef unsigned int _Bool;
 #endif
 
-#define __STDC_NO_COMPLEX__ 1 /* see RISC OS complex.h */
+#define USE_OWN_COMPLEX_IMPL 1 /* only for CROSS_COMPILE - see RISC OS complex.h */
 
 #endif /* __target_riscos_host_windows_h */
 

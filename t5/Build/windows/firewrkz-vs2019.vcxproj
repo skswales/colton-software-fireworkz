@@ -256,6 +256,7 @@
       <EnablePREfast>false</EnablePREfast>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -295,6 +296,7 @@
       <EnablePREfast>true</EnablePREfast>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -373,6 +375,7 @@
       <EnablePREfast>true</EnablePREfast>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -412,6 +415,7 @@
       <EnablePREfast>true</EnablePREfast>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -450,7 +454,7 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">$(IntDir)$(TargetName)-cpp.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">$(IntDir)$(TargetName)-cpp.pch</PrecompiledHeaderOutputFile>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">stdcpp17</LanguageStandard>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">NotUsing</PrecompiledHeader>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdcpp17</LanguageStandard>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">stdcpp17</LanguageStandard>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">stdcpp17</LanguageStandard>
@@ -461,8 +465,16 @@
       <SmallerTypeCheck Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">false</SmallerTypeCheck>
       <SmallerTypeCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SmallerTypeCheck>
       <SmallerTypeCheck Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">false</SmallerTypeCheck>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\cmodules\mathxcpx.c" />
+    <ClCompile Include="..\..\cmodules\muldiv64.c" />
     <ClCompile Include="..\..\cmodules\riscos\myrand.s">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
@@ -473,6 +485,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\cmodules\ss_string.c" />
     <ClCompile Include="..\..\external\cs-nonfree\DataPower\WindLibC\32\errors.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1328,14 +1341,14 @@
     <ClCompile Include="..\..\ob_skel\windows\ho_dll.c" />
     <ClCompile Include="..\..\ob_skel\windows\ho_event.c" />
     <ClCompile Include="..\..\ob_skel\windows\ho_gdip.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)$(TargetName)-cpp.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">$(IntDir)$(TargetName)-cpp.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">$(IntDir)$(TargetName)-cpp.pch</PrecompiledHeaderOutputFile>
@@ -1365,7 +1378,6 @@
     <ClCompile Include="..\..\ob_skel\windows\ho_utf8.c" />
     <ClCompile Include="..\..\ob_skel\windows\ho_win.c" />
     <ClCompile Include="..\..\ob_skel\windows\ho_xform.c" />
-    <ClCompile Include="..\..\cmodules\muldiv86.c" />
     <ClCompile Include="..\..\ob_skel\windows\splash.c" />
     <ClCompile Include="..\..\ob_skel\windows\winmain.c" />
     <ClCompile Include="..\..\ob_skspt\ob_skspt.c" />
@@ -1446,6 +1458,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\fprowrkz\ob_rec\resource\resource.h" />
     <ClInclude Include="..\..\cmodules\coltsoft\host_clang.h" />
+    <ClInclude Include="..\..\cmodules\coltsoft\target_riscos_host_clang.h" />
     <ClInclude Include="..\..\cmodules\mathxcpx.h" />
     <ClInclude Include="..\..\external\cs-nonfree\Acorn\Library\32\tboxlibs\flex.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
@@ -1658,7 +1671,7 @@
     <ClInclude Include="..\..\external\Dial_Solutions\drawfile.h" />
     <ClInclude Include="..\..\external\Dial_Solutions\DsAFF.h" />
     <ClInclude Include="..\..\external\Dial_Solutions\DsFF9.h" />
-    <ClInclude Include="..\..\external\FreeBSD\srcp\lib\msun\src\math.h" />
+    <ClInclude Include="..\..\external\FreeBSD\srcp\lib\msun\src\openmath-libm.h" />
     <ClInclude Include="..\..\external\FreeBSD\srcp\lib\msun\src\math_private.h" />
     <ClInclude Include="..\..\external\OtherBSD\dSFMT-src-2.2.2\dSFMT-common.h" />
     <ClInclude Include="..\..\external\OtherBSD\dSFMT-src-2.2.2\dSFMT-params.h" />
@@ -1965,6 +1978,255 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\docs\UserGuide\content\sg06a\sg6_ADDRESS.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06a\sg6_AVERAGEA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BETA_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BETA_INV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BINOM_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BINOM_DIST_RANGE.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06b\sg6_BINOM_INV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_DIST_RT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_INV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_INV_RT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CHISQ_TEST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_COMBINA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CONFIDENCE_NORM.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CONFIDENCE_T.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06c\sg6_CORREL.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06d\sg6_DB.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06e\sg6_EDATE.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06e\sg6_EOMONTH.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06e\sg6_EXPON_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FACTDOUBLE.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FISHER.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FISHERINV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FORECAST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_FREQUENCY.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_DIST_RT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_INV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_INV_RT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06f\sg6_F_TEST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06g\sg6_GAMMA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06g\sg6_GAMMA_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06g\sg6_GAMMA_INV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06h\sg6_HYPGEOM_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_INTERCEPT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISBLANK.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISERR.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISERROR.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISLOGICAL.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISNA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISNONTEXT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISNUMBER.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISREF.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06i\sg6_ISTEXT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06l\sg6_LOGNORM_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06l\sg6_LOGNORM_INV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06m\sg6_MAXA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06m\sg6_MINA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06m\sg6_M_UNIT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NEGBINOM_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NORM_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NORM_INV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NORM_S_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06n\sg6_NORM_S_INV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_INDEX.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_INT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_IRR.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_LOG10.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_MOD.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06odf\sg6_ODF_TDIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PEARSON.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PERCENTRANK_EXC.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PERCENTRANK_INC.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PHI.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_POISSON_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06p\sg6_PROB.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06r\sg6_RSQ.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06s\sg6_SLOPE.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06s\sg6_STDEVA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06s\sg6_STDEVPA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06s\sg6_STEYX.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_DIST_2T.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_DIST_RT.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_INV.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_INV_2T.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06t\sg6_T_TEST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06v\sg6_VARA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06v\sg6_VARPA.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06w\sg6_WEIBULL_DIST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06z\sg6_Z_TEST.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg06\sg6_array_or_range_or_list.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg\sg01_entering_and_editing_numerical_data.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -1977,7 +2239,46 @@
     <None Include="..\..\..\docs\UserGuide\content\sg\sg04_charts.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_compatibility_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_database_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_date_time_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_engineering_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_financial_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="..\..\..\docs\UserGuide\content\sg\sg05_function_reference.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_boolean_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_lookup_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_mathematical_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_matrix_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_miscellaneous_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_statistical_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_string_functions.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\docs\UserGuide\content\sg\sg05_trigonometrical_functions.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\sg\sg07_custom_functions.htm">
@@ -2023,9 +2324,6 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\content\ug\ug98_glossary.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\docs\UserGuide\content\ug\ug99_addenda.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\..\..\docs\UserGuide\Windows\firewrkz.hhc" />
@@ -3107,6 +3405,12 @@
     </None>
     <None Include="..\..\firewrkz\Resources\RISC_OS\UK\Help\HTML\licen.html" />
     <None Include="..\..\firewrkz\Resources\RISC_OS\UK\Help\Text" />
+    <None Include="..\..\firewrkz\Resources\Windows\France\res00.rci" />
+    <None Include="..\..\firewrkz\Resources\Windows\France\res01.rci" />
+    <None Include="..\..\firewrkz\Resources\Windows\France\res06.rci" />
+    <None Include="..\..\firewrkz\Resources\Windows\Germany\res00.rci" />
+    <None Include="..\..\firewrkz\Resources\Windows\Germany\res01.rci" />
+    <None Include="..\..\firewrkz\Resources\Windows\Germany\res06.rci" />
     <None Include="..\..\firewrkz\Resources\Windows\Neutral\mplhdr.rci" />
     <None Include="..\..\firewrkz\Resources\Windows\UK\res00.rci" />
     <None Include="..\..\firewrkz\RelNotes.htm">
@@ -3356,7 +3660,24 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="firewrkz.rc" />
-    <ResourceCompile Include="firewrkz_x_save.rc" />
+    <ResourceCompile Include="firewrkz_x_save.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Code Analysis|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Code Analysis|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP ANSI|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release XP|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\external\Unicode\UCD\CaseFolding.txt" />
@@ -3364,7 +3685,6 @@
     <Text Include="..\..\external\Unicode\UCD\UnicodeData.txt" />
     <Text Include="..\..\external\Unicode\UCD\UnicodeVersion.txt" />
     <Text Include="..\..\firewrkz\Resources\Windows\UK\config.txt" />
-    <Text Include="..\..\firewrkz\TODO.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>T.TEST</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Statistical, T.TEST" />
+        <param name="Keyword" value="Statistical functions, Student's t-test" />
+    </object>
+
+    <h1><a name="t_test" id="t_test"></a>T.TEST</h1>
+
+    <p>Probability associated with a Student's t-test.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        T.TEST(
+        <span class="csg-function-parameter">data 1</span>:<span class="csg-function-parameter-type">Range or Array</span>,
+        <span class="csg-function-parameter">data 2</span>:<span class="csg-function-parameter-type">Range or Array</span>,
+        <span class="csg-function-parameter">tails</span>:<span class="csg-function-parameter-type">PositiveInteger</span>,
+        <span class="csg-function-parameter">type</span>:<span class="csg-function-parameter-type">PositiveInteger</span> )
+    </p>
+
+    <p>Returns the probability associated with a Student's t-test of two data sets where:</p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 6em;">
+                <col>
+            </colgroup>
+            <tr>
+                <td class="csg-function-parameter">tails</td>
+                <td>1 uses the one-tailed t-distribution for the test;<br /> 2 uses the two-tailed t-distribution for the test.</td>
+            </tr>
+            <tr>
+                <td class="csg-function-parameter">type</td>
+                <td>1 is paired;<br />2 is homoscedastic;<br />3 is heteroscedastic.</td>
+            </tr>
+        </table>
+    </div>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in Fireworkz 2.00.</p>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="../sg06t/sg6_T_INV_2T.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06t/sg6_TREND.htm">Next</a></td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

@@ -1,22 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>SPEARMAN</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="SPEARMAN" />
-        <param name="Keyword" value="Statistical functions, SPEARMAN" />
+        <param name="Keyword" value="Spreadsheet functions, Statistical, SPEARMAN" />
         <param name="Keyword" value="Statistical functions, Spearman rank correlation coefficient" />
     </object>
 
@@ -24,33 +22,45 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        SPEARMAN(<span class="csg-function-parameter"><a href="../sg06/sg6_arrays.htm">array_1</a></span>,
-        <span class="csg-function-parameter"><a href="../sg06/sg6_arrays.htm">array_2</a></span>)
+        SPEARMAN(
+        <span class="csg-function-parameter"><a href="../sg06/sg6_arrays.htm">array_1</a></span>,
+        <span class="csg-function-parameter"><a href="../sg06/sg6_arrays.htm">array_2</a></span> )
     </p>
-    <p>Returns the Spearman rank correlation coefficient for the two <span class="csg-function-parameter"><a href="../sg06/sg6_arrays.htm">arrays</a></span>.</p>
+    <p>Returns the Spearman rank correlation coefficient<sup><a href="#cite_note-1">[1]</a></sup> for the two <span class="csg-function-parameter"><a href="../sg06/sg6_arrays.htm">arrays</a></span>.</p>
 
     <p class="csg-function-subheading">Formula:</p>
     <p class="csg-function-formula">
         <em>r<sub>s</sub></em> =
         1 &minus;
         <span class="csg-function-formula-parentheses-2">(</span>
-        6&sdot;<span class="csg-math-symbol-sum">&sum;<em><sup class="csg-math-symbol-limit-upper">i=n</sup></em></span> <em>d</em><em><sub>i</sub></em><sup>2</sup>
-        &divide;
-        <span class="csg-function-formula-parentheses-1">(</span><em>n</em>&sdot;(<em>n</em><sup>2</sup>&minus;1)<span class="csg-function-formula-parentheses-1">)</span>
+            6&sdot;<sub class="csg-math-symbol-limit-lower"><em>i </em></sub><span class="csg-math-symbol-sum">&sum;</span><sub class="csg-math-symbol-limit-lower">1</sub><sup class="csg-math-symbol-limit-upper"><em>n</em></sup>
+            <em>d</em><sub><em>i</em></sub><sup>2</sup>
+             &#x2215; 
+            <span class="csg-function-formula-parentheses-1">(</span><em>n</em>&sdot;(<em>n</em><sup>2</sup>&minus;1)<span class="csg-function-formula-parentheses-1">)</span>
         <span class="csg-function-formula-parentheses-2">)</span>
     </p>
-    <p>where <em>n</em> is the number of values and <em>x</em><em><sub>i</sub></em> is the <em>i</em>-th value.</p>
+    <p>where <span class="csg-function-formula-variable">n</span> is the number of values and <span class="csg-function-formula-variable">d<sub>i</sub></span> is the difference between the <span class="csg-function-formula-variable">i</span>&#8209;th rank values.</p>
 
     <p>You can use the output from the <a href="../sg06r/sg6_RANK.htm">RANK</a>() function as input for this function.</p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <div class="csg-line"><!-- ... --> </div>
+    <ol class="references">
+        <li id="cite_note-1">
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/about/author.html">Weisstein, Eric W.</a>
+            "Spearman Rank Correlation Coefficient."<br>
+            From <a class="external" target="_blank" href="https://mathworld.wolfram.com/">MathWorld</a>--A Wolfram Web Resource.
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/SpearmanRankCorrelationCoefficient.html">https://mathworld.wolfram.com/SpearmanRankCorrelationCoefficient.html</a>
+        </li>
+    </ol>
+
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06s/sg6_SMALL.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#statistical_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06s/sg6_STANDARDIZE.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06s/sg6_SMALL.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06s/sg6_STANDARDIZE.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

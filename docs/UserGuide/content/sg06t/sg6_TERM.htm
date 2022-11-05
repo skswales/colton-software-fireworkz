@@ -1,22 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>TERM</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="TERM" />
-        <param name="Keyword" value="Functions, Financial, TERM" />
+        <param name="Keyword" value="Spreadsheet functions, Financial, TERM" />
         <param name="Keyword" value="Financial functions, periods needed to reach fv" />
     </object>
 
@@ -26,32 +24,39 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        TERM(<span class="csg-function-parameter">payment</span>:<span class="csg-function-parameter-type">Number</span>,
+        TERM(
+        <span class="csg-function-parameter">payment</span>:<span class="csg-function-parameter-type">Number</span>,
         <span class="csg-function-parameter">interest</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter">future_value</span>:<span class="csg-function-parameter-type">Number</span>)
+        <span class="csg-function-parameter">future_value</span>:<span class="csg-function-parameter-type">Number</span> )
     </p>
     <p>where:</p>
-    <table>
-        <tr>
-            <td class="csg-function-parameter">payment</td>
-            <td>is the regular payment made each period;</td>
-        </tr>
-        <tr>
-            <td class="csg-function-parameter">interest</td>
-            <td>is the interest rate received;</td>
-        </tr>
-        <tr>
-            <td class="csg-function-parameter">future_value</td>
-            <td>is the future value you want to achieve.</td>
-        </tr>
-    </table>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 8em;">
+                <col>
+            </colgroup>
+            <tr>
+                <td class="csg-function-parameter">payment</td>
+                <td>is the regular payment made each period;</td>
+            </tr>
+            <tr>
+                <td class="csg-function-parameter">interest</td>
+                <td>is the interest rate received;</td>
+            </tr>
+            <tr>
+                <td class="csg-function-parameter">future_value</td>
+                <td>is the future value you want to achieve.</td>
+            </tr>
+        </table>
+    </div>
 
     <p class="csg-function-subheading">Formula:</p>
     <p class="csg-function-formula">
         TERM =
-        LN(1 + (<span class="csg-function-parameter">future_value</span> &times; <span class="csg-function-parameter">interest</span> &divide; <span class="csg-function-parameter">payment</span>))
-        &divide;
-        LN(1 + <span class="csg-function-parameter">interest</span>)
+        LN( 1 + (<span class="csg-function-parameter">future_value</span> &times; <span class="csg-function-parameter">interest</span> &#x2215; <span class="csg-function-parameter">payment</span>) )
+         &#x2215; 
+        LN( 1 + <span class="csg-function-parameter">interest</span> )
     </p>
 
     <p class="csg-function-subheading">Example:</p>
@@ -60,14 +65,14 @@
     <pre class="csg-sample-indent">TERM(500, 0.10, 100000)</pre>
     <p>returns the number <code>31.94</code> (years).</p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06s/sg6_SYD.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#financial_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg/sg05_function_reference.htm#lookup_functions">Next</a></td>
+                <td><a accesskey="p" href="../sg06s/sg6_SYD.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_financial_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg/sg05_lookup_functions.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

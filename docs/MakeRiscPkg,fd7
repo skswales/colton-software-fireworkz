@@ -2,13 +2,13 @@
 |
 | This Source Code Form is subject to the terms of the Mozilla Public
 | License, v. 2.0. If a copy of the MPL was not distributed with this
-| file, You can obtain one at http://mozilla.org/MPL/2.0/.
+| file, You can obtain one at https://mozilla.org/MPL/2.0/.
 |
-| Copyright (C) 2013-2021 Stuart Swales
+| Copyright © 2013-2022 Stuart Swales
 
 | !!! ENSURE EVERYTHING IS CHECKED IN FIRST !!!
 
-Set t5$Release 20210123
+Set t5$Release 20221105
 | Remember to update RiscPkg.Control too
 
 Set t5$Disc $.Temp.Fire.FzManuals_<t5$Release>
@@ -53,7 +53,6 @@ Set t5$UserGuide                        <t5$Disc>.Manuals.Fireworkz.UK.UserGuide
 | (Windows StartGuide, Windows compiled Help framework)
 X %Wipe <t5$Disc>.GSGuide ~cfr~v
 X %Wipe <t5$Disc>.UserGuide ~cfr~v
-X %Wipe <t5$Disc>.Originals ~cfr~v
 
 |
 | Prep the Getting Started Guide
@@ -92,11 +91,11 @@ Unset    Alias$t5_SetType_TXT
 SetMacro Alias$t5_SetType_HTM SetType %%0 &FAF
 Repeat         t5_SetType_HTM <t5$UserGuide> -files -verbose
 Repeat         t5_SetType_HTM <t5$UserGuide>.content -files -verbose
-Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg01 -files -verbose
-Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg02 -files -verbose
-Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg03 -files -verbose
-Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg04 -files -verbose
-Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg05 -files -verbose
+|epeat         t5_SetType_HTM <t5$UserGuide>.content.sg01 -files -verbose
+|epeat         t5_SetType_HTM <t5$UserGuide>.content.sg02 -files -verbose
+|epeat         t5_SetType_HTM <t5$UserGuide>.content.sg03 -files -verbose
+|epeat         t5_SetType_HTM <t5$UserGuide>.content.sg04 -files -verbose
+|epeat         t5_SetType_HTM <t5$UserGuide>.content.sg05 -files -verbose
 Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06 -files -verbose
 Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06a -files -verbose
 Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06b -files -verbose
@@ -125,7 +124,7 @@ Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06v -files -verbose
 Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06w -files -verbose
 Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06x -files -verbose
 Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg06y -files -verbose
-Repeat         t5_SetType_HTM <t5$UserGuide>.content.sg07 -files -verbose
+|epeat         t5_SetType_HTM <t5$UserGuide>.content.sg07 -files -verbose
 Repeat         t5_SetType_HTM <t5$UserGuide>.content.ug -files -verbose
 Unset    Alias$t5_SetType_HTM
 

@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -1170,7 +1170,6 @@ PROC_EXEC_PROTO(c_correl);
 PROC_EXEC_PROTO(c_covariance_p);
 PROC_EXEC_PROTO(c_covariance_s);
 PROC_EXEC_PROTO(c_forecast);
-PROC_EXEC_PROTO(c_frequency);
 PROC_EXEC_PROTO(c_intercept);
 PROC_EXEC_PROTO(c_pearson);
 PROC_EXEC_PROTO(c_prob);

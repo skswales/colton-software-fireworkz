@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1993-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -90,9 +90,12 @@
 #if _MSC_VER >= 1910 /* VS2017 or later */
 #define _USE_DECLSPECS_FOR_SAL  1
 #define _USE_ATTRIBUTES_FOR_SAL 0
-#else
+#elif _MSC_VER <= 1500 /* VS2008 */
+#define _USE_DECLSPECS_FOR_SAL  1
+#define _USE_ATTRIBUTES_FOR_SAL 0
+#else /* Seems broken for VS2013 */
 #define _USE_DECLSPECS_FOR_SAL  0
-#define _USE_ATTRIBUTES_FOR_SAL 1
+#define _USE_ATTRIBUTES_FOR_SAL 0
 #endif
 #else
 /* Usually disable expansion of SAL macros in non-Code Analysis mode to improve compiler throughput */

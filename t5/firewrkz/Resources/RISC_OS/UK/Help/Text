@@ -11,24 +11,24 @@ Many resources for Fireworkz are available online:
 
 The Fireworkz Getting Started Guide
 may be accessed online at
-http://croftnuisk.co.uk/coltsoft/docs/fireworkz/getting_started/
+https://croftnuisk.co.uk/coltsoft/docs/fireworkz/getting_started/
 
 The Fireworkz User Guide
 may be accessed online at
-http://croftnuisk.co.uk/coltsoft/docs/fireworkz/user_guide/
+https://croftnuisk.co.uk/coltsoft/docs/fireworkz/user_guide/
+
+Addenda and Errata to the printed documentation
+may be accessed online at
+https://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/
+
+Hints and Tips on using Fireworkz
+may be accessed online at
+https://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips/
 
 Updated Fireworkz packages and example files,
 including those used in the Getting Started Guide,
 may be obtained from
-http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/
-
-Hints and Tips on using Fireworkz
-may be accessed online at
-http://croftnuisk.co.uk/coltsoft/fireworkz/hints_and_tips/
-
-Addenda and Errata to the printed documentation
-may be accessed online at
-http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/
+https://croftnuisk.co.uk/coltsoft/fireworkz/downloads/
 
 
 * Support *
@@ -36,7 +36,7 @@ http://croftnuisk.co.uk/coltsoft/fireworkz/addenda_and_errata/
 Fireworkz is now open source and completely free to use,
 so support is a self-help affair.
 There is a Google Group colton-software-fireworkz
- Web site: http://groups.google.com/group/colton-software-fireworkz
+ Web site: https://groups.google.com/group/colton-software-fireworkz
  E-mail: colton-software-fireworkz@googlegroups.com
 where you may seek help from other users.
 Please include files which demonstrate any problems
@@ -45,8 +45,8 @@ Please include files which demonstrate any problems
 
 * Copyright and Licence *
 
-Copyright (C) 1992-2021 Colton Software
-Portions Copyright (C) 2012-2021 Stuart Swales
+Copyright © 1992-2022 Colton Software
+Portions Copyright © 2012-2022 Stuart Swales
 
 The Release Notes contain additional copyright information
 that pertains to certain portions of Fireworkz.
@@ -54,7 +54,7 @@ that pertains to certain portions of Fireworkz.
 Fireworkz is made available to you under the terms
 of the Mozilla Public License, v. 2.0.
 You may obtain a copy of the MPL at:
-http://mozilla.org/MPL/2.0/ .
+https://mozilla.org/MPL/2.0/ .
 
 This means you may use, copy and distribute Fireworkz
 to others. You are also welcome to modify the source
@@ -63,7 +63,7 @@ The Mozilla Public License also gives you the right
 to distribute your modified versions.
 
 The Fireworkz source code may be downloaded from
-http://croftnuisk.co.uk/coltsoft/fireworkz/downloads/
+https://croftnuisk.co.uk/coltsoft/fireworkz/downloads/
 
 
 * Release Notes *
@@ -73,4 +73,4 @@ be found in the application's directory. As they are
 in HTML format you will need to use a browser.
 
 A fuller release history may be found online:
-http://croftnuisk.co.uk/coltsoft/fireworkz/release_history/
+https://croftnuisk.co.uk/coltsoft/fireworkz/release_history/

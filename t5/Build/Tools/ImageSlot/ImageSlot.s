@@ -2,7 +2,7 @@
 
 ; This Source Code Form is subject to the terms of the Mozilla Public
 ; License, v. 2.0. If a copy of the MPL was not distributed with this
-; file, You can obtain one at http://mozilla.org/MPL/2.0/.
+; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 ; Copyright (C) 1991-1998 Colton Software Limited
 ; Copyright (C) 1998-2015 R W Colton
@@ -28,8 +28,6 @@ XOS_ChangeEnvironment * XOS_Bit :OR: &000040
 XOS_ConvertCardinal2 * XOS_Bit :OR: &0000D6
 
 XWimp_SlotSize * XOS_Bit :OR: &0400EC
-
-        ORG     0
 
 ; R12 based workspace
 
@@ -65,12 +63,16 @@ AIF_Reserved3 * 14*4
 AIF_Reserved4 * 15*4
 AIF_ZeroInitCode * 16*4 ; 16 words
 
+        AREA    |C$$Code|,CODE,READONLY,PIC
+
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++
 ; in:  R1 pointer to arguments
 
+        ENTRY
+
 ImageSlot ROUT
 
-        STMDB   R13!,{R14}
+        PUSH    {LR}
 
         MOV     R0,#0
         STR     R0,[R12,#extra_bytes]
@@ -124,13 +126,13 @@ ImageSlot ROUT
 50 ; read file info
         MOV     R0,#17
         LDR     R1,[R12,#filename]
-        SWI     XOS_File
+        SVC     #XOS_File
         BVS     ErrorExit
 
         TEQ     R0,#1 ; if it's not a file, generate suitable error
         MOVNE   R2,R0
         MOVNE   R0,#19
-        SWINE   XOS_File
+        SVCNE   #XOS_File
         BVS     ErrorExit
 
         STR     R4,[R12,#filesize]
@@ -141,7 +143,7 @@ TryCurrentOffset ; looped back to from below
 
         MOV     R0,#&4F ; open file for reading, must exist etc.
         LDR     R1,[R12,#filename]
-        SWI     XOS_Find
+        SVC     #XOS_Find
         BVS     ErrorExit
 
         STR     R0,[R12,#filehandle]
@@ -153,7 +155,7 @@ TryCurrentOffset ; looped back to from below
         LDR     R1,[R12,#filehandle]
         ADD     R2,R12,#aif_header
         MOV     R3,#128
-        SWI     XOS_GBPB
+        SVC     #XOS_GBPB
 
 ; close file handle, preserving error
 
@@ -163,7 +165,7 @@ TryCurrentOffset ; looped back to from below
 
         MOV     R0,#0
         LDR     R1,[R12,#filehandle]
-        SWI     XOS_Find
+        SVC     #XOS_Find
         BVS     ErrorExit
 
         MOV     R0,R6
@@ -175,7 +177,7 @@ TryCurrentOffset ; looped back to from below
 ; BL somewhere
 ; BLNV somewhere
 ; MOV R0,R0
-; followed by SWI OS_Exit
+; followed by SVC OS_Exit
 
         LDR     R1,MovR0R0Literal
 
@@ -262,7 +264,7 @@ UseCurrentFilesize ROUT
 
         MOV     R0,#14 ; Application Space
         MOV     R1,#0 ; (Read)
-        SWI     XOS_ChangeEnvironment
+        SVC     #XOS_ChangeEnvironment
         SUB     R1,R1,#&8000 ; := size of application space (which starts at &8000)
         STR     R1,[R12,#yyy]
 
@@ -348,7 +350,7 @@ UseCurrentFilesize ROUT
 SuccessExit
         CMP     R14,R14 ; Clear V bit
 
-        LDMIA   R13!,{PC}
+        POP     {PC}
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -369,7 +371,7 @@ DoError_AppNeedsAtLeast ROUT
 
         ADR     R1,Error_AppNeedsAtLeastNumber
         MOV     R2,#7
-        SWI     XOS_ConvertCardinal2
+        SVC     #XOS_ConvertCardinal2
 
 ; copy the error suffix down in memory to the end of the number
 
@@ -388,7 +390,7 @@ ErrorExit
         MOV     R14,#0
         CMP     R14,#&80000000 ; Set V bit
 
-        LDMIA   R13!,{PC}
+        POP     {PC}
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -399,19 +401,6 @@ Error_AppNeedsAtLeastNumber
         DCB "4194304"
 Error_AppNeedsAtLeastSuffix
         DCB "K to start up",0
-
-        ALIGN
-
-; +++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Error_Usage
-        DCD &00000001
-        DCB "Syntax: "
-        DCB "*ImageSlot "
-        DCB "<filename> "
-        DCB "[<extra bytes>[K|M] "
-        DCB "[<startup bytes>[K|M]]|[-check]]"
-        DCB 0
 
         ALIGN
 
@@ -433,7 +422,7 @@ Error_AppNeedsMoreMemory
 ReadSize ROUT
 
         MOV     R2,#0
-        SWI     XOS_ReadUnsigned
+        SVC     #XOS_ReadUnsigned
         BVS     ErrorExit
 
         LDRB    R0,[R1,#0]
@@ -460,7 +449,7 @@ SlotSize ROUT
 
         MVN     R1,#0 ; -1
         MVN     R2,#0 ; -1
-        SWI     XWimp_SlotSize
+        SVC     #XWimp_SlotSize
         MOV     PC,R14
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -471,15 +460,36 @@ MovR0R0Literal
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 OsExitLiteral
-        SWI     OS_Exit
+        SVC     #OS_Exit
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-IdString
-        DCB "ImageSlot 0.12",0
+Error_Usage
+        DCD &00000001
+        DCB "Syntax: "
+        DCB "*ImageSlot "
+        DCB "<filename> "
+        DCB "[<extra bytes>[K|M] "
+        DCB "[<startup bytes>[K|M]]|[-check]]"
+        DCB 0
 
         ALIGN
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+IdString
+        DCB "ImageSlot 0.13",0
+
+        ALIGN
+
+; +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ [ {FALSE} ; Looks like Link -Utility straps this on anyway
+
+KeepAemulor32bitHappy
+        DCB "32OK" ; NB no trailing zero
+
+; +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ ]
 
         END

@@ -2,9 +2,9 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2013-2021 Stuart Swales */
+/* Copyright (C) 2013-2022 Stuart Swales */
 
 /* Remember to disable use of precompiled headers for this file */
 
@@ -15,6 +15,11 @@
 #endif
 
 #include "common/gflags.h"
+
+extern "C" {
+/* base Fireworkz definitions */
+#include "ob_skel/xp_skel.h"
+}
 
 #pragma warning(disable:4263) /* 'x' : member function does not override any base class virtual member function */
 #pragma warning(disable:4264) /* 'x' : no override available for virtual member function from base 'y'; function is hidden */
@@ -58,9 +63,8 @@ gdiplus_shutdown(void)
 
 extern "C" HBITMAP
 gdiplus_load_bitmap_from_file(
-    _In_z_      PCTSTR filename)
+    _In_z_      PCWSTR wstr_filename)
 {
-    PCWSTR wstr_filename = _wstr_from_tstr(filename);
     Gdiplus::Bitmap mBitmap(wstr_filename, false);
     HBITMAP result;
     mBitmap.GetHBITMAP(0x00000000, &result);

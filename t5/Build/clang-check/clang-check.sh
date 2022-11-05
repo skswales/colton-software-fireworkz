@@ -2,14 +2,13 @@
 
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# Copyright (C) 2019-2021 Stuart Swales
+# Copyright © 2019-2022 Stuart Swales
 
 clang \
  -target arm-none-eabi \
  -std=c99 \
- -c ../../*/*.c \
  -I../.. \
  -I../../../../../coltsoft/trunk/cs-nonfree/Acorn/Library/32/tboxlibs \
  -I../../../../../coltsoft/trunk/cs-nonfree/Acorn/Library/32/RISC_OSLib \
@@ -19,5 +18,5 @@ clang \
  -DCROSS_COMPILE -DHOST_CLANG -DTARGET_RISCOS -DRELEASED \
  -funsigned-char \
  -fno-builtin \
- -Wall -Wextra -Wno-missing-field-initializers -Wno-missing-braces
-
+ -Wall -Wextra -Wno-missing-field-initializers -Wno-missing-braces \
+ -c ../../*/*.c

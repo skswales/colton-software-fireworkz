@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -45,7 +45,7 @@ muldiv64_a_b_GR_SCALE_ONE(
     _InVal_     S32 a,
     _InVal_     S32 b)
 {
-    /* NB contorted order to save register juggling on ARM Norcroft */
+    /* NB contorted order to save register juggling on ARM Norcroft C */
     const int64_t numerator = ((int64_t) b * a);
     return((S32) (numerator >> 16));
 }
@@ -96,28 +96,25 @@ gr_scale_from_s32_pair(
     _InVal_     S32 numerator,
     _InVal_     S32 denominator)
 {
+    MULDIV64_REMOVF removf;
     GR_SCALE num;
-    S32 overflow;
 
     if(numerator == 0)
         return(GR_SCALE_ZERO);
 
-    num = muldiv64(numerator, GR_SCALE_ONE, denominator);
+    num = muldiv64_removf(numerator, GR_SCALE_ONE, denominator, &removf);
 
     /* check not OTT */
-    overflow = muldiv64_overflow();
+    if(removf.overflow == 0)
+    {
+        /* SKS create rounding scale (assumes denominator +ve) */
+        if((removf.remainder * 2) > denominator)
+            ++num;
 
-    if(overflow > 0)
-        return(+GR_SCALE_MAX);
+        return(num);
+    }
 
-    if(overflow < 0)
-        return(-GR_SCALE_MAX);
-
-    /* SKS create rounding scale (assumes denominator +ve) */
-    if((muldiv64_remainder() * 2) > denominator)
-        ++num;
-
-    return(num);
+    return((removf.overflow < 0) ? -GR_SCALE_MAX : +GR_SCALE_MAX);
 }
 
 /******************************************************************************

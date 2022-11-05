@@ -2,16 +2,14 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2012-2021 Stuart Swales */
-
-/* SKS 2012 */
+/* Copyright (C) 2012-2022 Stuart Swales */
 
 #ifndef __target_riscos_host_gccsdk_h
 #define __target_riscos_host_gccsdk_h
 
-#ifndef __CHAR_UNSIGNED__
+#if !defined(__CHAR_UNSIGNED__)
 #error  __CHAR_UNSIGNED__ must be set (use -funsigned-char switch)
 #endif
 
@@ -29,8 +27,10 @@
 #define INTRINSIC_MEMCMP 1
 #define INTRINSIC_MEMCPY 1
 #define INTRINSIC_MEMSET 1
-#endif
+#endif /* CODE_ANALYSIS */
 #endif /* __clang__ */
+
+#define USE_OWN_COMPLEX_IMPL 1 /* only for CROSS_COMPILE - see RISC OS complex.h */
 
 #endif /* __target_riscos_host_gccsdk_h */
 

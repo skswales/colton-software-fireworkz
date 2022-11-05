@@ -2,9 +2,9 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2021 Stuart Swales */
+/* Copyright (C) 2014-2022 Stuart Swales */
 
 /* More mathematical function routines for evaluator */
 
@@ -746,40 +746,64 @@ PROC_EXEC_PROTO(c_seriessum)
     const F64 n = ss_data_get_real(args[1]);
     const F64 m = ss_data_get_real(args[2]);
     const PC_SS_DATA array_coefficients = args[3];
-    S32 x_size, y_size;
-    S32 ix, iy;
+    S32 coefficient_size;
     F64 seriessum_result = 0.0;
+#if 1
+    /* Use Horner's method to increase accuracy so that terms being summed are generally of increasing magnitude */
+    const F64 x_to_power_n = (n == 0.0) ? 1.0 : pow(x, n); /* NB it is useful to define 0^0=1 for polynomials */
+    const F64 x_to_power_m = pow(x, m);
+    S32 i;
+
+    exec_func_ignore_parms();
+
+    array_range_mono_size(array_coefficients, &coefficient_size);
+
+    /* come down from the highest index */
+    for(i = 1; i <= coefficient_size; ++i)
+    {
+        F64 term;
+        SS_DATA ss_data_coefficient;
+
+        (void) array_range_mono_index(&ss_data_coefficient, array_coefficients, coefficient_size - i, EM_REA);
+
+        term = ss_data_get_real(&ss_data_coefficient);
+
+        if(1 == i)
+            seriessum_result = term; /* avoids first fma() which are usually expensive */
+        else
+            seriessum_result = fma(seriessum_result, x_to_power_m, term);
+    }
+
+    seriessum_result *= x_to_power_n; /* finish off with a x^n */
+#else
     F64 power = n;
     F64 x_to_power = pow(x, power);
 
     exec_func_ignore_parms();
 
-    /* get x and y sizes */
-    array_range_sizes(array_coefficients, &x_size, &y_size);
+    array_range_mono_size(array_coefficients, &coefficient_size);
 
-    for(ix = 0; ix < x_size; ++ix)
+    for(coefficient_idx = 0; coefficient_idx < coefficient_size; ++coefficient_idx)
     {
-        for(iy = 0; iy < y_size; ++iy)
-        {
-            F64 term;
-            SS_DATA ss_data_coefficient;
+        F64 term;
+        SS_DATA ss_data_coefficient;
 
-            (void) array_range_index(&ss_data_coefficient, array_coefficients, ix, iy, EM_REA);
+        (void) array_range_mono_index(&ss_data_coefficient, array_coefficients, coefficient_idx, EM_REA);
 
-            term = ss_data_get_real(&ss_data_coefficient) * x_to_power;
+        term = ss_data_get_real(&ss_data_coefficient) * x_to_power;
 
-            seriessum_result += term;
+        seriessum_result += term;
 
-            /* advance */
-            power += m;
-            if(m == 1.0)
-                x_to_power *= x;
-            else if(m == 2.0)
-                x_to_power *= (x * x);
-            else
-                x_to_power = pow(x, power);
-        }
+        /* advance */
+        power += m;
+        if(m == 1.0)
+            x_to_power *= x;
+        else if(m == 2.0)
+            x_to_power *= (x * x);
+        else
+            x_to_power = pow(x, power);
     }
+#endif
 
     ss_data_set_real(p_ss_data_res, seriessum_result);
 }

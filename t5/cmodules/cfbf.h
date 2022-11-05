@@ -8,7 +8,7 @@ https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-cfb/53989ce4-7b0
 and the earlier
 http://download.microsoft.com/download/0/B/E/0BE8BDD7-E5E8-422A-ABFD-4342ED7AD886/WindowsCompoundBinaryFileFormatSpecification.pdf
 and
-http://sc.openoffice.org/compdocfileformat.pdf
+https://www.openoffice.org/sc/compdocfileformat.pdf
 */
 
 typedef U32 CFBF_SECT;

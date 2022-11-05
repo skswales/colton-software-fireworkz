@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>SLOPE</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Statistical, SLOPE" />
+        <param name="Keyword" value="Statistical functions, linear regression - slope" />
+    </object>
+
+    <h1><a name="slope" id="slope"></a>SLOPE</h1>
+
+    <p>Slope (gradient) of a linear regression line.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        SLOPE(
+        <span class="csg-function-parameter">y&#8209;data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">x&#8209;data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span> )
+    </p>
+
+    <p>
+        Returns the slope of the linear regression line given by the
+        <span class="csg-function-parameter">y&#8209;data</span> array and
+        <span class="csg-function-parameter">x&#8209;data</span> array.
+    </p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in Fireworkz 2.00.</p>
+
+    <p class="csg-function-subheading">Note:</p>
+    <p>
+        <code>SLOPE()</code> is implemented using a two-pass approach, first independently computing the mean values,
+        then computing intermediate values (such as the sum of the squares, products) using the difference between each value and the corresponding mean value.
+        This approach helps avoid many round-off errors and is also employed by Microsoft Excel 2003 and later.
+    </p>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="../sg06s/sg6_SKEW_P.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06s/sg6_SMALL.htm">Next</a></td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

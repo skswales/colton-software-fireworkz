@@ -1,4 +1,4 @@
-{Version:2.30.02;30 Aug 2021;Fireworkz for Windows (France);Colton Software;Windows-1252}
+{Version:2.32;05 Nov 2022;Fireworkz for Windows (France);Colton Software;Windows-1252}
 {RowTable:1}
 {BindFileType:1;0;All files;(*.*);*.*}
 {BindFileType:1;0xBDF;Colton Software Fireworkz;(*.fwk,*.fwkh);*.fwk\\\;*.fwkh}
@@ -8,6 +8,7 @@
 {BindFileType:3;0xFFF;Plain text;(*.txt);*.txt}
 {BindFileType:3;0xC32;Rich text format;(*.rtf);*.rtf}
 {BindFileType:3;0xDFE;Comma separated values;(*.csv);*.csv}
+{BindFileType:1;0xF0D;TAB separated values;(*.tsv);*.tsv}
 {BindFileType:3;0xBA6;Microsoft Excel;(*.xls);*.xls}
 {BindFileType:1;0xDB0;Lotus 1-2-3;(*.wk1,*.wk3.*.wks);*.wk1\\\;*.wk3\\\;*.wks}
 {BindFileType:2;0xDB0;Lotus 1-2-3;(*.wk1);*.wk1}
@@ -68,12 +69,12 @@
 {MenuAdd:Function;&Quick...;;Functions-S:-1}
 {MenuAdd:Function;&Catégorie}
 {MenuAdd:Function.Catégorie;Toutes...;;Functions-S}
+{MenuAdd:Function.Catégorie;L&ogique...;;Functions-S:13}
 {MenuAdd:Function.Catégorie;&Custom control...;;Functions-S:10}
 {MenuAdd:Function.Catégorie;&Database...;;Functions-S:1}
 {MenuAdd:Function.Catégorie;Date et Heure...;;Functions-S:2}
 {MenuAdd:Function.Catégorie;Eng&ineering...;;Functions-S:0}
 {MenuAdd:Function.Catégorie;&Financière...;;Functions-S:3}
-{MenuAdd:Function.Catégorie;L&ogique...;;Functions-S:13}
 {MenuAdd:Function.Catégorie;&Lookup...;;Functions-S:11}
 {MenuAdd:Function.Catégorie;&Mathématique...;;Functions-S:4}
 {MenuAdd:Function.Catégorie;Mat&rice...;;Functions-S:5}
@@ -192,12 +193,12 @@
 {MenuAdd:$.Edit.Insérer;&Fonction}
 {MenuAdd:$.Edit.Insérer.Fonction;&Quick...;;Functions-S:-1}
 {MenuAdd:$.Edit.Insérer.Fonction;Toutes...;;Functions-S}
+{MenuAdd:$.Edit.Insérer.Fonction;L&ogique...;;Functions-S:13}
 {MenuAdd:$.Edit.Insérer.Fonction;&Custom control...;;Functions-S:10}
 {MenuAdd:$.Edit.Insérer.Fonction;&Database...;;Functions-S:1}
 {MenuAdd:$.Edit.Insérer.Fonction;Date et Heure...;;Functions-S:2}
 {MenuAdd:$.Edit.Insérer.Fonction;Eng&ineering...;;Functions-S:0}
 {MenuAdd:$.Edit.Insérer.Fonction;&Financière...;;Functions-S:3}
-{MenuAdd:$.Edit.Insérer.Fonction;L&ogique...;;Functions-S:13}
 {MenuAdd:$.Edit.Insérer.Fonction;&Lookup...;;Functions-S:11}
 {MenuAdd:$.Edit.Insérer.Fonction;&Mathématique...;;Functions-S:4}
 {MenuAdd:$.Edit.Insérer.Fonction;Mat&rice...;;Functions-S:5}
@@ -289,7 +290,7 @@
 {MenuAdd:$.Aide;Aide;F1;HelpContents:firewrkz.chm}
 {MenuAdd:$.Aide;Aide rechercher...;;HelpSearchKeyword:firewrkz.chm}
 {MenuAdd:$.Aide}
-{MenuAdd:$.Aide;Fireworkz en ligne...;;HelpURL:http://groups.google.com/group/colton-software-fireworkz}
+{MenuAdd:$.Aide;Fireworkz en ligne...;;HelpURL:https://groups.google.com/group/colton-software-fireworkz}
 {MenuAdd:$.Aide}
 {MenuAdd:$.Aide;À propos de Fireworkz...;;Info}
 {NumformData:janvier février mars avril mai juin juillet août septembre octobre novembre décembre dimanche lundi mardi mercredi jeudi vendredi samedi}
@@ -317,6 +318,7 @@
 {ObjectBindLoader:20;0xDDE;pd}
 {ObjectBindLoader:23;0xFFF;txt}
 {ObjectBindLoader:24;0xDFE;csv}
+{ObjectBindLoader:24;0xF0D;tsv}
 {ObjectBindLoader:24;0xC7D;sid}
 {ObjectBindLoader:25;0xAF8;fwp}
 {ObjectBindLoader:26;0xBA6;xls}

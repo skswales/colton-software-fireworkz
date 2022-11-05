@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1993-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -132,37 +132,36 @@ static STATUS
 rgb_class_handler_ctl_state_change(
     _InRef_     PC_DIALOG_MSG_CTL_STATE_CHANGE p_dialog_msg_ctl_state_change)
 {
-    U32 shift = 0;
+    const P_FLT_CALLBACK p_flt_callback = (P_FLT_CALLBACK) p_dialog_msg_ctl_state_change->client_handle;
 
     switch(p_dialog_msg_ctl_state_change->dialog_control_id)
     {
-    case DIALOG_ID_RGB_B:
-        shift += 8;
-
-        /*FALLTHRU*/
-
-    case DIALOG_ID_RGB_G:
-        shift += 8;
-
-        /*FALLTHRU*/
-
     case DIALOG_ID_RGB_R:
         {
-        const P_FLT_CALLBACK p_flt_callback = (P_FLT_CALLBACK) p_dialog_msg_ctl_state_change->client_handle;
-        union DIALOG_CONTROL_DATA_USER_STATE user;
-
-        user.u32 =
-            (* (PC_U32) &p_flt_callback->rgb & ~(0x000000FFU << shift))
-          | (((U32) p_dialog_msg_ctl_state_change->new_state.bump_s32 & 0x000000FFU) << shift);
-
+        RGB rgb = p_flt_callback->rgb;
+        rgb.r = p_dialog_msg_ctl_state_change->new_state.bump_u8;
         p_flt_callback->rgb_modified = 1;
+        return(rgb_patch_set(p_dialog_msg_ctl_state_change->h_dialog, &rgb));
+        }
 
-        return(rgb_patch_set(p_dialog_msg_ctl_state_change->h_dialog, &user.rgb));
+    case DIALOG_ID_RGB_G:
+        {
+        RGB rgb = p_flt_callback->rgb;
+        rgb.g = p_dialog_msg_ctl_state_change->new_state.bump_u8;
+        p_flt_callback->rgb_modified = 1;
+        return(rgb_patch_set(p_dialog_msg_ctl_state_change->h_dialog, &rgb));
+        }
+
+    case DIALOG_ID_RGB_B:
+        {
+        RGB rgb = p_flt_callback->rgb;
+        rgb.b = p_dialog_msg_ctl_state_change->new_state.bump_u8;
+        p_flt_callback->rgb_modified = 1;
+        return(rgb_patch_set(p_dialog_msg_ctl_state_change->h_dialog, &rgb));
         }
 
     case DIALOG_ID_RGB_PATCH:
         {
-        const P_FLT_CALLBACK p_flt_callback = (P_FLT_CALLBACK) p_dialog_msg_ctl_state_change->client_handle;
         DIALOG_CMD_CTL_STATE_SET dialog_cmd_ctl_state_set;
 
         p_flt_callback->rgb_modified = 1;
@@ -192,8 +191,6 @@ rgb_class_handler_ctl_state_change(
 
     case DIALOG_ID_RGB_T:
         {
-        const P_FLT_CALLBACK p_flt_callback = (P_FLT_CALLBACK) p_dialog_msg_ctl_state_change->client_handle;
-
         p_flt_callback->rgb_modified = 1;
 
         ui_dlg_ctl_enable(p_dialog_msg_ctl_state_change->h_dialog, DIALOG_ID_RGB_GROUP_INNER, (p_dialog_msg_ctl_state_change->new_state.checkbox != DIALOG_BUTTONSTATE_ON));

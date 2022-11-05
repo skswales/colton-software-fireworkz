@@ -13,7 +13,7 @@
 *
 ******************************************************************************/
  
-/* See Sunday, Dan (2001), Inclusion of a Point in a Polygon, http://geomalgorithms.com/a03-_inclusion.html. */
+/* See Sunday, Dan (2001), Inclusion of a Point in a Polygon, https://geomalgorithms.com/a03-_inclusion.html. */
 
 #include "common/gflags.h"
 

@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -280,31 +280,34 @@ determinant(
     _InVal_     U32 m,
     _OutRef_    P_F64 dp)
 {
-    switch(m)
+    /* ordered for efficiency with higher m */
+    if(m > 3)
     {
-    case 0:
-        return(determinant_0(ap, m, dp));
-
-    case 1:
-        return(determinant_1(ap, m, dp));
-
-    case 2:
-        return(determinant_2(ap, m, dp));
-
-    case 3:
-        return(determinant_3(ap, m, dp));
-
-    default:
 #if defined(DETERMINANT_GAUSS_ELIMINATION)
         return(determinant_gauss_elimination(ap, m, dp));
 #else
         return(determinant_minors(ap, m, dp));
 #endif
     }
+
+    if(m == 3)
+        return(determinant_3(ap, m, dp));
+
+    switch(m)
+    {
+    case 2:
+        return(determinant_2(ap, m, dp));
+
+    case 1:
+        return(determinant_1(ap, m, dp));
+
+    default:
+        return(determinant_0(ap, m, dp));
+    }
 }
 
 #if RISCOS
-//#define POSSIBLE_VFP_SUPPORT 1
+//#define POSSIBLE_VFP_SUPPORT
 #endif
 
 #if defined(POSSIBLE_VFP_SUPPORT)
@@ -430,6 +433,8 @@ determinant_3_vfp(
     return(STATUS_OK);
 }
 
+#if !defined(DETERMINANT_GAUSS_ELIMINATION) || 1
+
 _Check_return_
 static STATUS
 determinant_vfp(
@@ -503,6 +508,12 @@ determinant_vfp_minors(
     return(status);
 }
 
+#endif /* DETERMINANT_GAUSS_ELIMINATION */
+
+#if defined(DETERMINANT_GAUSS_ELIMINATION)
+
+#endif /* DETERMINANT_GAUSS_ELIMINATION */
+
 _Check_return_
 static STATUS
 determinant_vfp(
@@ -515,7 +526,11 @@ determinant_vfp(
     if(m == 3)
         return(determinant_3_vfp(ap, m, dp));
 
+#if defined(DETERMINANT_GAUSS_ELIMINATION) && 0
+   return(determinant_vfp_gauss_elimination(ap, m, dp));
+#else
    return(determinant_vfp_minors(ap, m, dp));
+#endif
 }
 
 #endif /* POSSIBLE_VFP_SUPPORT */
@@ -608,7 +623,7 @@ PROC_EXEC_PROTO(c_m_determ)
 }
 
 /*
-inverse of square matrix A is 1/det * adjunct(A)
+inverse of square matrix A is 1/det(A) * adj(A)
 */
 
 PROC_EXEC_PROTO(c_m_inverse)
@@ -682,7 +697,7 @@ PROC_EXEC_PROTO(c_m_inverse)
         goto endpoint;
     }
 
-    /* compute adjunct(A) */
+    /* compute the adjugate, adj(A) */
 
     /* step 1 - compute matrix of minors */
     minor_m = m - 1;
@@ -738,9 +753,9 @@ PROC_EXEC_PROTO(c_m_inverse)
         }
     }
 
-    /* step 3 - transpose the matrix of cofactors => adjunct(A) (simple to do this in formation of result) */
+    /* step 3 - transpose the matrix of cofactors => adj(A) (simple to do this in formation of result) */
 
-    { /* copy out the inverse(A) == adjunct(A) / determinant(A) */
+    { /* copy out the inverse(A) == adj(A) / det(A) */
 #if defined(POSSIBLE_VFP_SUPPORT)
     const VFP_DOUBLE vfp_D = vfp_double_from_f64(&D); /* copy once - trivial, so doesn't matter if VFP not being used! */
 #endif

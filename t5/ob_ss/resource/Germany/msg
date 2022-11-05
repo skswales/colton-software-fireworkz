@@ -3,10 +3,10 @@
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #
-# Copyright (C) 1993-1998 Colton Software Limited
-# Copyright (C) 1998-2015 R W Colton
+# Copyright © 1993-1998 Colton Software Limited
+# Copyright © 1998-2015 R W Colton
 #
 # ob_ss messages: keep consistent with ob_ss/resource/resource.h
 #
@@ -23,25 +23,29 @@
 #
 # Toolbar button help
 #
-# UK r90:Fill down (or ADJUST to Fill up)
+# UK r90:Click Select to fill selected cells down from the top. Click Adjust to fill selected cells up from the bottom
 r90:Replizieren Sie den Zelleninhalt in jeder Spalte (nach unten). SPEZIAL-Klick, um nach oben zu replizieren.
 # UK w90:Fill down (or Ctrl-click to Fill up)
 w90:Replizieren Sie den Zelleninhalt in jeder Spalte (nach unten). Strg-Klick, um nach oben zu replizieren.
-# UK r91:Fill right (or ADJUST to Fill left)
+# UK r91:Click Select to fill selected cells towards the right. Click Adjust to fill selected cells towards the left
 r91:Replizieren Sie den Zelleninhalt in jeder Zeile (nach rechts). SPEZIAL-Klick, um nach links zu replizieren.
 # UK w91:Fill right (or Ctrl-click to Fill left)
 w91:Replizieren Sie den Zelleninhalt in jeder Zeile (nach rechts). Strg-Klick, um nach links zu replizieren.
-# UK r92:Auto sum. ADJUST for short function list
+# UK r92:Click Select to insert an Auto sum. Click Adjust for short function list
 r92:Summe. SPEZIAL-Klick, um eine kurze Liste der Funktionen anzuzeigen
 # UK w92:Auto sum. Ctrl-click for short function list
 w92:Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen
-# UK 93:Create chart
+# UK r93:Click Select for the Chart menu
+# UK w93:Create chart
 93:Diagramm erstellen
-# UK 94:Function selector
+# UK r94:Click Select for the Function selector menu
+# UK w94:Function selector
 94:Funktionsauswahl
-# UK 95:Cancel formula line editing
+# UK r95:Click Select to cancel editing in the formula line
+# UK w95:Cancel formula line editing
 95:Brechen Sie die Bearbeitung der Formelzeile ab
-# UK 96:Enter formula as new cell contents
+# UK r96:Click Select to enter the formula as new cell contents
+# UK w96:Enter formula as new cell contents
 96:Geben Sie die Formel als neuen Zelleninhalt ein
 # UK 97:This is the formula line
 97:Dies ist die Bearbeitungszeile für Formeln
@@ -115,8 +119,8 @@ w92:Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen
 12:Lookup
 # UK 13:Custom
 13:Benutzerdefinierte
-# UK 14:Logical
-14:Logisch
+# UK 14:Boolean (logical)
+14:Boolesch (logisch)
 # UK 15:Compatibility
 15:Compatibility
 # UK 16:Names
@@ -154,8 +158,8 @@ w92:Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen
 76:sg/sg05_lookup_functions.htm
 # UK 77:sg/sg07_custom_functions.htm
 77:sg/sg07_custom_functions.htm
-# UK 78:sg/sg05_logical_functions.htm
-78:sg/sg05_logical_functions.htm
+# UK 78:sg/sg05_boolean_functions.htm
+78:sg/sg05_boolean_functions.htm
 # UK 79:sg/sg05_compatibility_functions.htm
 79:sg/sg05_compatibility_functions.htm
 # UK 80:ug/ug09_adding_a_name_to_a_number_cell.htm
@@ -254,9 +258,9 @@ w92:Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen
 # UK 509:alert
 109:Dialogfenster mit einer |Nachricht:Text string displayed in dialogue box| und mindestens einem |1button:Etikett| mit einem optionalen |2{second button}:Etikett|
 509:alarm
-# UK 110:Logical AND of |list:List of Boolean values (or array, or range of cells)| of Boolean values
+# UK 110:Boolean (logical) AND of |list:List of Boolean values (or range of cells, or array)| of Boolean values
 # UK 510:and
-110:Logisches UND der |Liste:Liste der Booleschen Werte (oder des Arrays oder des Zellbereichs)| der Booleschen Werte
+110:Boolesches UND der |Liste:Liste der Booleschen Werte (oder des Zellbereichs oder des Arrays)| der Booleschen Werte
 510:und
 # UK 111:Arc secant of |number:Real number, modulus >= 1|
 # UK 511:asec
@@ -286,22 +290,22 @@ w92:Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen
 # UK 517:atanh
 117:Areatangens hyperbolicus der |Zahl:Reele Zahl, abs(z) <= 1|
 517:arctanhyp
-# UK 118:Average deviation of the numbers in |list:List of numbers (or array, or range of cells)| from their arithmetic mean
+# UK 118:Average deviation of the numbers in |list:List of numbers (or range of cells, or array)| from their arithmetic mean
 # UK 518:avedev
-118:Durchschnittliche Abweichung der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| von ihrem arithmetischen Mittelwert
+118:Durchschnittliche Abweichung der Zahlen in der |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)| von ihrem arithmetischen Mittelwert
 518:mittelabw
-# UK 119:Average of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 119:Average of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK 519:avg
-119:Durchschnitt der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|. Leere Zellen werden ignoriert.
+119:Durchschnitt der Zahlen in der |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|. Leere Zellen werden ignoriert.
 519:mittelwert
 #
 # UK 120:Beta function for |a:Real number| and |1b:Real number|
 # UK 520:beta
 120:Werte der Beta-verteilung mit |a:Reele Zahl| und |1b:Reele Zahl|
 520:beta
-# UK 121:Frequencies in |data array:Array of data (or range of cells)| given bin values in |1bin array:Array of bin limit values (or range of cells)|. Useful for histogram
+# UK 121:Frequencies in |data:Data range of cells (or array)| given bin values in |1bins:Bin limit values range of cells (or array)|. Useful for histogram
 # UK 521:bin
-121:Frequencies in |Daten Array:Array oder Zellbereich von Daten| given bin values in |1bin Array:Array oder Zellbereich von bin limit values|. Useful for histogram
+121:Frequencies in |Daten:Zellbereich oder Array von Daten| given bin values in |1bins:Zellbereich oder Array von bin limit values|. Useful for histogram
 521:bin
 # UK 122:Break out of |{n}:Optional number of loops| loops in custom function
 # UK 522:break
@@ -408,7 +412,7 @@ w92:Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen
 # UK 547:c_power
 147:|complexe Zahl 1:1*2 array or range| zur Potenz der |1:complexe Zahl 2:1*2 array or range| erhoben
 547:c_potenz
-# UK 148:Absolute value (modulus, radius) of |complex number:1*2 array or range|
+# UK 148:Modulus (absolute value, radius) of |complex number:1*2 array or range|
 # UK 548:c_radius
 148:Absolutwert (Betrag, modulus, radius) der |complexe Zahl:1*2 array or range|
 548:c_abs
@@ -455,13 +459,13 @@ w92:Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen
 558:zeichen
 # UK 159:Choose |n:Index of element in list|-th item from |1list:List to be selected from|
 # UK 559:choose
-159:Liefert das |n:Index of element in list|-te Element aus der |1Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+159:Liefert das |n:Index of element in list|-te Element aus der |1Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 559:wahl
-# UK 160:Cleans |string:Text string or reference to text cell| by removing non-printing characters
+# UK 160:Cleans |string:Text string, or reference to text cell| by removing non-printing characters
 # UK 560:clean
 160:Cleans |Text:Text oder Verweis auf Textzelle| by removing non-printing characters
 560:säubern
-# UK 161:ASCII value of |character:Text string or reference to text cell|
+# UK 161:ASCII value of |character:Text string, or reference to text cell|
 # UK 561:code
 161:ASCII value of |character:Text oder Verweis auf Textzelle|
 561:code
@@ -469,9 +473,9 @@ w92:Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen
 # UK 562:col
 162:Spaltennummer der |Zellenverweis| (oder der Zelle, die die Formel enthält). Spalte A ist 1, B ist 2, usw.
 562:spalte
-# UK 163:Number of columns in worksheet or |{array}:Array (or range of cells)|
+# UK 163:Number of columns in worksheet or |{array}:Range of cells (or array)|
 # UK 563:cols
-163:Anzahl der Spalten im Arbeitsblatt oder |{Array}:Array oder Zellbereich|
+163:Anzahl der Spalten im Arbeitsblatt oder |{Array}:Zellbereich oder Array|
 563:spalten
 # UK 164:Number of combinations of |n:Number of unlike things - positive integer| unlike things taken |1k:Number of things to be taken at a time - positive integer, k < n| at a time
 # UK 564:combin
@@ -570,9 +574,9 @@ w575:cterm
 # UK 587:deref
 187:Dereferences (calculates value of) a |cell reference:Cell reference|
 w587:deref
-# UK 188:Sum of squares of the deviation of the numbers in the |list:List of numbers (or array, or range of cells)| from their arithmetic mean
+# UK 188:Sum of squares of the deviation of the numbers in the |list:List of numbers (or range of cells, or array)| from their arithmetic mean
 # UK 588:devsq
-188:Sum of squares of the deviation of the numbers in the |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| from their arithmetic mean
+188:Sum of squares of the deviation of the numbers in the |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)| from their arithmetic mean
 588:sumquadabw
 # UK 189:Maximum of |range:Range of cells to be processed| elements which satisfy |1condition| e.g. E1E20="Mark"
 # UK 589:dmax
@@ -660,9 +664,9 @@ w602:endwhile
 # UK 609:fixed
 209:Converts |Zahl:Reele Zahl| into a string with the given number of |1Dezimalstellen:Ganzzahl| and thousands separators (unless optional |2{no commas}| is TRUE)
 609:fest
-# UK 210:Flip |array:Array (or range of cells)| vertically
+# UK 210:Flip |data:Range of cells (or array)| vertically
 # UK 610:flip
-210:Flip |Array:Array oder Zellbereich| vertically
+210:Flip |Datengruppe:Zellbereich oder Array| vertically
 w610:flip
 # UK 211:Rounds |number:Real number| to given |1multiple:Real number| towards -infinity (or towards zero, if both are negative)
 # UK 611:floor
@@ -693,9 +697,9 @@ w614:function
 # UK 617:gammaln
 217:Natürlicher Logarithmus der Gammafunktion für |n:Reele Zahl|
 617:gammaln
-# UK 218:Geometric mean of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 218:Geometric mean of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK 618:geomean
-218:Geometrischer Mittelwert der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+218:Geometrischer Mittelwert der Zahlen in der |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 618:geomittel
 # UK 219:GOTO |cell reference:Cell reference| in custom function
 # UK 619:goto
@@ -710,13 +714,12 @@ w619:goto
 221:Predict y-values given |logest:Output from logest function| data and |1x| data
 621:variation
 #
-# UK 222:Harmonic mean of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 222:Harmonic mean of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK 622:harmean
-222:Harmonischer Mittelwert der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+222:Harmonischer Mittelwert der Zahlen in der |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 622:harmittel
-# UK 223:Look for |key:Key value| in horizontal |1target:Horizontally-arranged, array (or range of cells e.g. B1:J3)| data set (sorted in ascending order) and return corresponding element from |2row index:Integer|-th row in target array
-# UK 623:hlookup
-223:Suchen |Schlüssel| in |1Zielarray:Array oder Zellbereich| (Horizontal angeordneter Datensatz zB B1:J3, in aufsteigender Reihenfolge sortiert) und liefert das entsprechende Element aus |2Zeile index:Ganzzahl|-te Zeile im Zielarray
+# UK 223:Look for |key:Key value| in horizontal |1lookup data:Horizontally-arranged range of cells (e.g. B1:J3, or array)| data set (sorted in ascending order) and return corresponding element from |2row index:Integer|-th row in data set
+223:Suchen |Schlüssel| in |1lookup_data:Zellbereich oder Array| (Horizontal angeordneter Datensatz zB B1:J3, in aufsteigender Reihenfolge sortiert) und liefert das entsprechende Element aus |2Zeile index:Ganzzahl|-te Zeile im Zielarray
 623:wverweis
 # UK 224:Hour part of |time:Time in form hh:mm:ss|
 # UK 624:hour
@@ -731,9 +734,9 @@ w619:goto
 # UK 626:if
 226:Erster Teil von IF(|Bedingung:Ausdruck, der einen booleschen Wert zurückgibt|)ŒENDIF, nur in benutzerdefinierten Funktionen verwenden
 w626:if
-# UK 227:Element in |array| at position |1x:Column of array, starting 1|, |2y:Row of array, starting 1| or sub-array starting at x,y with dimensions |3{x_size}|,|4{y_size}|
+# UK 227:Element in |data| at position |1x:Column of data, starting 1|, |2y:Row of data, starting 1| or sub-array starting at x,y with dimensions |3{x_size}|,|4{y_size}|
 # UK 627:index
-227:Liefert das Element in |Array| an Position |1x:Spalte des Arrays, beginnend mit 1|, |2y:Zeile des Arrays, beginnend mit 1| oder Unterarray beginnend bei x, y mit den Dimensionen |3{x_size} , |4{y_size}|
+227:Liefert das Element in der |Datengruppe| an Position |1x:Spalte des Datengruppe, beginnend mit 1|, |2y:Zeile des Datengruppe, beginnend mit 1| oder Unterarray beginnend bei x, y mit den Dimensionen |3{x_size} , |4{y_size}|
 627:index
 # UK 228:Dialogue box displaying a |caption:Text string| requesting input for |1"name":Name to be written back to|, with at least one |2button:Label| and an optional |3{second button}:Label|
 # UK 628:input
@@ -743,9 +746,9 @@ w628:input
 # UK 629:int
 229:Liefert den ganzzahligen Teil von |Zahl:Reele Zahl|
 629:ganzzahl
-# UK 230:Internal rate of return given |guess:Initial guessed interest rate, e.g. 0.01| and |1array:Array of numbers (or range of cells) representing cashflows| of cashflows
+# UK 230:Internal rate of return given |guess:Initial guessed interest rate, e.g. 0.01| and |1cashflows:Range of cells (or array) of numbers representing cashflows|
 # UK 630:irr
-230:Internal rate of return given |Vermutung:Initial guessed interest rate, e.g. 0.01| and |1Array:Array oder Zellbereich of numbers representing cashflows| of cashflows
+230:Internal rate of return given |Vermutung:Initial guessed interest rate, e.g. 0.01| and |1cashflows:Zellbereich oder Array of numbers representing cashflows| of cashflows
 630:ikv
 # UK 231:Returns Boolean value TRUE if |value| refers to an empty cell, FALSE otherwise. Unlike Excel, an empty string also returns TRUE
 # UK 631:isblank
@@ -792,35 +795,35 @@ w628:input
 241:Liefert den Booleschen Wert WEHR, wenn sich der |Wert| auf einen Text bezieht, andernfalls FALSCH
 641:isttext
 #
-# UK 242:Joins |list:List of strings (or array, or range of cells)| of strings together
+# UK 242:Joins |list:List of strings (or range of cells, or array)| of strings together
 # UK 642:join
-242:Verbindet eine |Liste:Liste der Texte (oder des Arrays oder des Zellbereichs)| von Zeichenfolgen miteinander
+242:Verbindet eine |Liste:Liste der Texte (oder des Zellbereichs oder des Arrays)| von Zeichenfolgen miteinander
 642:verketten
 #
-# UK 243:Kurtosis of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 243:Kurtosis of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK 643:kurt
-243:Berechnet die Kurtosis einer Verteilung, die durch die |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| der Zahlen gegeben ist
+243:Berechnet die Kurtosis einer Verteilung, die durch die |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)| der Zahlen gegeben ist
 643:kurt
 #
-# UK 244:Returns the |1k:Integer|-th largest item in |array|
+# UK 244:Returns the |1k:Integer|-th largest item in |data|
 # UK 644:large
-244:Liefert das |1k:Ganzzahl|-te größte Element im |Array|
+244:Liefert das |1k:Ganzzahl|-te größte Element in der |Datengruppe|
 644:kgrösste
-# UK 245:Left part of |string:Text string or reference to text cell| to |1n:Positive integer| characters
+# UK 245:Left part of |string:Text string, or reference to text cell| to |1n:Positive integer| characters
 # UK 645:left
 245:Linker Teil des |Text:Text oder Verweis auf Textzelle|es, |1n:Positive Ganzzahl| Zeichen
 645:links
-# UK 246:Length of |string:Text string or reference to text cell|
+# UK 246:Length of |string:Text string, or reference to text cell|
 # UK 646:length
 246:Länge des |Text:Text oder Verweis auf Textzelle|es in Zeichen
 646:länge
-# UK 247:Linest of |y-array:Array of y-values (or range of cells)| and optional |1{x-array}:Array of x-values (or range of cells)|
+# UK 247:Linest of |y-data:Range of cells (or array) of y-values| and optional |1{x-data}:Range of cells (or array) of x-values|
 # UK 647:linest
-247:Linest of |y-Daten:Array oder Zellbereich von y-Daten| and optional |1{x-Daten}:Array oder Zellbereich von x-Daten|
+247:Linest of |y-Daten:Zellbereich oder Array von y-Daten| and optional |1{x-Daten}:Zellbereich oder Array von x-Daten|
 647:rgp
-# UK 248:Returns array of numbers of entries in |array:Array of values to be counted (or range of cells)| with optional |1amounts:Corresponding numeric amounts to be summed|. Useful for histogram
+# UK 248:Returns array of numbers of entries in |data:Range of cells (or array) of values to be counted| with optional |1amounts:Corresponding numeric amounts to be summed|. Useful for histogram
 # UK 648:listcount
-248:Liefert ein Array von Anzahlen von Einträgen in |Array:Array oder Zellenbereich von Werten|, die mit einem optionalen |1{Zweites Array:Array oder Zellenbereich von Zahlen}| von entsprechenden numerischen Beträgen gezählt werden sollen, die summiert werden sollen. Nützlich für das Histogramm
+248:Liefert ein Array von Anzahlen von Einträgen in |Datengruppe:Zellenbereich oder Array von Werten|, die mit einem optionalen |1{Zweites Datengruppe:Zellenbereich oder Array von Zahlen}| von entsprechenden numerischen Beträgen gezählt werden sollen, die summiert werden sollen. Nützlich für das Histogramm
 648:listcount
 # UK 249:Natural logarithm of |number:Real number > 0|
 # UK 649:ln
@@ -830,66 +833,66 @@ w628:input
 # UK 650:log
 250:Logarithmus zur Basis |1{b}:Zahl, default 10 (Zehnerlogarithmus)| der |x:Reele Zahl, > 0|
 650:log
-# UK 251:Logest of |y-array:Array of y-values (or range of cells)| and optional |1{x-array}:Array of x-values (or range of cells)|
+# UK 251:Logest of |y-data:Range of cells (or array) of y-values| and optional |1{x-data}:Range of cells (or array) of x-values|
 # UK 651:logest
-251:Logest of |y-Daten:Array oder Zellbereich von y-Daten| and optional |1{x-Daten}:Array oder Zellbereich von x-Daten|
+251:Logest of |y-Daten:Zellbereich oder Array von y-Daten| and optional |1{x-Daten}:Zellbereich oder Array von x-Daten|
 651:rkp
-# UK 252:Look for exact match of |key:Key - any value| in |1target:Target array (or range of cells)| and return corresponding element(s) from |2result array:Array (or range of cells)|
+# UK 252:Look for exact match of |key:Key - any value| in |1lookup data:Target range of cells (or array)| and return corresponding element(s) from |2result data:Range of cells (or array)|
 # UK 652:lookup
-252:Liefert den Wert in |2Array 2:Array oder Zellbereich|, dessen Position derjenigen von |Schlüssel| in |1Array 1:Array oder Zellbereich| entspricht
+252:Liefert den Wert in |2Array 2:Zellbereich oder Array|, dessen Position derjenigen von |Schlüssel| in |1Array 1:Zellbereich oder Array| entspricht
 652:verweis
-# UK 253:Converts |string:Text string or reference to text cell| to lower-case
+# UK 253:Converts |string:Text string, or reference to text cell| to lower-case
 # UK 653:lower
 253:Konvertiert |Text:Textzeichenfolge oder Verweis auf Textzelle| in Kleinbuchstaben
 653:klein
 #
-# UK 254:Determinant of |matrix:Square array (or range of cells)|
+# UK 254:Determinant of |matrix:Square range of cells (or array)|
 # UK 654:m_determ
-254:Determinant of |Matrix:Square Array oder Zellbereich|
+254:Determinant of |Matrix:Quadratische Zellbereich oder Array|
 654:m_det
-# UK 255:Inverse of |matrix:Square array (or range of cells)|
+# UK 255:Inverse of |matrix:Square range of cells (or array)|
 # UK 655:m_inverse
-255:Inverse of |Matrix:Square Array oder Zellbereich|
+255:Inverse of |Matrix:Quadratische Zellbereich oder Array|
 655:m_inv
-# UK 256:Multiply |matrix 1:Array (or range of cells)| by |1matrix 2:Array (or range of cells)|
+# UK 256:Multiply |matrix 1:Range of cells (or array)| of dimensions a*b by |1matrix 2:Range of cells (or array)| of dimensions b*c
 # UK 656:m_mul
-256:|Matrix 1:Array oder Zellbereich| mit |1Matrix 2:Array oder Zellbereich| multiplizieren
+256:|Matrix 1:Zellbereich oder Array| mit den Dimensionen a*b mit |1Matrix 2:Zellbereich oder Array| mit den Dimensionen b*c multiplizieren
 656:m_mul
-# UK 257:Looks up |key:Key - any value| in |1array:Target array (or range of cells)| using |2type: -1=smallest value bigger than key,0=exact match,1=largest value below key| and returns cell reference
+# UK 257:Looks up |key:Key - any value| in |1looukp data:Target range of cells (or array)| using |2type: -1=smallest value bigger than key,0=exact match,1=largest value below key| and returns cell reference
 # UK 657:match
-257:Looks up |key:Key - any value| in |1Array:Target Array oder Zellbereich| using |2type: -1=smallest value bigger than key,0=exact match,1=largest value below key| and returns cell reference
+257:Looks up |key:Key - any value| in |1Lookup Datengruppe:Target Zellbereich oder Array| using |2type: -1=smallest value bigger than key,0=exact match,1=largest value below key| and returns cell reference
 657:vergleich
-# UK 258:Maximum value in |list:List of values (or array, or range of cells)|
+# UK 258:Maximum value in |list:List of values (or range of cells, or array)|
 # UK 658:max
-258:Maximalwert der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+258:Maximalwert der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 658:max
-# UK 259:Median value of |list:List of values (or array, or range of cells)|
+# UK 259:Median value of |list:List of values (or range of cells, or array)|
 # UK 659:median
-259:Medianwert der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+259:Medianwert der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 659:median
-# UK 260:Middle part of |string:Text tring or reference to text cell| starting at |1offset:Offset in string, starts 1| and of given |2length:Length of string required|
+# UK 260:Middle part of |string:Text string, or reference to text cell| starting at |1offset:Offset in string, starts 1| and of given |2length:Length of string required|
 # UK 660:mid
 260:Middle part of |Text:Text oder Verweis auf Textzelle| starting at |1offset:Offset in string, starts 1| and of given |2length:Length of string required|
 660:teil
-# UK 261:Minimum value in |list:List of values (or array, or range of cells)|
+# UK 261:Minimum value in |list:List of values (or range of cells, or array)|
 # UK 661:min
-261:Mindestwert der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+261:Mindestwert der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 661:min
 # UK 262:Minute part of |time:Time in form hh:mm:ss|
 # UK 662:minute
 262:Liefert die Minuten Teil der |Zeit:Zeit hat die Form hh:mm:ss|
 662:minute
-# UK 263:Modified irr given |cashflow:Array of cashflows (or range of cells)|, |1rate_1:Interest rate of borrowed finance|, |2rate_2:Interest rate of invested finance|
+# UK 263:Modified irr given |cashflow:Range of cells (or array) of cashflows|, |1rate_1:Interest rate of borrowed finance|, |2rate_2:Interest rate of invested finance|
 # UK 663:mirr
-263:Modified irr given |cashflow:Array oder Zellbereich von Cashflows|, |1Zins 1:Zinsrate borrowed finance|, |2Zins 2:Zinsrate of invested finance|
+263:Modified irr given |cashflow:Zellbereich oder Array von Cashflows|, |1Zins 1:Zinsrate borrowed finance|, |2Zins 2:Zinsrate of invested finance|
 663:qikv
-# UK 264:Remainder of |dividend:Real number| divided by |1quotient:Real number <> 0|
+# UK 264:Remainder of |dividend:Real number| divided by |1quotient:Real non-zero number|
 # UK 664:mod
 264:Liefert den Rest nach einer Division von |Dividende:Reele Zahl| durch |1Quotient:Reele Zahl, <> 0|
 664:rest
-# UK 265:Mode of |array:Array of values (or range of cells)|
+# UK 265:Mode of |data:Range of cells (or array) of values|
 # UK 665:mode.sngl
-265:Liefert den Wert, der innerhalb einer |Array:Array oder Zellbereich| am häufigsten vorkommt
+265:Liefert den Wert, der innerhalb einer |Datengruppe:Zellbereich oder Array| am häufigsten vorkommt
 665:modus.einf
 # UK 266:Month part of |date:Date in form dd.mm.yyyy|
 # UK 666:month
@@ -908,17 +911,17 @@ w628:input
 269:Runden |Zahl:Reele Zahl| auf das gegebene |1Vielfache:Reele Zahl|
 669:vrunden
 #
-# UK 270:|number|
+# UK 270:|value|
 # UK 670:n
-270:|Zahl|
+270:|Wert|
 670:n
 # UK 271:Next loop in FOR statement: use only in custom functions
 # UK 671:next
 271:Nächste Schleife in der FOR-Anweisung: Nur in Benutzerdefinierte Funktion verwenden
 w671:next
-# UK 272:Logical NOT of |Boolean value|
+# UK 272:Boolean (logical) NOT of |Boolean value|
 # UK 672:not
-272:Logicshes NICHT von |Boolescher wert|
+272:Boolesches NICHT von |Boolescher wert|
 672:nicht
 # UK 273:Current date and time
 # UK 673:now
@@ -928,18 +931,18 @@ w671:next
 # UK 674:nper
 274:OpenDocument/Excel-compatible TERM given interest |rate:Rate of interest|, |1payment:Payment per term| and |2present value|
 w674:nper
-# UK 275:Net present value given interest |rate:Rate of interest| and range of |1cashflows:Array of cashflows (or range of cells)|
+# UK 275:Net present value given interest |rate:Rate of interest| and range of |1cashflows:Range of cells (or array) of cashflows|
 # UK 675:npv
-275:Nettobarwert eines Arrays von |1Cashflows:Array oder Zellbereich von Cashflows| mit einem unverändlichen |Zinsatz|
+275:Nettobarwert eines Arrays von |1Cashflows:Zellbereich oder Array von Cashflows| mit einem unverändlichen |Zinsatz|
 675:nbw
 #
 # UK 276:Rounds |number:Real number| up to the next odd integer, away from zero
 # UK 676:odd
 276:Rundet |Zahl:Reelle Zahl| bis zur nächsten ungerade ganzen Zahl, weg von Null
 676:ungerade
-# UK 277:Logical OR of |list:List of Boolean values (or array, or range of cells)| of Boolean values
+# UK 277:Boolean (logical) OR of |list:List of Boolean values (or range of cells, or array)| of Boolean values
 # UK 677:or
-277:Logisches ODER der |Liste:Liste der Booleschen Werte (oder des Arrays oder des Zellbereichs)| der Booleschen Werte
+277:Boolesches ODER der |Liste:Liste der Booleschen Werte (oder des Zellbereichs oder des Arrays)| der Booleschen Werte
 677:oder
 #
 # UK 278:Current page number or page containing |cell reference:Cell reference|
@@ -950,9 +953,9 @@ w674:nper
 # UK 679:pages
 279:Anzahl der Seiten im Arbeitsblatt in beide |Richtungen:0 gibt Seiten über das Dokument hinweg, 1 gibt Seiten nach unten|
 679:seiten
-# UK 280:Returns the |1percentile:Real number|-th value in the given |array|
+# UK 280:Returns the |1percentile:Real number|-th value in the given |data|
 # UK 680:percentile.inc
-280:Returns the |1percentile:Reele Zahl|-th value in the given |Array|
+280:Returns the |1percentile:Reele Zahl|-th value in der |Datengruppe|
 680:quantil.inkl
 # UK 281:Number of permutations of |n:Number of unlike things - positive integer| unlike things taken |1k:Number of things to be taken at a time - positive integer, k < n| at a time
 # UK 681:permut
@@ -974,11 +977,11 @@ w674:nper
 # UK 685:power
 285:|number1:Reele Zahl| zur Potenz der |1number2:Reele Zahl| erhoben
 685:potenz
-# UK 286:Product of numbers in |list:List of numbers (or array, or range of cells)|
+# UK 286:Product of numbers in |list:List of numbers (or range of cells, or array)|
 # UK 686:product
-286:Product of numbers in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+286:Product of numbers in |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 686:produkt
-# UK 287:Convert |string:Text string or reference to text cell| to Initial Capitals
+# UK 287:Convert |string:Text string, or reference to text cell| to Initial Capitals
 # UK 687:proper
 287:Wandelt alle Wortanfänge einer |Text:Text oder Verweis auf Textzelle| in Großbuchstaben um
 687:gross2
@@ -987,16 +990,16 @@ w674:nper
 288:Der Barwert einer Reihe von gleichen |Zahlung|en, distkontiert zu einem regelmäßigen |1Zinssatz| and für eine |2Zeit|periode
 688:bw
 #
-# UK 289:Returns the |1quartile:Integer, where 0=0%(MIN), 1=25%, 2=50%(MEDIAN), 3=75%, 4=100%(MAX)|-th value in the given |array|
+# UK 289:Returns the |1quartile:Integer, where 0=0%(MIN), 1=25%, 2=50%(MEDIAN), 3=75%, 4=100%(MAX)|-th value in the given |data|
 # UK 689:quartile.inc
-289:Returns the |1quartile:Ganzzahl, where 0=0%(MIN), 1=25%, 2=50%(MEDIAN), 3=75%, 4=100%(MAX)|-th value in the given |Array|
+289:Returns the |1quartile:Ganzzahl, where 0=0%(MIN), 1=25%, 2=50%(MEDIAN), 3=75%, 4=100%(MAX)|-th value in der |Datengruppe|
 689:quartile.inkl
 #
 # UK 290:Convert |angle:Angle in degrees| from degrees to radians
 # UK w690:rad
 290:Wandelt den |Winkel:Winkel in Grad| von Grad in Bogenmaß um
 690:bogenmass
-# UK 291:Random number from 0 to 1 with optional |seed:Real number to be used as seed|
+# UK 291:Random number from 0 to 1 with optional |{seed}:Real number to be used as seed|
 # UK w691:rand
 291:Liefert eine Zufallszahrl im Bereich 0 bis 1. |{seed}:Reele Zahl to be used as seed| is optional.
 691:zufallszahl
@@ -1004,13 +1007,13 @@ w674:nper
 # UK 692:randbetween
 292:Zufällige Ganzzahl im Intervall |Kleinste_Zahl:Ganzzahl|..|Größte_Zahl:Ganzzahl|
 692:zufallsbereich
-# UK 293:Gives ranking corresponding to |array:Array of values to be ranked (or range of cells)|
+# UK 293:Gives ranking corresponding to |data:Range of cells (or array) of values to be ranked|
 # UK w693:rank
-293:Ermittelt Rangfolge entsprechend |Array:Array oder Zellbereich, für den Rangfolge ermittelt werden soll|
+293:Ermittelt Rangfolge entsprechend |Datengruppe:Zellbereich oder Array, für den Rangfolge ermittelt werden soll|
 w693:rank
-# UK 294:Returns the rank of |number| in the given |1array|
+# UK 294:Returns the rank of |number| in the given |1data|
 # UK 694:rank.eq
-294:Returns the rank of |Zahl| in the given |1Array|
+294:Returns the rank of |Zahl| in der |1Datengruppe|
 w694:rank.eq
 # UK 295:Interest rate given |future value|, |1present value| and |2term:Number of periods|
 # UK w695:rate
@@ -1024,7 +1027,7 @@ w696:repeat
 # UK w697:replace
 297:Text erstetzen am |1Position:Position in Text s_1| mit |2Länge:Länge des zu ersetzenden Textes| in |Text 1:Text wird ersetzt| durch |3Text 2:Text, der eingefügt wird|
 697:ersetzen
-# UK 298:Repeat |string:Text string or reference to text cell| |1n:Number of times to repeat - positive integer| times
+# UK 298:Repeat |string:Text string, or reference to text cell| |1n:Number of times to repeat - positive integer| times
 # UK w698:rept
 298:Wiederhole |String:Textzeichenfolge oder Verweis auf Textzelle| $1n:Ganzzahl$| mal
 698:wiederholen
@@ -1032,11 +1035,11 @@ w696:repeat
 # UK w699:return
 299:RETURN |wert:Beliebiger Wert oder Formel| als Ergebnis einer Benutzerdefinierte Funktion
 w699:return
-# UK 300:Reverse order of |string:Text string or reference to text cell|
+# UK 300:Reverse order of |string:Text string, or reference to text cell|
 # UK w700:reverse
 300:Umgekehrte Reihenfolge von |String:Textzeichenfolge oder Verweis auf Textzelle|
 700:umkehren
-# UK 301:Right part of |string:Text string or reference to text cell| to |1n:Positive integer| characters
+# UK 301:Right part of |string:Text string, or reference to text cell| to |1n:Positive integer| characters
 # UK w701:right
 301:Rechter Teil von |String:Textzeichenfolge oder Verweis auf Textzelle| bis |1n:Positiv Ganzzahl| Zeichen
 701:rechts
@@ -1056,9 +1059,9 @@ w699:return
 # UK w705:row
 305:Zeilennummer der |{Zellenverweis}| (oder der Zelle, die die Formel enthält)
 705:zeile
-# UK 306:Number of rows in worksheet or |{array}:Array (or range of cells)|
+# UK 306:Number of rows in worksheet or |{array}:Range of cells (or array)|
 # UK w706:rows
-306:Anzahl der Zeilen im Arbeitsblatt oder |{Array}:Array oder Zellbereich|
+306:Anzahl der Zeilen im Arbeitsblatt oder |{Array}:Zellbereich oder Array|
 706:zeilen
 #
 # UK 307:Secant of |number:Real number|
@@ -1093,41 +1096,41 @@ w699:return
 # UK w714:sinh
 314:Sinus hyperbolicus der |Zahl:Reele Zahl|
 714:sinhyp
-# UK 315:Skewness of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 315:Skewness of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK 715:skew
-315:Berechnet die Schiefe einer Verteilung, die durch die |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| der Zahlen gegeben ist
+315:Berechnet die Schiefe einer Verteilung, die durch die |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)| der Zahlen gegeben ist
 715:schiefe
 # UK 316:Straight line depreciation given |cost:Cost at start|, |1salvage:Salvage value at end| and |2lifetime:Lifetime as number of periods|
 # UK w716:sln
 316:Geradlinige Abwertung bei |Kosten:Kosten am Anfang|, |1Salvagewert:Salvagewert am Ende$| und |2Laufzeit:Anzahl der Perioden|
 716:lia
-# UK 317:Returns the |1k:Integer|-th smallest item in |array|
+# UK 317:Returns the |1k:Integer|-th smallest item in |data|
 # UK w717:small
-317:Liefert das |1k:Ganzzahl|-te kleinste Element im |Array|
+317:Liefert das |1k:Ganzzahl|-te kleinste Element in der |Datengruppe|
 717:kkleinste
-# UK 318:Sort |array:Array of data to be sorted (or range of cells)| in ascending order, with optional |1{column number:1 if omitted}|
+# UK 318:Sort |data:Range of cells (or array) of data to be sorted| in ascending order, with optional |1{column number:1 if omitted}|
 # UK w718:sort
-318:Sortiere |Array:Array oder Zellbereich zu sortieren| in aufsteigender Folge, mit optionaler |1{Spaltenzahl:1, wenn weggelassen}|
+318:Sortiere |Datengruppe:Zellbereich oder Array zu sortieren| in aufsteigender Folge, mit optionaler |1{Spaltenzahl:1, wenn weggelassen}|
 718:sort
-# UK 319:Spearman's rank correlation coefficient for |Array 1:First array, can be output from rank() | and |1Array 2:Second array, can be output from rank()|
+# UK 319:Spearman's rank correlation coefficient for |data 1:First array, can be output from RANK() | and |1data 2:Second array, can be output from RANK()|
 # UK w719:spearman
-319:Rangkorrelationskoeffizient nach Spearman für |Array 1:Erstes Array| und |1Array 2:Zweites Array|
+319:Rangkorrelationskoeffizient nach Spearman für |Array 1:Erstes Array, kann von der RANK-Funktion ausgegeben werden| und |1Array 2:Zweites Array, kann von der RANK-Funktion ausgegeben werden|
 719:spearman
 # UK 320:Square root of |number:Real number|. Number must be >= 0
 # UK w720:sqr
 320:Quadratwurzel der |Zahl:Reele Zahl, >= 0|
 720:wurzel
-# UK 321:Standardizes the value |x:Number| to the distribution with given |1mean:Number| and |2standard deviation:Number|
+# UK 321:Standardizes the value |x:Real number| to the distribution with given |1mean:Real number| and |2standard deviation:Real number > 0|
 # UK 721:standardize
-321:Standardisiert den Wert |x:Zahl| auf die Verteilung mit dem angegebenen |1Mittelwert:Zahl| und der angegebenen |2Standardabweichung:Zahl|
+321:Standardisiert den Wert |x:Reele Zahl| auf die Verteilung mit dem angegebenen |1Mittelwert:Reele Zahl| und der angegebenen |2Standardabweichung:Reele Zahl > 0|
 721:standardisierung
-# UK 322:Standard deviation of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 322:Standard deviation of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK w722:std
-322:Standardabweichung der Zahlen in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+322:Standardabweichung der Zahlen in |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 722:stabw
-# UK 323:Population standard deviation of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 323:Population standard deviation of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK w723:stdp
-323:Populationsstandardabweichung der Zahlen in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+323:Populationsstandardabweichung der Zahlen in |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 723:stabwn
 # UK 324:Converts |number:Number to be converted| to string with optional |1{digits}:Integer| decimal places
 # UK w724:string
@@ -1137,13 +1140,13 @@ w724:string
 # UK w725:substitute
 325:Substitutes |1old text:Text| with |2new text:Text| in the |string:Text|
 725:wechseln
-# UK 326:Sum of the values in |list:List of numbers (or array, or range of cells)|
+# UK 326:Sum of the values in |list:List of numbers (or range of cells, or array)|
 # UK w726:sum
-326:Summe von |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+326:Summe von |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 726:summe
-# UK 327:Sum of the squares of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 327:Sum of the squares of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK w727:sumsq
-327:Summe der Quadrate der Zahlen in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+327:Summe der Quadrate der Zahlen in |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 727:quadratesumme
 # UK 328:Sum-of-years' depreciation during the given |3period:Period of calculation| with |cost:Cost at start|, |1salvage:Salvage value at end|, |2lifetime:Number of periods|
 # UK w728:syd
@@ -1152,7 +1155,7 @@ w724:string
 #
 # UK 329:|value|
 # UK w729:t
-329:|value|
+329:|Wert|
 729:t
 # UK 330:Tangent of |angle:Angle in radians|
 # UK w730:tan
@@ -1182,21 +1185,21 @@ w724:string
 # UK w736:today
 336:Gibt das aktuelle Datum aus
 736:heute
-# UK 337:Transpose |matrix:Array of data to be transposed (or range of cells)|
+# UK 337:Transpose |matrix:Range of cells (or array) of data to be transposed|
 # UK w737:transpose
-337:Transponiere |matrix:Array oder Zellbereich zu transponierender|
+337:Transponiere |matrix:Zellbereich oder Array zu transponierender|
 737:mtrans
 # UK 338:Predict y-values given |linest:Output from linest function| data and |1x-data:Value or array to generate y-values from|
 # UK w738:trend
 338:Voraussage y-Werte bei |linest:Output von LINEST Funktion| Daten und |1x-Daten:Wert oder Array, der y-Werte aus Daten generiert|
 w738:trend
-# UK 339:Trims leading, trailing and multiple spaces from |string:Text string or reference to text cell|
+# UK 339:Trims leading, trailing and multiple spaces from |string:Text string, or reference to text cell|
 # UK w739:trim
 339:Entfernt vorausgehende, nachfolgende und mehrfache Leerzeichen aus |Text:Text oder Verweis auf Textzelle|
 739:glätten
-# UK 340:Arithmetic mean value of the interior of the data in |array:Array of values (or range of cells)| when the lowest and highest |1percent:Real number, 0 <= percent <= 0.5| values are excluded
+# UK 340:Arithmetic mean value of the interior of the data in |data:Range of cells (or array) of values| when the lowest and highest |1percent:Real number, 0 <= percent <= 0.5| values are excluded
 # UK w740:trimmean
-340:Liefert den Mittelwert einer |Datengruppe:Array oder Zellbereich|, wenn die niedrigsten und höchsten |1Prozent:Reele Zahl, 0 <= Prozent <= 0.5| Werte ausgeschlossen sind
+340:Liefert den Mittelwert einer |Datengruppe:Zellbereich oder Array|, wenn die niedrigsten und höchsten |1Prozent:Reele Zahl, 0 <= Prozent <= 0.5| Werte ausgeschlossen sind
 740:gestutztmittel
 # UK 341:Boolean value TRUE (one)
 # UK w741:true
@@ -1215,30 +1218,30 @@ w738:trend
 # UK w744:until
 344:REPEATŒUNTIL(|Bedingung:Ausdruck, der einen booleschen Wert zurückgibt|) in Benutzerdefinierte Funktion
 w744:until
-# UK 345:Converts |string:Text string or reference to text cell| to upper-case
+# UK 345:Converts |string:Text string, or reference to text cell| to upper-case
 # UK w745:upper
 345:Konvertiert |Text:Textzeichenfolge oder Verweis auf Textzelle| in Großbuchstaben
 745:gross
 #
-# UK 346:Converts |string:Text string or reference to text cell| to number
+# UK 346:Converts |string:Text string, or reference to text cell| to number
 # UK w746:value
 346:Konvertiert |Text:Textzeichenfolge oder Verweis auf Textzelle| in eine Zahl
 746:wert
-# UK 347:Variance of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 347:Variance of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK w747:var
-347:Varianz der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+347:Varianz der Zahlen in der |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 747:varianz
-# UK 348:Population variance of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 348:Population variance of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK w748:varp
-348:Populationsvarianz der Zahlen in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+348:Populationsvarianz der Zahlen in der |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 748:varianzen
 # UK 349:Version of Fireworkz
 # UK w749:version
 349:Version von Fireworkz
 749:version
-# UK 350:Look for |key:Key value| in vertical |1target:Vertically-arranged array (or range of cells e.g. B1:D20)| data set (sorted in ascending order) and return corresponding element from |2column index:Integer|-th column in target array
+# UK 350:Look for |key:Key value| in vertical |lookup data:Vertically-arranged range of cells (e.g. B1:D20, or array)| data set (sorted in ascending order) and return corresponding element from |2column index:Integer|-th column in data set
 # UK w750:vlookup
-350:Suchen |Schlüssel| in |1Zielarray:Array oder Zellbereich| (Vertikal angeordneter Datensatz zB B1:J3, in aufsteigender Reihenfolge sortiert) und liefert das entsprechende Element aus |Spalte Index:Ganzzahl|-te Spalte im Zielarray
+350:Suchen |Schlüssel| in |1Zielarray:Zellbereich oder Array| (Vertikal angeordneter Datensatz zB B1:J3, in aufsteigender Reihenfolge sortiert) und liefert das entsprechende Element aus |Spalte Index:Ganzzahl|-te Spalte im Zielarray
 750:sverweis
 #
 # UK 351:Weekday of |date:Date in form dd.mm.yyyy|. Sunday is 1, 2=MondayŒ, controlled by optional |1{mode}|
@@ -1265,17 +1268,17 @@ w753:while
 # UK 755:sumproduct
 355:Sum of the product of each of the corresponding values from all the |Array 1| .. |1Array n| parameters
 755:summenprodukt
-# UK 356:Sum of the difference of the squares of corresponding values from |x-data:Array| and |1y-data:Array|
+# UK 356:Sum of the difference of the squares of corresponding values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 # UK 756:sum_x2my2
-356:Sum of the difference of the squares of corresponding values from |x-Daten:Array| and |1y-Daten:Array|
+356:Sum of the difference of the squares of corresponding values from |x-Daten:Zellbereich oder Array von x-Werten| and |1y-Daten:Zellbereich oder Array von y-Werten|
 756:summex2my2
-# UK 357:Sum of the sum of the squares of the corresponding values from |x-data:Array| and |1y-data:Array|
+# UK 357:Sum of the sum of the squares of the corresponding values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 # UK 757:sum_x2py2
-357:Sum of the sum of the squares of the corresponding values from |x-Daten:Array| and |1y-Daten:Array|
+357:Sum of the sum of the squares of the corresponding values from |x-Daten:Zellbereich oder Array von x-Werten| and |1y-Daten:Zellbereich oder Array von y-Werten|
 757:summex2py2
-# UK 358:Sum of the squares of the difference of the corresponding values from |x-data:Array| and |1y-data:Array|
+# UK 358:Sum of the squares of the difference of the corresponding values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 # UK 758:sum_xmy2
-358:Sum of the squares of the difference of the corresponding values from |x-Daten:Array| and |1y-Daten:Array|
+358:Sum of the squares of the difference of the corresponding values from |x-Daten:Zellbereich oder Array von x-Werten| and |1y-Daten:Zellbereich oder Array von y-Werten|
 758:summexmy2
 # UK 359:OpenDocument/Excel-compatible number representing the type of |parameter|
 # UK 759:odf.type
@@ -1285,75 +1288,75 @@ w753:while
 # UK 760:countblank
 360:Count of the number of blank cells (or empty text strings) in |range|
 760:anzahlleerezellen
-# UK 361:Population covariance of the values from |x-data:Array| and |1y-data:Array|
+# UK 361:Population covariance of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 # UK 761:covariance.p
-361:Populationskovarianz der Werte aus |x-Daten:Array| und |1y-Daten:Array|
+361:Populationskovarianz der Werte aus |x-Daten:Zellbereich oder Array von x-Werten| und |1y-Daten:Zellbereich oder Array von y-Werten|
 761:kovarianz.p
-# UK 362:Pearson-r correlation coefficient of the values from |x-data:Array| and |1y-data:Array|
+# UK 362:Pearson-r correlation coefficient of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 # UK 762:pearson
-362:Pearsonschen Produktmoment-Korrelationskoeffizient der Werte aus |x-Daten:Array| und |1y-Daten:Array|
+362:Pearsonschen Produktmoment-Korrelationskoeffizient der Werte aus |x-Daten:Zellbereich oder Array von x-Werten| und |1y-Daten:Zellbereich oder Array von y-Werten|
 762:pearson
-# UK 363:Square of Pearson-r of the values from |x-data:Array| and |1y-data:Array|
+# UK 363:Square of Pearson-r of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 # UK 763:rsq
-363:Quadrat des Pearsonschen Produktmoment-Korrelationskoeffizient der Werte aus |x-Daten:Array| und |1y-Daten:Array|
+363:Quadrat des Pearsonschen Produktmoment-Korrelationskoeffizient der Werte aus |x-Daten:Zellbereich oder Array von x-Werten| und |1y-Daten:Zellbereich oder Array von y-Werten|
 763:bestimmtheitsmass
-# UK 364:Slope of the linear regression line to |y-array:Array of y-values (or range of cells)| and |1x-array:Array of x-values (or range of cells)|
+# UK 364:Slope of the linear regression line to |y-data:Range of cells (or array) of y-values| and |1x-data:Range of cells (or array) of x-values|
 # UK 764:slope
-364:Liefert die Steigung der Regressionsgeraden von |y-Daten:Array oder Zellbereich von y-Daten| und |1x-Daten:Array oder Zellbereich von x-Daten|
+364:Liefert die Steigung der Regressionsgeraden von |y-Daten:Zellbereich oder Array von y-Daten| und |1x-Daten:Zellbereich oder Array von x-Daten|
 764:steigung
-# UK 365:Intercept of the linear regression line to |y-array:Array of y-values (or range of cells)| and |1x-array:Array of x-values (or range of cells)|
+# UK 365:Intercept of the linear regression line to |y-data:Range of cells (or array) of y-values| and |1x-data:Range of cells (or array) of x-values|
 # UK 765:intercept
-365:Liefert den Wert, bei dem eine lineare Regressionslinie die y-Achse schneidet, unter Verwendung bekannter |y-Daten:Array oder Zellbereich von y-Daten| und |1x-Daten:Array oder Zellbereich von x-Daten|
+365:Liefert den Wert, bei dem eine lineare Regressionslinie die y-Achse schneidet, unter Verwendung bekannter |y-Daten:Zellbereich oder Array von y-Daten| und |1x-Daten:Zellbereich oder Array von x-Daten|
 765:achsenabschnitt
-# UK 366:Forecast y-value corresponding to the given |x-value:Number| of the linear regression line to |1y-array:Array of y-values (or range of cells)| and |2x-array:Array of x-values (or range of cells)|
+# UK 366:Forecast y-value corresponding to the given |x-value:Number| of the linear regression line to |1y-data:Range of cells (or array) of y-values| and |2x-data:Range of cells (or array) of x-values|
 # UK 766:forecast
-366:Forecast y-value corresponding to the given |x-value:Zahl| of the linear regression line to |1y-Daten:Array oder Zellbereich von y-Daten| and |2x-Daten:Array oder Zellbereich von x-Daten|
+366:Forecast y-value corresponding to the given |x-value:Zahl| of the linear regression line to |1y-Daten:Zellbereich oder Array von y-Daten| and |2x-Daten:Zellbereich oder Array von x-Daten|
 w766:forecast
-# UK 367:Standard error of the predicted y-values for |y-array:Array of y-values (or range of cells)| and |1x-array:Array of x-values (or range of cells)|
+# UK 367:Standard error of the predicted y-values for |y-data:Range of cells (or array) of y-values| and |1x-data:Range of cells (or array) of x-values|
 # UK 767:steyx
-367:Liefert den Standardfehler der geschätzten y-Werte fur alle |y-Daten:Array oder Zellbereich von y-Daten| und |1x-Daten:Array oder Zellbereich von x-Daten| der Regression
+367:Liefert den Standardfehler der geschätzten y-Werte fur alle |y-Daten:Zellbereich oder Array von y-Daten| und |1x-Daten:Zellbereich oder Array von x-Daten| der Regression
 767:stfehleryx
-# UK 368:Population skewness of the numbers in |list:List of numbers (or array, or range of cells)|
+# UK 368:Population skewness of the numbers in |list:List of numbers (or range of cells, or array)|
 # UK 768:skew.p
-368:Population skewness of the numbers in |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)|
+368:Population skewness of the numbers in |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)|
 768:schiefe.p
-# UK 369:|1n:Number|-th order Bessel function of the first kind. Jn(|x:Number|)
+# UK 369:|1n:Positive integer|-th order Bessel function of the first kind. Jn(|x:Real number|)
 # UK 769:besselj
-369:Besselfunktion der ersten Gattung. J|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Zahl|)
+369:Besselfunktion der ersten Gattung. J|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Reele Zahl|)
 769:besselj
-# UK 370:|1n:Number|-th order Bessel function of the second kind. Yn(|x:Number|)
+# UK 370:|1n:Positive integer|-th order Bessel function of the second kind. Yn(|x:Real number|)
 # UK 770:bessely
-370:Besselfunktion der zweiten Gattung. Y|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Zahl|)
+370:Besselfunktion der zweiten Gattung. Y|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Reele Zahl|)
 770:bessely
-# UK 371:Average of all the values in |list:List of values (or array, or range of cells)|
+# UK 371:Average of all the values in |list:List of values (or range of cells, or array)|
 # UK 771:averagea
-371:Durchschnitt aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+371:Durchschnitt aller Werte in der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 771:mittelwerta
-# UK 372:Minimum of all the values in |list:List of values (or array, or range of cells)|
+# UK 372:Minimum of all the values in |list:List of values (or range of cells, or array)|
 # UK 772:mina
-372:Minimum aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+372:Minimum aller Werte in der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 772:mina
-# UK 373:Maximum of all the values in |list:List of values (or array, or range of cells)|
+# UK 373:Maximum of all the values in |list:List of values (or range of cells, or array)|
 # UK 773:maxa
-373:Maximum aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+373:Maximum aller Werte in der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 773:maxa
-# UK 374:Standard deviation of all the values in |list:List of values (or array, or range of cells)|
+# UK 374:Standard deviation of all the values in |list:List of values (or range of cells, or array)|
 # UK 774:stdeva
-374:Standardabweichung aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+374:Standardabweichung aller Werte in der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 774:stabwa
-# UK 375:Population standard deviation of all the values in |list:List of values (or array, or range of cells)|
+# UK 375:Population standard deviation of all the values in |list:List of values (or range of cells, or array)|
 # UK 775:stdevpa
-375:Populationsstandardabweichung aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+375:Populationsstandardabweichung aller Werte in der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 775:stabwna
-# UK 376:Variance of all the values in |list:List of values (or array, or range of cells)|
+# UK 376:Variance of all the values in |list:List of values (or range of cells, or array)|
 # UK 776:vara
-376:Varianz aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+376:Varianz aller Werte in der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 776:varianza
-# UK 377:Population variance of all the values in |list:List of values (or array, or range of cells)|
+# UK 377:Population variance of all the values in |list:List of values (or range of cells, or array)|
 # UK 777:varpa
-377:Populationsvarianz aller Werte in der |Werteliste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+377:Populationsvarianz aller Werte in der |Werteliste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 777:varianzena
-# UK 378:Percentage rank (in 0.0..1.0 inclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places
+# UK 378:Percentage rank (in 0.0..1.0 inclusive) of the |1value:Number| in the |data set:Range of cells (or array)| to the optional |2{digits}:Number| decimal places
 # UK 778:percentrank.inc
 378:Percentage rank (in 0.0..1.0 inclusive) of the |1value:Zahl| in the |data set:Array| to the optional |2{Dezimalstellen}:Zahl|
 778:quantilsrang.inkl
@@ -1361,23 +1364,23 @@ w766:forecast
 # UK 779:erf
 379:Gauß'schen Fehlerfunktion integrated between zero and |lower limit:Zahl|, or between lower limit and the optional |1{upper limit}:Zahl|
 779:gaussfehler
-# UK 380:Error function integrated between |x:Number| and +infinity. This is the complementary error function
+# UK 380:Error function integrated between |x:Real number| and +infinity. This is the complementary error function
 # UK 780:erfc
-380:Gauß'schen Fehlerfunktion integrated between |x:Zahl| and +infinity. This is the complementary error function
+380:Gauß'schen Fehlerfunktion integrated between |x:Reele Zahl| and +infinity. This is the complementary error function
 780:gaussfkompl
-# UK 381:Sample covariance of the values from |x-data:Array| and |1y-data:Array|
+# UK 381:Sample covariance of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 # UK 781:covariance.s
-381:Kovarianz der Werte aus |x-Daten:Array| und |1y-Daten:Array|
+381:Kovarianz der Werte aus |x-Daten:Zellbereich oder Array von x-Werten| und |1y-Daten:Zellbereich oder Array von y-Werten|
 781:kovarianz.s
-# UK 382:Logical Exclusive-OR of |list:List of Boolean values (or array, or range of cells)| of Boolean values
+# UK 382:Boolean (logical) Exclusive-OR of |list:List of Boolean values (or range of cells, or array)| of Boolean values
 # UK 782:xor
-382:Logisches Exklusiv-ODER der |Liste:Liste der Booleschen Werte (oder des Arrays oder des Zellbereichs)| der Booleschen Werte
+382:Boolesches Exklusiv-ODER der |Liste:Liste der Booleschen Werte (oder des Zellbereichs oder des Arrays)| der Booleschen Werte
 782:xoder
 # UK 383:Create complex number string from |real part:Number| and |1imaginary part:Number| with optional |2{suffix}:Text string|
 # UK 783:c_complex
 383:Erstellt eine komplexe Zahl aus |Realteil:Zahl| ind |1Imaginärteil:Zahl| mit optionalen |2{Suffix}:Text|
 783:c_komplexe
-# UK 384:Create cell reference from |row:Number| number and |1column:Number| number
+# UK 384:Create cell reference from |row:Positive integer| number and |1column:Positive integer| number
 # UK 784:address
 384:Create cell reference from |row:Zahl| number and |1column:Zahl| number
 784:adresse
@@ -1389,13 +1392,13 @@ w766:forecast
 # UK 786:fvschedule
 386:Calculates the future value of |principal:Zahl| given the series of compounded interest |1rates:Array|
 786:zw2
-# UK 387:Truncates the result of |numerator:Number| divided by |1denominator:Number| to an integer, always towards zero
+# UK 387:Truncates the result of |numerator:Real number| divided by |1denominator:Real number| to an integer, always towards zero
 # UK 787:quotient
-387:Liefert das abgeschnittene Ergebnis des |Zählers:Zahl| geteilt durch den |1Nenner:Zahl| zu einer ganzen Zahl, gegen Null
+387:Liefert das abgeschnittene Ergebnis des |Zählers:Reele Zahl| geteilt durch den |1Nenner:Reele Zahl| zu einer ganzen Zahl, gegen Null
 787:quotient
-# UK 388:Value of the PDF or CDF for the exponential distribution for |x:Number| and |1lambda:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 388:Value of the CDF or PDF for the exponential distribution for |x:Real number| and |1lambda:Real number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 # UK 788:expon.dist
-388:Wert des VF oder WDF für die Exponentialverteilung für |x:Zahl| und |1Lambda:Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+388:Wert der Exponentialverteilung (oder Wahrscheinlichkeitsfunktion) für |x:Reele Zahl| und |1Lambda:Reele Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt Verteilungsfunktion, sonst Wahrscheinlichkeitsfunktion
 788:expon.vert
 # UK 389:Number of combinations of |1m:Positive integer| objects out of |n:Positive integer| possible ones with repetitions allowed
 # UK 789:combina
@@ -1405,97 +1408,97 @@ w766:forecast
 # UK 790:factdouble
 390:Double factorial of |n:Positive Ganzzahl|
 790:zweifakultät
-# UK 391:Sum of |3coefficients:Array| times |x:Number| to the power of |1n:Number|, n + |2m:Number| Œ
+# UK 391:Sum of |3coefficients:Range of cells (or array)| times |x:Real number| to the power of |1n:Number|, n + |2m:Number| Œ
 # UK 791:seriessum
-391:Summe von |3Koeffizient(en):Array| x |x:Zahl| zur Potenz von |1n:Zahl|, n + |2m:Zahl| Œ
+391:Summe von |3Koeffizient(en):Zellbereich oder Array| x |x:Reele Zahl| zur Potenz von |1n:Zahl|, n + |2m:Zahl| Œ
 791:potenzreihe
-# UK 392:Value of the PMF or CDF for the hypergeometric distribution for |sample_s:Number|uccesses, |1sample_n:Number|umber, |2pop_s:Number|uccesses, |3pop_n:Number|umber. |4{cumulative}:Boolean|=TRUE selects CDF, else PMF (default)
+# UK 392:Value of the CDF or PMF for the hypergeometric distribution for |sample_s:Number|uccesses, |1sample_n:Number|umber, |2pop_s:Number|uccesses, |3pop_n:Number|umber. |4{cumulative}:Boolean|=TRUE selects CDF, else PMF (default)
 # UK 792:hypgeom.dist
 392:Wert der hypergeometrische Verteilung (oder Wahrscheinlichkeitsfunktion) für |sample_s:Zahl|uccesses, |1sample_n:Zahl|umber, |2pop_s:Zahl|uccesses, |3pop_n:Zahl|umber. |4{Kumuliert}:Boolescher Wert|=WAHR wählt Verteilungsfunktion, sonst Wahrscheinlichkeitsfunktion (default)
 792:hypgeom.vert
-# UK 393:Value of the PDF or CDF for the Weibull distribution for |x:Number|, |1shape:Number|, and |2scale:Number|. |3cumulative:Boolean|=TRUE selects CDF, else PDF
+# UK 393:Value of the CDF or PDF for the Weibull distribution for |x:Real number|, |1shape:Real number|, and |2scale:Real number|. |3cumulative:Boolean|=TRUE selects CDF, else PDF
 # UK 793:weibull.dist
-393:Wert der Weibull-Verteilung (oder WDF) für |x:Zahl|, |1Form:Zahl|, and |2Maßstab:Zahl|. |3Kumuliert:Boolescher Wert|=WAHR wählt VF, sonst WDF
+393:Wert der Weibull-Verteilung (oder WDF) für |x:Reele Zahl|, |1Form:Zahl|, and |2Maßstab:Reele Zahl|. |3Kumuliert:Boolescher Wert|=WAHR wählt Verteilungsfunktion, sonst WDF
 793:weibull.vert
-# UK 394:Value of the PDF or CDF for the Poisson distribution for |x:Number| and |1lambda:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 394:Value of the CDF or PMF for the Poisson distribution for |x:Real number| and |1lambda:Real number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PMF
 # UK 794:poisson.dist
-394:Wert der Poisson-Verteilung (oder WDF) für |x:Zahl| und |1lambda:Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+394:Wert der Poisson-Verteilung (oder Wahrscheinlichkeitsfunktion) für |x:Reele Zahl| und |1lambda:Reele Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt Verteilungsfunktion, sonst Wahrscheinlichkeitsfunktion
 794:poisson.vert
-# UK 395:Value of the PMF or CDF for the binomial distribution for number of |successes:Integer| in |1trials:Integer| and the |2probability:Number| of success for each trial. |3cumulative:Boolean|=TRUE selects CDF, else PMF
+# UK 395:Value of the CDF or PMF for the binomial distribution for number of |successes:Integer| in |1trials:Integer| and the |2probability:Real number| of success for each trial. |3cumulative:Boolean|=TRUE selects CDF, else PMF
 # UK 795:binom.dist
 395:Wert der Wahrscheinlichkeitsfunktion der Binomialverteilung (oder Verteilungsfunktion) für |Anzahl der Erfolge:Ganzzahl| in |1Versuchen:Ganzzahl| und die |2Erfolgswahrscheinlichkeit:Zahl| für jeden Versuch. |3Kumuliert:Boolescher Wert|=WAHR wählt Verteilungsfunktion, sonst Wahrscheinlichkeitsfunktion
 795:binom.vert
-# UK 396:Probability of a trial result using binomial distribution. Number of |trials:Integer|, the |1probability:Number| of success for each trial, and number of successful trials |2S:Integer| and |3{S2}:Integer|
+# UK 396:Probability of a trial result using binomial distribution. Number of |trials:Integer|, the |1probability:Real number| of success for each trial, and number of successful trials |2S:Integer| and |3{S2}:Integer|
 # UK 796:binom.dist.range
 396:Wahrscheinlichkeit eines Versuchsergebnisses unter Verwendung der Binomialverteilung. |Anzahl der Versuche:Ganzzahl|, die |1Erfolgswahrscheinlichkeit:Zahl| für jeden Versuch, und die Anzahl erfolgreicher Versuche |2S:Ganzzahl| und |3{S2}:Ganzzahl|
 796:binom.vert.bereich
-# UK 397:Fisher transformation at |x:Number|
+# UK 397:Fisher transformation at |x:Real number|
 # UK 797:fisher
-397:Fisher-Transformation bei |x:Zahl|
+397:Fisher-Transformation bei |x:Reele Zahl|
 797:fisher
-# UK 398:Inverse Fisher transformation for |y:Number|
+# UK 398:Inverse Fisher transformation for |y:Real number|
 # UK 798:fisherinv
-398:Inverse Fisher-Transformation bei |y:Zahl|
+398:Inverse Fisher-Transformation bei |y:Reele Zahl|
 798:fisherinv
-# UK 399:Multinomial of all the values in |list:List of values (or array, or range of cells)|
+# UK 399:Multinomial of all the values in |list:List of values (or range of cells, or array)|
 # UK 799:multinomial
-399:Multinomial of all the values in |Liste:Liste der Werten (oder des Arrays oder des Zellbereichs)|
+399:Multinomial of all the values in |Liste:Liste der Werten (oder des Zellbereichs oder des Arrays)|
 799:polynomial
-# UK 400:|1n:Number|-th order modified Bessel function of the first kind. In(|x:Number|)
+# UK 400:|1n:Positive integer|-th order modified Bessel function of the first kind. In(|x:Real number|)
 # UK 800:besseli
-400:Modifizierte Besselfunktion der ersten Gattung. I|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Zahl|)
+400:Modifizierte Besselfunktion der ersten Gattung. I|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Reele Zahl|)
 800:besseli
-# UK 401:|1n:Number|-th order modified Bessel function of the second kind. Kn(|x:Number|)
+# UK 401:|1n:Positive integer|-th order modified Bessel function of the second kind. Kn(|x:Real number|)
 # UK 801:besselk
-401:Modifizierte Besselfunktion der zweiten Gattung. K|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Zahl|)
+401:Modifizierte Besselfunktion der zweiten Gattung. K|1n:Zahl, welche die Ordnung der Besselfunktion angibt|(|x:Reele Zahl|)
 801:besselk
-# UK 402:Value of the PDF or CDF for the normal distribution with given |1mean:Number| and |2standard deviation:Number| for the value |x:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 402:Value of the CDF or PDF for the normal distribution with given |1mean:Real number| and |2standard deviation:Real number| for the value |x:Real number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 # UK 802:norm.dist
-402:Wert der Normalverteilung (oder WDF) mit angegebenem |1Mittelwert:Zahl| und |2Standardabweichung:Zahl| für den Wert |x:Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+402:Wert der Normalverteilung (oder WDF) mit angegebenem |1Mittelwert:Reele Zahl| und |2Standardabweichung:Reele Zahl| für den Wert |x:Reele Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt Verteilungsfunktion, sonst WDF
 802:norm.vert
-# UK 403:Value of the PDF or CDF for the standard normal distribution for the (standardized) value |z:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 403:Value of the CDF or PDF for the standard normal distribution for the (standardized) value |z:Real number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 # UK 803:norm.s.dist
-403:Wert der Standardnormalverteilung (oder WDF) für den (standardisierten) Wert |z:Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+403:Wert der Standardnormalverteilung (oder WDF) für den (standardisierten) Wert |z:Reele Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
 803:norm.s.vert
-# UK 404:Value of the PDF or CDF for the log-normal distribution with given |1{mean}:Number, default zero| and |2{standard deviation}:Number, default one| for the value |x:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 404:Value of the CDF or PDF for the log-normal distribution with given |1{mean}:Real number, default zero| and |2{standard deviation}:Real number, default one| for the value |x:Real number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 # UK 804:lognorm.dist
-404:Wert der logarithmische Normalverteilung (oder WDF) mit angegebenem |1{Mittelwert}:Zahl, default 0| und |2{Standardabweichung}:Zahl, default 1| für den Wert |x:Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+404:Wert der logarithmische Normalverteilung (oder WDF) mit angegebenem |1{Mittelwert}:Reele Zahl, default 0| und |2{Standardabweichung}:Reele Zahl, default 1| für den Wert |x:Reele Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
 804:lognorm.vert
-# UK 405:Value of the PDF for the standard normal distribution for the (standardized) value |z:Number|
+# UK 405:Value of the PDF for the standard normal distribution for the (standardized) value |z:Real number|
 # UK 805:phi
-405:Wert des PDF für die Standardnormalverteilung für den (standardisierten) Wert |z:Zahl|
+405:Wert des PDF für die Standardnormalverteilung für den (standardisierten) Wert |z:Reele Zahl|
 805:phi
-# UK 406:Returns the value 1 if |number_1:Number| == |1{number_2}:Number, default zero|, else 0
+# UK 406:Returns the value 1 if |number 1:Real number| == |1{number 2}:Real number, default zero|, else 0
 # UK 806:delta
-406:Liefert 1, wenn |Zahl_1:Zahl| == |1{Zahl_2}:Zahl, default 0|, sonst 0
+406:Liefert 1, wenn |Zahl 1:Zahl| == |1{Zahl 2}:Reele Zahl, default 0|, sonst 0
 806:delta
-# UK 407:Returns the value 1 if |number| >= |1{step}:Number, default zero|, else 0
+# UK 407:Returns the value 1 if |number| >= |1{step}:Real number, default zero|, else 0
 # UK 807:gestep
-407:Liefert 1 1, wenn |Zahl| größer als oder gleich groß wie |1{step}:Zahl, default 0|, sonst 0
+407:Liefert 1 1, wenn |Zahl| größer als oder gleich groß wie |1{step}:Reele Zahl, default 0|, sonst 0
 807:gganzzahl
 # UK 408:Rounds |number| down to the nearest integer, towards -infinity (OpenDocument/Excel-compatible behaviour)
 # UK 808:odf.int
 408:Rounds |Zahl| down to the nearest integer, towards -infinity (OpenDocument/Excel-compatible behaviour)
 808:odf.ganzzahl
-# UK 409:Frequencies in |data array:Array of data (or range of cells)| given bin values in |1bins array:Array of bin limit values (or range of cells)|. Ignores blank cells and text
+# UK 409:Frequencies in |data:Data range of cells (or array)| given bin values in |1bins:Bin limit values range of cells (or array)|. Ignores blank cells and text
 # UK 809:frequency
-409:Frequencies in |data Array:Array oder Zellbereich von Daten| given bin values in |1bins array:Array oder Zellbereich von bin limit values|. Ignores blank cells and text
+409:Frequencies in |data:Zellbereich oder Array von Daten| given bin values in |1bins:Zellbereich oder Array von bin limit values|. Ignores blank cells and text
 809:häufigkeit
-# UK 410:Unit matrix of dimension |n:Number|
+# UK 410:Identity matrix of dimension |n:Number|
 # UK 810:m_unit
-410:Quadratische Einheitsmatrix mit der Größe |n:Zahl|
-810:einheitsmatrix
-# UK 411:OpenDocument/Excel-compatible internal rate of return given |array:Array of numbers (or range of cells) representing cashflows| of cashflows and |1{guess}:Number, default 0.1. Initial guessed interest rate, e.g. 0.01|
+410:Identitätsmatrix mit der Größe |n:Zahl|
+810:m_einheit
+# UK 411:OpenDocument/Excel-compatible internal rate of return given |cashflows:Range of cells (or array) of numbers representing cashflows| and |1{guess}:Number, default 0.1. Initial guessed interest rate, e.g. 0.01|
 # UK 811:odf.irr
-411:OpenDocument/Excel-compatible internal rate of return given |Array:Array oder Zellbereich representing cashflows| of cashflows and |1{guess}:Zahl, default 0.1. Initial guessed interest rate, e.g. 0.01|
+411:OpenDocument/Excel-compatible internal rate of return given |cashflows:Zellbereich oder Array representing cashflows| and |1{guess}:Zahl, default 0.1. Initial guessed interest rate, e.g. 0.01|
 811:odf.ikv
-# UK 412:Find the value in the CDF for the normal distribution with given |1mean:Number| and |2standard deviation:Number| matching the given |probability:Number, [0,1]|
+# UK 412:Find the value in the CDF for the normal distribution with given |1mean:Real number| and |2standard deviation:Real number| matching the given |probability:Real number, [0,1]|
 # UK 812:norm.inv
-412:Find the value in the CDF for the normal distribution with given |1mean:Zahl| and |2standard deviation:Zahl| matching the given |probability:Zahl, [0,1]|
+412:Find the value in the CDF for the normal distribution with given |1mean:Zahl| and |2standard deviation:Zahl| matching the given |probability:Reele Zahl, [0,1]|
 812:norm.inv
-# UK 413:Find the value in the CDF for the standard normal distribution matching the given |probability:Number, [0,1]|
+# UK 413:Find the value in the CDF for the standard normal distribution matching the given |probability:Real number, [0,1]|
 # UK 813:norm.s.inv
-413:Find the value in the CDF for the standard normal distribution matching the given |probability:Zahl, [0,1]|
+413:Find the value in the CDF for the standard normal distribution matching the given |probability:Reele Zahl, [0,1]|
 813:norm.s.inv
 # UK 414:Log to base 10 of |number:Real number > 0|
 # UK 814:odf.log10
@@ -1505,140 +1508,140 @@ w766:forecast
 # UK 815:gamma
 415:Gammafunktion für |n:Reele Zahl|
 815:gamma
-# UK 416:Value of the PMF or CDF for the negative binomial distribution with |n failures:Integer| before the |1n successes:Integer| and the |2probability:Number| of success. |3{cumulative}:Boolean, default FALSE|=TRUE selects CDF, else PMF (default)
+# UK 416:Value of the CDF or PMF for the negative binomial distribution with |n failures:Integer| before the |1n successes:Integer| and the |2probability:Real number| of success. |3{cumulative}:Boolean, default FALSE|=TRUE selects CDF, else PMF (default)
 # UK 816:negbinom.dist
 416:Wert der Wahrscheinlichkeitsfunktion der negativen Binomialverteilung (oder Verteilungsfunktion) für |Anzahl Misserfolge:Ganzzahl| before the |1Anzahl der Erfolge:Ganzzahl| und die |2Erfolgswahrscheinlichkeit:Zahl| of success. |3{Kumuliert}:Boolescher Wert, default FALSCH|=WAHR wählt Verteilungsfunktion, sonst Wahrscheinlichkeitsfunktion (default)
 816:negbinom.vert
-# UK 417:Element in |array| at position |1row:Number|, |2column:Number|
+# UK 417:Element in |data| at position |1row:Positive integer|, |2column:Positive integer|
 # UK 817:odf.index
-417:Element in |Array| at position |1row:Zahl|, |2column:Zahl|
+417:Element in der |Datengruppe| at position |1row:Zahl|, |2column:Zahl|
 817:odf.index
-# UK 418:Value of the PDF or CDF for the gamma distribution for |x:Number|, |1shape:Number|, and |2scale:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 418:Value of the CDF or PDF for the gamma distribution for |x:Real number|, |1shape:Real number|, and |2scale:Real number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 # UK 818:gamma.dist
-418:Wert der Gammaverteilung (oder WDF) für |x:Zahl|, |1Form:Zahl|, und |2Maßstab:Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+418:Wert der Gammaverteilung (oder WDF) für |x:Reele Zahl|, |1Form:Zahl|, und |2Maßstab:Reele Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
 818:gamma.vert
-# UK 419:Find the value in the CDF for the gamma distribution with given |shape:Number| and |2scale:Number| matching the given |probability:Number, [0,1]|
+# UK 419:Find the value in the CDF for the gamma distribution with given |shape:Real number| and |2scale:Real number| matching the given |probability:Real number, [0,1]|
 # UK 819:gamma.inv
-419:Find the value in the CDF for the gamma distribution with given |Form:Zahl| and |2Maßstab:Zahl| matching the given |probability:Zahl, [0,1]|
+419:Find the value in the CDF for the gamma distribution with given |Form:Zahl| and |2Maßstab:Reele Zahl| matching the given |probability:Reele Zahl, [0,1]|
 819:gamma.inv
-# UK 420:Value of the PDF or CDF for the beta distribution for |x:Number|, |1alpha:Number|, and |2beta:Number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF. |4{a}:Number| and |5{b}:Number| shift and scale
+# UK 420:Value of the CDF or PDF for the beta distribution for |x:Real number|, |1alpha:Real number|, and |2beta:Real number|. |3{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF. |4{a}:Real number| and |5{b}:Real number| shift and scale
 # UK 820:beta.dist
-420:Value of the PDF or CDF for the beta distribution for |x:Zahl|, |1alpha:Zahl|, and |2beta:Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF. |4{a}:Zahl| and |5{b}:Zahl| shift and scale
+420:Value of the CDF or PDF for the beta distribution for |x:Reele Zahl|, |1alpha:Reele Zahl|, and |2beta:Reele Zahl|. |3{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF. |4{a}:Reele Zahl| and |5{b}:Reele Zahl| shift and scale
 820:beta.vert
-# UK 421:Value of the PDF or CDF for the beta distribution for |x:Number|, |1alpha:Number|, and |2beta:Number|. |3{a}:Number| and |4{b}:Number| shift and scale. |5{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 421:Value of the CDF or PDF for the beta distribution for |x:Real number|, |1alpha:Real number|, and |2beta:Real number|. |3{a}:Real number| and |4{b}:Real number| shift and scale. |5{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 # UK 821:odf.betadist
-421:Value of the PDF or CDF for the beta distribution for |x:Zahl|, |1alpha:Zahl|, and |2beta:Zahl|. |3{a}:Zahl| and |4{b}:Zahl| shift and scale. |5{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+421:Value of the CDF or PDF for the beta distribution for |x:Reele Zahl|, |1alpha:Reele Zahl|, and |2beta:Reele Zahl|. |3{a}:Reele Zahl| and |4{b}:Reele Zahl| shift and scale. |5{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
 821:odf.betavert
-# UK 422:Find the value in the CDF for the beta distribution with given |1alpha:Number| and |2beta:Number| matching the given |probability:Number, [0,1]|. |3{a}:Number| and |4{b}:Number| shift and scale
+# UK 422:Find the value in the CDF for the beta distribution with given |1alpha:Real number| and |2beta:Real number| matching the given |probability:Real number, [0,1]|. |3{a}:Real number| and |4{b}:Real number| shift and scale
 # UK 822:beta.inv
-422:Find the value in the CDF for the beta distribution with given |1alpha:Zahl| and |2beta:Zahl| matching the given |probability:Zahl, [0,1]|. |3{a}:Zahl| and |4{b}:Zahl| shift and scale
+422:Find the value in the CDF for the beta distribution with given |1alpha:Reele Zahl| and |2beta:Reele Zahl| matching the given |probability:Reele Zahl, [0,1]|. |3{a}:Reele Zahl| and |4{b}:Reele Zahl| shift and scale
 822:beta.inv
-# UK 423:Pearson-r correlation coefficient of the values from |x-data:Array| and |1y-data:Array|
+# UK 423:Pearson-r correlation coefficient of the values from |x-data:Range of cells (or array) of x-values| and |1y-data:Range of cells (or array) of y-values|
 # UK 823:correl
-423:Pearson-r Korrelationskoeffizient of the values from |x-Daten:Array| and |1y-Daten:Array|
+423:Pearson-r Korrelationskoeffizient of the values from |x-Daten:Zellbereich oder Array von x-Werten| and |1y-Daten:Zellbereich oder Array von y-Werten|
 823:korrel
 # UK 424:Returns the error value #N/A (not available)
 # UK 824:na
 424:Liefert den Fehlerwert  #N/V (not available)
 824:nv
-# UK 425:Value of the PDF or CDF for the chi-squared distribution with |1degrees of freedom:Number, > 0, truncated| for |x:Number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 425:Value of the CDF or PDF for the chi-squared distribution with |1degrees of freedom:Positive integer| for |x:Real number|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 # UK 825:chisq.dist
-425:Wert der Chi-Quadrat-Verteilung (oder WDF) mit |Freiheitsgraden:Zahl, > 0, gekürzt| für |x:Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+425:Wert der Chi-Quadrat-Verteilung (oder WDF) mit |Freiheitsgraden:positive Ganzzahl| für |x:Reele Zahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
 825:chiqu.vert
-# UK 426:Find the value in the CDF for the chi-squared distribution with given |1degrees of freedom:Number, > 0, truncated| matching the given |probability:Number, [0,1]|
+# UK 426:Find the value in the CDF for the chi-squared distribution with given |1degrees of freedom:Positive integer| matching the given |probability:Real number, [0,1]|
 # UK 826:chisq.inv
-426:Findet den Wert in der CDF für die Chi-Quadrat-Verteilung mit gegebenen |1Freiheitsgraden:Zahl, > 0, gekürzt|, die der gegebenen |Wahrscheinlichkeit:Zahl, [0,1]| entsprechen
+426:Findet den Wert in der CDF für die Chi-Quadrat-Verteilung mit gegebenen |1Freiheitsgraden:positive Ganzzahl|, die der gegebenen |Wahrscheinlichkeit:Zahl, [0,1]| entsprechen
 826:chiqu.inv
-# UK 427:Right-tailed probability for the chi-squared distribution and |degrees of freedom:Number, > 0, truncated| for |x:Number|
+# UK 427:Right-tailed probability for the chi-squared distribution and |degrees of freedom:Positive integer| for |x:Real number|
 # UK 827:chisq.dist.rt
-427:Rechtsschwanzwahrscheinlichkeit für die Chi-Quadrat-Verteilung und |1Freiheitsgraden:Zahl, > 0, gekürzt| für |x:Zahl|
+427:Rechtsschwanzwahrscheinlichkeit für die Chi-Quadrat-Verteilung und |1Freiheitsgraden:positive Ganzzahl| für |x:Reele Zahl|
 827:chiqu.vert.re
-# UK 428:Find the value for the chi-squared distribution with given |1k:degrees of freedom, > 0, truncated| matching the given right-tailed |probability:Number, [0,1]|
+# UK 428:Find the value for the chi-squared distribution with given |1k:degrees of freedom, positive integer| matching the given right-tailed |probability:Real number, [0,1]|
 # UK 828:chisq.inv.rt
-428:Findet den Wert für die Chi-Quadrat-Verteilung mit gegebenen |1k:Freiheitsgraden, > 0, gekürzt|, der der gegebenen Wahrscheinlichkeit mit dem |Rechtsschwanzwahrscheinlichkeit:Zahl, [0,1]|
+428:Findet den Wert für die Chi-Quadrat-Verteilung mit gegebenen |1k:Freiheitsgraden, positiv Ganzzahl|, der der gegebenen Wahrscheinlichkeit mit dem |Rechtsschwanzwahrscheinlichkeit:Zahl, [0,1]|
 828:chiqu.inv.re
-# UK 429:Value of the PDF or CDF for the F-distribution for |x:Number| and |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 429:Value of the CDF or PDF for the F-distribution for |x:Real number| and |1numerator d.o.f.:Positive integer|, |2denominator d.o.f.:Positive integer|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 # UK 829:f.dist
-429:Wert der F-Verteilung (oder WDF) für |x:Zahl| and |1Freiheitsgrade 1:Zahl, > 0, gekürzt|, |2Freiheitsgrade 2:Zahl, > 0, gekürzt|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+429:Wert der F-Verteilung (oder WDF) für |x:Reele Zahl| and |1Freiheitsgrade im Zähler:positive Ganzzahl|, |2Freiheitsgrade im Nenner:positive Ganzzahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
 829:f.vert
-# UK 430:Find the value in the CDF for the F-distribution with given |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated| matching the given |probability:Number, [0,1]|
+# UK 430:Find the value in the CDF for the F-distribution with given |1numerator d.o.f.:Positive integer|, |2denominator d.o.f.:Positive integer| matching the given |probability:Real number, [0,1]|
 # UK 830:f.inv
-430:Findet den Wert in der CDF für die F-Verteilung mit gegebenem |1Freiheitsgrade 1:Zahl, > 0, gekürzt|, |2Freiheitsgrade 2:Zahl, > 0, gekürzt| Übereinstimmung mit der gegebenen |Wahrscheinlichkeit:Zahl, [0,1]|
+430:Findet den Wert in der CDF für die F-Verteilung mit gegebenem |1Freiheitsgrade im Zähler:positive Ganzzahl|, |2Freiheitsgrade im Nenner:positive Ganzzahl| Übereinstimmung mit der gegebenen |Wahrscheinlichkeit:Zahl, [0,1]|
 830:f.inv
-# UK 431:Right-tailed probability for the F-distribution for |x:Number| and |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated|
+# UK 431:Right-tailed probability for the F-distribution for |x:Real number| and |1numerator d.o.f.:Positive integer|, |2denominator d.o.f.:Positive integer|
 # UK 831:f.dist.rt
-431:Rechtsschwanzwahrscheinlichkeit für die F-Verteilung für |x:Zahl| und |1Freiheitsgrade 1:Zahl, > 0, gekürzt|, |2Freiheitsgrade 2:Zahl, > 0, gekürzt|
+431:Rechtsschwanzwahrscheinlichkeit für die F-Verteilung für |x:Reele Zahl| und |1Freiheitsgrade im Zähler:positive Ganzzahl|, |2Freiheitsgrade im Nenner:positive Ganzzahl|
 831:f.vert.re
-# UK 432:Find the value for the F-distribution with given |1degrees of freedom 1:Number, > 0, truncated|, |2degrees of freedom 2:Number, > 0, truncated| matching the given right-tailed |probability:Number, [0,1]|
+# UK 432:Find the value for the F-distribution with given |1numerator d.o.f.:Positive integer|, |2denominator d.o.f.:Positive integer| matching the given right-tailed |probability:Real number, [0,1]|
 # UK 832:f.inv.rt
-432:Find the value for the F-distribution with given |1Freiheitsgrade 1:Zahl, > 0, gekürzt|, |2Freiheitsgrade 2:Zahl, > 0, gekürzt| matching the given right-tailed |probability:Zahl, [0,1]|
+432:Find the value for the F-distribution with given |1Freiheitsgrade im Zähler:positive Ganzzahl|, |2Freiheitsgrade im Nenner:positive Ganzzahl| matching the given right-tailed |probability:Reele Zahl, [0,1]|
 832:f.inv.rt
-# UK 433:Value of the PDF or CDF for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
+# UK 433:Value of the CDF or PDF for the Student's t-distribution for |x:Real number| and |1degrees of freedom:Positive integer|. |2{cumulative}:Boolean, default TRUE|=TRUE selects CDF, else PDF
 # UK 833:t.dist
-433:Wert der Student'schen t-Verteilung (oder WDF) für |x:Zahl| und |1Freiheitsgrade:Zahl, > 0, gekürzt|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
+433:Wert der Student'schen t-Verteilung (oder WDF) für |x:Reele Zahl| und |1Freiheitsgrade:positive Ganzzahl|. |2{Kumuliert}:Boolescher Wert, default WAHR|=WAHR wählt VF, sonst WDF
 833:t.vert
-# UK 434:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Number, > 0, truncated| matching the given |probability:Number, [0,1]|
+# UK 434:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Positive integer| matching the given |probability:Real number, [0,1]|
 # UK 834:t.inv
-434:Find the value in the CDF for the Student'schen t-Verteilung with given |1Freiheitsgrade:Zahl, > 0, gekürzt| matching the given |probability:Zahl, [0,1]|
+434:Find the value in the CDF for the Student'schen t-Verteilung with given |1Freiheitsgrade:positive Ganzzahl| matching the given |probability:Reele Zahl, [0,1]|
 834:t.inv
-# UK 435:Two-tailed probability for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated|
+# UK 435:Two-tailed probability for the Student's t-distribution for |x:Real number| and |1degrees of freedom:Positive integer|
 # UK 835:t.dist.2t
-435:Zweiseitige Wahrscheinlichkeit für die Student'schen t-Verteilung für |x:Zahl| und |1Freiheitsgrade:Zahl, > 0, gekürzt|
+435:Zweiseitige Wahrscheinlichkeit für die Student'schen t-Verteilung für |x:Reele Zahl| und |1Freiheitsgrade:positive Ganzzahl|
 835:t.vert.2s
-# UK 436:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Number, > 0, truncated| matching the given two-tailed |probability:Number, [0,1]|
+# UK 436:Find the value in the CDF for the Student's t-distribution with given |1degrees of freedom:Positive integer| matching the given two-tailed |probability:Real number, [0,1]|
 # UK 836:t.inv.2t
-436:Find the value in the CDF for the Student'schen t-Verteilung with given |1Freiheitsgrade:Zahl, > 0, gekürzt| matching the given |Zweiseitige Wahrscheinlichkeit:Zahl, [0,1]|
+436:Find the value in the CDF for the Student'schen t-Verteilung with given |1Freiheitsgrade:positive Ganzzahl| matching the given |Zweiseitige Wahrscheinlichkeit:Zahl, [0,1]|
 836:t.inv.2e
-# UK 437:Right-tailed probability for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated|
+# UK 437:Right-tailed probability for the Student's t-distribution for |x:Real number| and |1degrees of freedom:Positive integer|
 # UK 837:t.dist.rt
-437:Rechtsschwanzwahrscheinlichkeit für die Student'schen t-Verteilung für |x:Zahl| and |1Freiheitsgrade:Zahl, > 0, gekürzt|
+437:Rechtsschwanzwahrscheinlichkeit für die Student'schen t-Verteilung für |x:Reele Zahl| and |1Freiheitsgrade:positive Ganzzahl|
 837:t.vert.re
-# UK 438:One- or two-tailed probability for the Student's t-distribution for |x:Number| and |1degrees of freedom:Number, > 0, truncated| and |2number of tails:Number, 1 or 2|
+# UK 438:One- or two-tailed probability for the Student's t-distribution for |x:Real number| and |1degrees of freedom:Positive integer| and |2number of tails:Number, 1 or 2|
 # UK 838:odf.tdist
-438:Ein- oder zweiseitige Wahrscheinlichkeit für die Student'schen t-Verteilung für |x:Zahl| und |1Freiheitsgrade:Zahl, > 0, gekürzt| und |2number of tails:Zahl, 1 or 2|
+438:Ein- oder zweiseitige Wahrscheinlichkeit für die Student'schen t-Verteilung für |x:Reele Zahl| und |1Freiheitsgrade:positive Ganzzahl| und |2number of tails:Zahl, 1 or 2|
 838:odf.tdist
-# UK 439:Confidence interval for a population mean given significance level |alpha:Number| for the normal distribution with given |1standard deviation:Real number, > 0| and a |2sample size:Number, > 0, truncated|
+# UK 439:Confidence interval for a population mean given significance level |alpha:Real number in (0,1)| for the normal distribution with given |1standard deviation:Real number > 0| and a |2sample size:Positive integer|
 # UK 839:confidence.norm
-439:Confidence interval for a population mean given significance level |alpha:Zahl| for the normal distribution with given |1standard deviation:Reele Zahl, > 0| and a |2sample size:Zahl, > 0, gekürzt|
+439:Confidence interval for a population mean given significance level |alpha:Reele Zahl| for the normal distribution with given |1standard deviation:Reele Zahl, > 0| and a |2sample size:positive Ganzzahl|
 839:konfidenz.norm
-# UK 440:Confidence interval for a population mean given significance level |alpha:Number| for a Student's t-distribution with given |1standard deviation:Real number, > 0| and a |2sample size:Number, > 0, truncated|
+# UK 440:Confidence interval for a population mean given significance level |alpha:Real number in (0,1)| for a Student's t-distribution with given |1standard deviation:Real number > 0| and a |2sample size:Positive integer|
 # UK 840:confidence.t
-440:Confidence interval for a population mean given significance level |alpha:Zahl| for a Student'schen t-Verteilung with given |1standard deviation:Reele Zahl, > 0| and a |2sample size:Zahl, > 0, gekürzt|
+440:Confidence interval for a population mean given significance level |alpha:Reele Zahl| for a Student'schen t-Verteilung with given |1standard deviation:Reele Zahl, > 0| and a |2sample size:positive Ganzzahl|
 840:konfidenz.t
-# UK 441:Returns the |1percentile:Real number|-th value in the given |array|, exclusive of 0 and 1
+# UK 441:Returns the |1percentile:Real number|-th value in the given |data|, exclusive of 0 and 1
 # UK 841:percentile.exc
-441:Returns the |1percentile:Reele Zahl|-th value in the given |Array|, exclusive of 0 and 1
+441:Returns the |1percentile:Reele Zahl|-th value in der |Datengruppe|, exclusive of 0 and 1
 841:quantil.exkl
-# UK 442:Returns the |1quartile:Integer, where 1=25%, 2=50%(MEDIAN), 3=75%|-th value in the given |array|, exclusive of 0 and 1
+# UK 442:Returns the |1quartile:Integer, where 1=25%, 2=50%(MEDIAN), 3=75%|-th value in the given |data|, exclusive of 0 and 1
 # UK 842:quartile.exc
-442:Returns the |1quartile:Ganzzahl, where 1=25%, 2=50%(MEDIAN), 3=75%|-th value in the given |Array|, exclusive of 0 and 1
+442:Returns the |1quartile:Ganzzahl, where 1=25%, 2=50%(MEDIAN), 3=75%|-th value in der |Datengruppe|, exclusive of 0 and 1
 842:quartile.exkl
-# UK 443:Find the lowest value in the CDF for the binomial distribution with number |trials:Integer| and the |1probability:Number| of success for each trial that is greater than or equal to the given probability |2alpha:Number, [0,1]|
+# UK 443:Find the lowest value in the CDF for the binomial distribution with number |trials:Integer| and the |1probability:Real number| of success for each trial that is greater than or equal to the given probability |2alpha:Real number, [0,1]|
 # UK 843:binom.inv
-443:Find the lowest value in the CDF for the binomial distribution with number |trials:Ganzzahl| and the |1probability:Zahl| of success for each trial that is greater than or equal to the given probability |2alpha:Zahl, [0,1]|
+443:Find the lowest value in the CDF for the binomial distribution with number |trials:Ganzzahl| and the |1probability:Reele Zahl| of success for each trial that is greater than or equal to the given probability |2alpha:Reele Zahl, [0,1]|
 843:binom.inv
-# UK 444:z-test using the values from |data:Array| with |1hypothesised mean:Number|. |2{standard deviation}:Number| may be given, otherwise it is calculated from the sample data
+# UK 444:z-test using the values from |data:Range of cells (or array)| with |1hypothesised mean:Real number|. |2{standard deviation}:Real number| may be given, otherwise it is calculated from the sample data
 # UK 844:z.test
-444:z-test using the values from |data:Array| with |1hypothesised mean:Zahl|. |2{Standardabweichung}:Zahl| may be given, otherwise it is calculated from the sample data
+444:z-test using the values from |data:Zellbereich oder Array| with |1hypothesised mean:Zahl|. |2{Standardabweichung}:Reele Zahl| may be given, otherwise it is calculated from the sample data
 844:g.test
-# UK 445:Probability that values are between two limits given |x range:Array| of data and |1associated probabilities:Array|. Sums probabilities from |2lower limit:Number| to optional |3{upper limit}:Number
+# UK 445:Probability that values are between two limits given |x range:Range of cells (or array)| of data and |1associated probabilities:Range of cells (or array)|. Sums probabilities from |2lower limit:Number| to optional |3{upper limit}:Number|
 # UK 845:prob
-445:Probability that values are between two limits given |x range:Array| of data and |1associated probabilities:Array|. Sums probabilities from |2lower limit:Zahl| to optional |3{upper limit}:Zahl
+445:Probability that values are between two limits given |x range:Zellbereich oder Array| of data and |1associated probabilities:Zellbereich oder Array|. Sums probabilities from |2lower limit:Zahl| to optional |3{upper limit}:Zahl|
 845:wahrschbereich
-# UK 446:Chi-squared value of corresponding values from |actual data:Array| and |1expected data:Array|
+# UK 446:Chi-squared value of corresponding values from |actual data:Range of cells (or array)| and |1expected data:Range of cells (or array)|
 # UK 846:chisq.test
-446:Chi-squared value of corresponding values from |actual data:Array| and |1expected data:Array|
+446:Chi-squared value of corresponding values from |actual data:Zellbereich oder Array| and |1expected data:Zellbereich oder Array|
 846:chiqu.test
-# UK 447:F-test for data from |array 1:Array| and |1array 2:Array|
+# UK 447:F-test for data from |data 1:Range of cells (or array)| and |1data 2:Range of cells (or array)|
 # UK 847:f.test
-447:F-test for data from |Array 1:Array| and |1Array 2:Array|
+447:F-test for data from |Array 1:Zellbereich oder Array| and |1Array 2:Zellbereich oder Array|
 847:f.test
-# UK 448:t-test for data from |array 1:Array| and |1array 2:Array| with number of |2tails:Number, 1 or 2| and |3type:Number|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic
+# UK 448:t-test for data from |data 1:Range of cells (or array)| and |1data 2:Range of cells (or array)| with number of |2tails:Number, 1 or 2| and |3type:Number|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic
 # UK 848:t.test
-448:t-test for data from |Array 1:Array| and |1Array 2:Array| with number of |2tails:Zahl, 1 or 2| and |3type:Zahl|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic
+448:t-test for data from |Array 1:Zellbereich oder Array| and |1Array 2:Zellbereich oder Array| with number of |2tails:Zahl, 1 or 2| and |3type:Zahl|, where test type 1 is paired, 2 is homoscedastic, 3 is heteroscedastic
 848:t.test
 #
-# UK 449:Absolute value (modulus) of |complex number|
+# UK 449:Modulus (absolute value) of |complex number|
 # UK 849:odf.imabs
 449:Absolutwert (modulus) der |complexe Zahl|
 849:odf.imabs
@@ -1751,13 +1754,13 @@ w766:forecast
 # UK 870:odf.complex
 470:Erstellt eine komplexe Zahl aus |Realteil:Zahl| ind |1Imaginärteil:Zahl| mit optionalen |2{Suffix}:Text|
 870:odf.komplexe
-# UK 471:Find the value in the CDF for the log-normal distribution with given |1mean:Number| and |2standard deviation:Number| matching the given |probability:Number, [0,1]|. |3{a}:Number| and |4{b}:Number| shift and scale
+# UK 471:Find the value in the CDF for the log-normal distribution with given |1mean:Real number| and |2standard deviation:Real number| matching the given |probability:Real number, [0,1]|
 # UK 871:lognorm.inv
-471:Findet den Wert in der CDF für die logarithmische Normalverteilung mit dem angegebenen |1Mittelwert:Zahl| und der |2Standardabweichung:Zahl|, die der angegebenen |Wahrscheinlichkeit:Zahl, [0,1]| entsprechen. |3{a}:Zahl| and |4{b}:Zahl| shift and scale
+471:Findet den Wert in der CDF für die logarithmische Normalverteilung mit dem angegebenen |1Mittelwert:Reele Zahl| und der |2Standardabweichung:Reele Zahl|, die der angegebenen |Wahrscheinlichkeit:Zahl, [0,1]| entsprechen
 871:lognorm.inv
-# UK 472:Percentage rank (in 0.0..1.0 exclusive) of the |1value:Number| in the |data set:Array| to the optional |2{digits}:Number| decimal places
+# UK 472:Percentage rank (in 0.0..1.0 exclusive) of the |1value:Number| in the |data set:Range of cells (or array)| to the optional |2{digits}:Number| decimal places
 # UK 872:percentrank.exc
-472:Percentage rank (in 0.0..1.0 exclusive) of the |1value:Zahl| in the |data set:Array| to the optional |2{Dezimalstellen}:Zahl|
+472:Percentage rank (in 0.0..1.0 exclusive) of the |1value:Zahl| in the |data set:Zellbereich oder Array| to the optional |2{Dezimalstellen}:Zahl|
 872:quantilsrang.exkl
 # UK 473:Returns the date that is the specified number of |1months:Number| before or after the given |start_date:Date in form dd.mm.yyyy|
 # UK 873:edate
@@ -1767,7 +1770,7 @@ w766:forecast
 # UK 874:eomonth
 474:Liefert das Datum, das der letzte Tag des Monats für die angegebene |1Anzahl von Monaten:Zahl| vor oder nach dem angegebenen |Startdatum:Datum hat die Form tt.mm.jjjj| ist
 874:monatsende
-# UK 475:Remainder of |dividend:Real number| divided by |1quotient:Real number <> 0| (OpenDocument/Excel-compatible behaviour)
+# UK 475:Remainder of |dividend:Real number| divided by |1quotient:Real non-zero number| (OpenDocument/Excel-compatible behaviour)
 # UK 875:odf.mod
 475:Liefert den Rest nach einer Division von |Dividende:Reele Zahl| durch |1Quotient:Reele Zahl, <> 0| (OpenDocument/Excel-compatible behaviour)
 875:odf.rest
@@ -1849,13 +1852,13 @@ w766:forecast
 # UK 894:decimal
 494:Konvertiert die |Zahl:Positive Ganzzahl| vom angegebenen |Radix:Positive Ganzzahl| in den entsprechenden Dezimalwert
 894:dezimal
-# UK 495:Returns the greatest common denominator of all the values in |list:List of numbers (or array, or range of cells)|
+# UK 495:Returns the greatest common denominator of all the values in |list:List of numbers (or range of cells, or array)|
 # UK 895:gcd
-495:Gibt den größten gemeinsamen Nenner aller Werte in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| zurück
+495:Gibt den größten gemeinsamen Nenner aller Werte in der |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)| zurück
 895:ggt
-# UK 496:Returns the least common multiple of all the values in |list:List of numbers (or array, or range of cells)|
+# UK 496:Returns the least common multiple of all the values in |list:List of numbers (or range of cells, or array)|
 # UK 896:lcm
-496:Gibt das kleinste gemeinsame Vielfache aller Werte in der |Liste:Liste der Zahlen (oder des Arrays oder des Zellbereichs)| zurück
+496:Gibt das kleinste gemeinsame Vielfache aller Werte in der |Liste:Liste der Zahlen (oder des Zellbereichs oder des Arrays)| zurück
 896:kgv
 # UK 497:Week number of |date:Date in form dd.mm.yyyy| (ISO 8601)
 # UK 897:isoweeknum

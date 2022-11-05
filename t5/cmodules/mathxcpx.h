@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -18,15 +18,15 @@
 declare complex number type for internal usage
 */
 
-#if (__STDC_VERSION__ < 199901L) || defined(__STDC_NO_COMPLEX__) || 0
+#if (__STDC_VERSION__ < 199901L) || defined(__STDC_NO_COMPLEX__) || defined(USE_OWN_COMPLEX_IMPL) || 0
 
-#if !defined(__STDC_NO_COMPLEX__)
-#define __STDC_NO_COMPLEX__ 1 /* for subsequent testing */
+#if !defined(USE_OWN_COMPLEX_IMPL)
+#define USE_OWN_COMPLEX_IMPL 1 /* for subsequent testing */
 #endif
 
 #endif
 
-#if !defined(__STDC_NO_COMPLEX__)
+#if !defined(USE_OWN_COMPLEX_IMPL)
 
 #include <complex.h>
 
@@ -85,7 +85,7 @@ complex_set_ri(
 
 #define inline_if_native_complex inline
 
-#else /* defined(__STDC_NO_COMPLEX__) */
+#else /* defined(USE_OWN_COMPLEX_IMPL) */
 
 typedef struct COMPLEX
 {
@@ -124,7 +124,7 @@ complex_set_ri(
 
 #define inline_if_native_complex /*nothing*/
 
-#endif/* defined(__STDC_NO_COMPLEX__) */
+#endif/* defined(USE_OWN_COMPLEX_IMPL) */
 
 /*
 exported data

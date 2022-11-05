@@ -2,7 +2,7 @@ REM BootRunGen - !Boot/!Run file generator for Fireworkz family
 REM
 REM This Source Code Form is subject to the terms of the Mozilla Public
 REM License, v. 2.0. If a copy of the MPL was not distributed with this
-REM file, You can obtain one at http://mozilla.org/MPL/2.0/.
+REM file, You can obtain one at https://mozilla.org/MPL/2.0/.
 REM
 REM Copyright (C) 1992-1998 Colton Software Limited
 REM Copyright (C) 1998-2015 R W Colton
@@ -123,7 +123,7 @@ LOCAL env%, ptr%, buflen%
 SYS "OS_GetEnv" TO env%
 :
 buflen% = 511
-DIM buffer% LOCAL buflen%
+DIM buffer% buflen%
 :
 SYS "XOS_ReadArgs","BASIC,quit/K,load/K,output/A,product/A,version/A,runimage/K,r32/S,c32/S,d32/S,p32/S,r32m/S,boot/S,alternate/S",env%,buffer%,buflen% TO ;PSR%
 IF PSR% AND 1 THEN ERROR 0,"Bad parameters to BootRunGen"
@@ -193,7 +193,7 @@ ENDIF
 PROCo(f%,"|")
 PROCs(f%,FNvar_product("Help"),var_product_dir$+".!Help",boot%)
 PROCs(f%,FNvar_product("Version"),version$,boot%)
-PROCs(f%,FNvar_product("Web"),"http://croftnuisk.co.uk/coltsoft/fireworkz/",boot%)
+PROCs(f%,FNvar_product("Web"),"https://croftnuisk.co.uk/coltsoft/fireworkz/",boot%)
 PROCs(f%,FNvar_product("Title"),true_product$,boot%)
 IF is_y% THEN
 PROCs(f%,FNvar_product("Description"),"Integrated spreadsheet, word processor and database",boot%)
@@ -234,7 +234,7 @@ ENDPROC
 DEF PROCgenerate_run_end(f%)
 REM Go for the minimal version we can cope with using the Stubs we built with
 REM and the required functionality (we need working C99 functions)
-REM SharedCLibrary 6.06 is the latest ROOL seen to date (May 2020)
+REM SharedCLibrary 6.09 (06 Feb 2021) is the latest ROOL seen to date (September 2021)
 CLibVersion$="SharedCLibrary 5.45"
 :
 PROCo(f%,"|")
@@ -255,9 +255,6 @@ PROCo(f%,"|")
 PROCo(f%,"RMEnsure "+CLibVersion$+" RMLoad System:Modules.CLib")
 PROCo(f%,"RMEnsure "+CLibVersion$+" Error 0 "+true_product$+" needs "+CLibVersion$+" or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
 :
-PROCo(f%,"|")
-PROCo(f%,"RMEnsure BASIC 0.00 Error 0 "+true_product$+"'s Loader needs BASIC. Is it unplugged?")
-:
 IF colour_picker% THEN
   PROCo(f%,"|")
   PROCo(f%,"RMEnsure ColourPicker 0.00 RMLoad System:Modules.Picker")
@@ -271,13 +268,14 @@ PROCo(f%,"RMEnsure ColourTrans 0.52 Error 0 "+true_product$+" needs ColourTrans 
 PROCo(f%,"|")
 REM Drawfile module is supplied in end-user redistributable, supporting RISC OS 3.1 and newer systems
 REM RISC OS 3.6 on have Drawfile in ROM
+PROCo(f%,"| If you have no need to render "+true_product$+" Charts or other Drawfiles you can comment these out for pre-RISC OS 3.6 systems")
 PROCo(f%,"RMEnsure Drawfile 1.30 RMLoad System:Modules.Drawfile")
 PROCo(f%,"RMEnsure Drawfile 1.30 Error 0 "+true_product$+" needs Drawfile 1.30 or later. An updated 32-bit !System may be obtained from the RISC OS Open website")
 :
 REM Go for the minimal version we can cope with
-REM NB FPEmulator 4.09 in RISC OS 4.02 ROM (also in 4.39 ROM) has poor precision
+REM FPEmulator 4.09 in RISC OS 4.02 ROM (also in some 4.39 ROMs?) has poor precision and should not be used
 REM FPEmulator 4.10 in RISC OS 4.39 ROM is better
-REM FPEmulator 4.37 is the latest ROOL seen to date (Nov 2019)
+REM FPEmulator 4.38 (03 Jul 2021) (1.13CELM) is the latest ROOL seen to date (September 2021)
 FPEVersion$="FPEmulator 4.10"
 :
 PROCo(f%,"|")
@@ -288,6 +286,9 @@ IF loadable_release32% THEN
   PROCo(f%,"|")
   PROCo(f%,"RMEnsure Squash 0.00 RMLoad System:Modules.Squash")
 ENDIF
+:
+PROCo(f%,"|")
+PROCo(f%,"RMEnsure BASIC 0.00 Error 0 "+true_product$+"'s Loader needs BASIC. Is it unplugged?")
 :
 PROCo(f%,"|")
 PROCo(f%,FNif_z_then("Choices$Write")+"Error 0 "+true_product$+" needs Choices$Write to be set")
@@ -513,12 +514,12 @@ ptr%??A% = 13
 :
 :
 DEF PROCfiletypes(f%,boot%)
-PROCs(f%,"File$Type_BDF","Firewrkz",FALSE)
+PROCs(f%,"File$Type_BDF","Firewrkz",FALSE): REM FILETYPE_T5_FIREWORKZ
 PROCft_ar(f%,"BDF","Run "+var_product_dir$+".!Run %%*0",boot%)
 PROCft_ap(f%,"BDF","Run "+var_product_dir$+".!Run -Print %%*0",boot%)
 :
 PROCo(f%,"|")
-PROCs(f%,"File$Type_A78","FzDraw",FALSE)
+PROCs(f%,"File$Type_A78","FzDraw",FALSE): REM FILETYPE_T5_HYBRID_DRAW
 IF is_y% THEN
   REM Only claim these for Fireworkz Pro
   PROCft_ar(f%,"A78","Run "+var_product_dir$+".!Run %%*0",boot%)
@@ -529,26 +530,26 @@ ELSE
 ENDIF
 :
 PROCo(f%,"|")
-PROCs(f%,"File$Type_C1D","FwrkzTem",FALSE)
+PROCs(f%,"File$Type_C1D","FwrkzTem",FALSE): REM FILETYPE_T5_TEMPLATE
 PROCft_ar(f%,"C1D","Run "+var_product_dir$+".!Run -Template %%*0",boot%)
 PROCft_ap(f%,"C1D","Run "+var_product_dir$+".!Run -oPrint %%*0",boot%)
 :
 PROCo(f%,"|")
-PROCs(f%,"File$Type_C1E","FwrkzCmd",FALSE)
+PROCs(f%,"File$Type_C1E","FwrkzCmd",FALSE): REM FILETYPE_T5_COMMAND
 PROCft_ar(f%,"C1E","Run "+var_product_dir$+".!Run -Command %%*0",boot%)
 :
 PROCo(f%,"|")
-PROCs(f%,"File$Type_C1C","Wordz",FALSE)
+PROCs(f%,"File$Type_C1C","Wordz",FALSE): REM FILETYPE_T5_WORDZ
 PROCft_ar(f%,"C1C","Run "+var_product_dir$+".!Run %%*0",boot%)
 PROCft_ap(f%,"C1C","Run "+var_product_dir$+".!Run -Print %%*0",boot%)
 :
 PROCo(f%,"|")
-PROCs(f%,"File$Type_BE1","Resultz",FALSE)
+PROCs(f%,"File$Type_BE1","Resultz",FALSE): REM FILETYPE_T5_RESULTZ
 PROCft_ar(f%,"BE1","Run "+var_product_dir$+".!Run %%*0",boot%)
 PROCft_ap(f%,"BE1","Run "+var_product_dir$+".!Run -Print %%*0",boot%)
 :
 PROCo(f%,"|")
-PROCs(f%,"File$Type_BE0","Recordz",FALSE)
+PROCs(f%,"File$Type_BE0","Recordz",FALSE): REM FILETYPE_T5_RECORDZ
 IF is_y% THEN
   REM Only fully claim these for Fireworkz Pro
   PROCft_ar(f%,"BE0","Run "+var_product_dir$+".!Run %%*0",boot%)
@@ -561,46 +562,53 @@ ENDIF
 :
 IF fy_or_fz% THEN PROCo(f%,"|")
 REM Never override any other definition of file types we do not actually own
-IF fy_or_fz% THEN PROCs(f%,"File$Type_BA6","ExcelXLS",TRUE)
+IF fy_or_fz% AND (NOT boot%) THEN PROCo(f%,"| Avoid overriding any other definition of file types we do not actually own")
+IF fy_or_fz% THEN PROCs(f%,"File$Type_BA6","ExcelXLS",TRUE): REM FILETYPE_MS_XLS
 IF fy_or_fz% THEN PROCft_ar(f%,"BA6","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
 :
 IF fy_or_fz% THEN PROCo(f%,"|")
 REM Never override any other definition...
-IF fy_or_fz% THEN PROCs(f%,"File$Type_C27","Database",TRUE)
+IF fy_or_fz% THEN PROCs(f%,"File$Type_C27","Database",TRUE): REM FILETYPE_DATAPOWER
 :
 IF fy_or_fz% THEN PROCo(f%,"|")
 REM Never override any other definition...
-IF fy_or_fz% THEN PROCs(f%,"File$Type_C32","RTF",TRUE)
+IF fy_or_fz% THEN PROCs(f%,"File$Type_C32","RTF",TRUE): REM FILETYPE_RTF
 IF fy_or_fz% THEN PROCft_ar(f%,"C32","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
 :
 IF fy_or_fz% THEN PROCo(f%,"|")
 REM Never override any other definition...
-IF fy_or_fz% THEN PROCs(f%,"File$Type_DB0","LotusWK1",TRUE)
+IF fy_or_fz% THEN PROCs(f%,"File$Type_DB0","LotusWK1",TRUE): REM FILETYPE_LOTUS123
 IF fy_or_fz% THEN PROCft_ar(f%,"DB0","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
 :
 IF fy_or_fz% THEN PROCo(f%,"|")
 REM Never override any other definition...
-IF fy_or_fz% THEN PROCs(f%,"File$Type_DFE","CSV",TRUE)
+IF fy_or_fz% THEN PROCs(f%,"File$Type_DFE","CSV",TRUE): REM FILETYPE_CSV
 IF fy_or_fz% THEN PROCft_ar(f%,"DFE","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
+:
+IF fy_or_fz% THEN PROCo(f%,"|")
+REM Never override any other definition...
+IF fy_or_fz% THEN PROCs(f%,"File$Type_F0D","TSV",TRUE)
+IF fy_or_fz% THEN PROCft_ar(f%,"F0D","Run "+var_product_dir$+".!Run -import %%*0",TRUE)
 ENDPROC
 :
 :
 DEF PROCdosmap(f%)
-PROCo(f%,"DOSMap BMP &69C")
-PROCo(f%,"DOSMap DIB &69C")
-PROCo(f%,"DOSMap AFF &AFF")
-PROCo(f%,"DOSMap XLS &BA6")
-PROCo(f%,"DOSMap FWK &BDF")
-PROCo(f%,"DOSMap FWT &C1D")
-PROCo(f%,"DOSMap RTF &C32")
-PROCo(f%,"DOSMap JPG &C85")
-PROCo(f%,"DOSMap WKS &DB0")
-PROCo(f%,"DOSMap CSV &DFE")
-PROCo(f%,"DOSMap TXT &FFF")
+PROCo(f%,"DOSMap BMP &69C"): REM FILETYPE_BMP
+PROCo(f%,"DOSMap DIB &69C"): REM FILETYPE_BMP
+PROCo(f%,"DOSMap AFF &AFF"): REM FILETYPE_DRAW
+PROCo(f%,"DOSMap XLS &BA6"): REM FILETYPE_MS_XLS
+PROCo(f%,"DOSMap FWK &BDF"): REM FILETYPE_T5_FIREWORKZ
+PROCo(f%,"DOSMap FWT &C1D"): REM FILETYPE_T5_TEMPLATE
+PROCo(f%,"DOSMap RTF &C32"): REM FILETYPE_RTF
+PROCo(f%,"DOSMap JPG &C85"): REM FILETYPE_JPEG
+PROCo(f%,"DOSMap WKS &DB0"): REM FILETYPE_LOTUS123
+PROCo(f%,"DOSMap CSV &DFE"): REM FILETYPE_CSV
+PROCo(f%,"DOSMap TSV &F0D"): REM FILETYPE_TSV
+PROCo(f%,"DOSMap TXT &FFF"): REM FILETYPE_TEXT
 PROCo(f%,"| RISC OS 3.10 DOSFS can't take numbers in extension")
-PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap WK1 &DB0")
-PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap PD4 &DDE")
-PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap FF9 &FF9")
+PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap WK1 &DB0"): REM FILETYPE_LOTUS123
+PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap PD4 &DDE"): REM FILETYPE_PIPEDREAM
+PROCo(f%,"If Boot$OSVersion>=350 Then DOSMap FF9 &FF9"): REM FILETYPE_SPRITE
 ENDPROC
 :
 :
@@ -641,7 +649,7 @@ REM     BLNV somewhere
 REM     MOV R0,R0
 REM followed by fifth word
 REM     SWI OS_Exit
-DIM aif_header% LOCAL 127
+DIM aif_header% 127
 LOCAL ro_area_size%, rw_area_size%, dbg_area_size%, zi_area_size%
 LOCAL image_base%, ro_end%, rw_end, dbg_end%, zi_end%, max_addr%
 slot_size% = file_len%: REM In case it's not an AIF

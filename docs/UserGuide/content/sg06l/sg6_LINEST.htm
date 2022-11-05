@@ -1,22 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>LINEST</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="LINEST" />
-        <param name="Keyword" value="Statistical functions, LINEST" />
+        <param name="Keyword" value="Spreadsheet functions, Statistical, LINEST" />
         <param name="Keyword" value="Statistical functions, straight line best fit" />
     </object>
 
@@ -26,8 +24,9 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        LINEST(<span class="csg-function-parameter">known-ys</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>,
-        <span class="csg-function-parameter">known-xs</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>)
+        LINEST(
+        <span class="csg-function-parameter">known-ys</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">known-xs</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span> )
     </p>
     <p>
         Calculates the formula of the straight line which best fits the data
@@ -46,33 +45,37 @@
     <h2>Simple linear regression</h2>
     <p>
         For simple linear regressions,
-        the result is an array of two values giving <code>{c,m}</code> for the straight line fit
+        the result is an array of two values giving <code>{ c, m }</code> for the straight line fit
     </p>
-    <p class="csg-function-formula"><em>y</em> = c + m&sdot;<em>x</em></p>
+    <p class="csg-function-formula">
+        <em>y</em> =
+        c + m&sdot;<em>x</em>
+    </p>
 
     <h2>Multiple linear regression</h2>
     <p>
         For multiple linear regression, with <em>m</em> independent <span class="csg-function-parameter">known-xs</span>,
-        the result is an array of <code>m+1</code> values such that
+        the result is an array of <code><em>m</em>+1</code> values such that
     </p>
     <p class="csg-function-formula">
-        <em>y</em> = <em>a<sub>0</sub></em> +
-        <span class="csg-math-symbol-sum">&sum;</span><em><sup>i=m</sup></em>
+        <em>y</em> =
+        <em>a<sub>0</sub></em> +
+        <sub class="csg-math-symbol-limit-lower"><em>i </em></sub><span class="csg-math-symbol-sum">&sum;</span><sub class="csg-math-symbol-limit-lower">1</sub><sup class="csg-math-symbol-limit-upper"><em>m</em></sup>
         <em>a<sub>i</sub></em>&sdot;<em>x<sub>i</sub></em>
     </p>
     <p>
-        where the <em>x<sub>i</sub></em> are the independent x variables and
-        <em>a<sub>i</sub></em> is the (<em>i</em>+1)<sup>th</sup> element of the returned <a href="../sg06/sg6_arrays.htm">array</a>.
+        where the <span class="csg-function-formula-variable">x<sub>i</sub></span> are the independent x variables and
+        <span class="csg-function-formula-variable">a<sub>i</sub></span> is the (<span class="csg-function-formula-variable">i</span>+1)<sup>th</sup> element of the returned <a href="../sg06/sg6_arrays.htm">array</a>.
     </p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06l/sg6_LARGE.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#statistical_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06l/sg6_LISTCOUNT.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06l/sg6_LARGE.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06l/sg6_LISTCOUNT.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

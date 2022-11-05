@@ -1,19 +1,19 @@
-//
+﻿//
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 ﻿//
 // RCGen created for Object 27
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -24,10 +24,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages (none)
 //
@@ -49,10 +49,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -62,10 +62,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x6B81,	L"zz-msg"
 //
@@ -78,10 +78,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -92,17 +92,17 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with fl_csv/fl_csv.h
 //
 // CSV_MSG_LOAD_QUERY_xxx
 //
-// UK 1:Loading CSV
-	0x6C01,	L"Laden von CSV-Daten"
+// UK 1:Loading CSV/TSV
+	0x6C01,	L"Laden von TSV-/CSV-Daten"
 // UK 2:ug/ug08_importing_data_into_tables.htm
 	0x6C02,	L"ug/ug08_importing_data_into_tables.htm"
 // UK 3:Insert as table
@@ -136,10 +136,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -149,10 +149,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x6C81,	L"zz-msg"
 //
@@ -165,10 +165,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -178,10 +178,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x6A01,	L"zz-msg"
 //
@@ -194,10 +194,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -207,10 +207,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x6B01,	L"zz-msg"
 //
@@ -223,10 +223,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -237,10 +237,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages (none)
 //
@@ -259,10 +259,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -273,10 +273,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1994-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1994-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with fl_xls/fl_xls.h
 //
@@ -310,10 +310,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -323,10 +323,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x7401,	L"zz-msg"
 //
@@ -339,10 +339,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -352,10 +352,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x7081,	L"zz-msg"
 //
@@ -368,10 +368,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -381,10 +381,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x7181,	L"zz-msg"
 //
@@ -397,10 +397,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -410,10 +410,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x7481,	L"zz-msg"
 //
@@ -426,10 +426,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -439,10 +439,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x6501,	L"zz-msg"
 //
@@ -455,10 +455,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -469,10 +469,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages (none)
 //
@@ -496,10 +496,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -510,10 +510,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_draw/ob_draw.h
 //
@@ -533,10 +533,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -547,9 +547,9 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 2001-2015 R W Colton
+// Copyright © 2001-2015 R W Colton
 //
 // messages: keep consistent with ob_drwio/ob_drwio.h
 //
@@ -570,10 +570,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -584,10 +584,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_file/ob_file.h
 //
@@ -677,10 +677,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -691,10 +691,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_hefo/ob_hefo.h
 //
@@ -747,10 +747,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -761,10 +761,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_mails/ob_mails.h
 //
@@ -811,10 +811,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -824,10 +824,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x6601,	L"zz-msg"
 //
@@ -840,10 +840,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -854,9 +854,9 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 2014-2021 Stuart Swales
+// Copyright © 2014-2022 Stuart Swales
 //
 // messages (none)
 //
@@ -877,10 +877,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -891,10 +891,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_ruler/ob_ruler.h
 //
@@ -960,10 +960,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -974,10 +974,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_skspt/ob_skspt.h
 //
@@ -1112,10 +1112,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -1126,10 +1126,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_spelb/ob_spelb.h
 //
@@ -1159,10 +1159,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -1173,10 +1173,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_spell/resource/resource.h
 //
@@ -1258,10 +1258,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -1271,10 +1271,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x6801,	L"zz-msg"
 //
@@ -1287,10 +1287,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -1300,10 +1300,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1995-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1995-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 	0x6181,	L"zz-msg"
 //
@@ -1316,10 +1316,10 @@ END
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 #pragma code_page(65001) // UTF-8
 //
@@ -1330,10 +1330,10 @@ BEGIN
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (C) 1993-1998 Colton Software Limited
-// Copyright (C) 1998-2015 R W Colton
+// Copyright © 1993-1998 Colton Software Limited
+// Copyright © 1998-2015 R W Colton
 //
 // messages: keep consistent with ob_toolb/ob_toolb.h
 //

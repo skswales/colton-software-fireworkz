@@ -1,28 +1,33 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>Arrays</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <h1><a name="arrays" id="arrays"></a>Arrays</h1>
 
     <p>
-        A set of values or cell references entered in a single cell or function parameter,
-        which may be used to represent any arbitrary set of data, a complex number or a matrix.
+        A set of values or cell references entered in a single cell or as a spreadsheet function parameter,
+        which may be used to represent any arbitrary set of data, a matrix, or a complex number.
     </p>
 
-    <p>Arrays should be entered in the form</p>
+    <p>Array constants should be entered in the form</p>
     <pre class="csg-sample-indent">{1,2,3;4,5,6}</pre>
     <p>with commas separating each element in a row of the array and semi-colons separating each row.</p>
+
+    <p>
+        Many spreadsheet functions return array results, which can be passed to further functions.
+        Cells containing an array-returning function just display the first (or top-left) element of that result.
+        Individual elements (or sub-arrays) may be obtained from such results using the <a href="../sg06i/sg6_INDEX.htm">INDEX</a> function.
+    </p>
 </body>
 </html>

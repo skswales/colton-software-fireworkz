@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -365,7 +365,7 @@ quick_wblock_vprintf(
     while(NULL != (wstr = wstrchr(format, CH_PERCENT_SIGN)))
     {
         /* can't use L"" as wchar_t is int on RISC OS */
-        const WCHAR conversion_chars[] = { 'd', 'i', 'o', 'u', 'x', 'X', 'c', 's', 'f', 'e', 'E', 'g', 'G', 'p', 'n', 'C', 'S', CH_NULL }; /*L"diouxXcsfeEgGpnCS"*/
+        const WCHAR conversion_chars[] = { 'd', 'i', 'o', 'u', 'x', 'X', 'c', 's', 'f', 'F', 'e', 'E', 'a', 'A', 'g', 'G', 'p', 'n', 'C', 'S', CH_NULL }; /*L"diouxXcsfFeEaAgGpnCS"*/
 
         /* output what we have so far */
         if(wstr - format)
@@ -432,8 +432,11 @@ quick_wblock_vprintf(
         switch(conversion)
         {
         case 'f':
+        case 'F':
         case 'e':
         case 'E':
+        case 'a':
+        case 'A':
         case 'g':
         case 'G':
             if(preceding == 'L')

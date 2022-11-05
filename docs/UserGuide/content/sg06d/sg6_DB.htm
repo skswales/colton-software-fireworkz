@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>DB</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Financial, DB" />
+        <param name="Keyword" value="Financial functions, depreciation allowance (fixed declining balance method)" />
+    </object>
+
+    <h1><a name="db" id="db"></a>DB</h1>
+
+    <p>Returns the calculated depreciation allowance on an asset at a specific period of time using the fixed declining balance method.</p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        DB(
+        <span class="csg-function-parameter">cost</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">salvage</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">life</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">period</span>:<span class="csg-function-parameter-type">Number</span>,
+        {,­ ­<span class="csg-function-parameter">month</span>:<span class="csg-function-parameter-type">Number</span>} )
+    </p>
+    <p>where:</p>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 6em;">
+                <col>
+            </colgroup>
+            <tr>
+                <td class="csg-function-parameter">cost</td>
+                <td>is the original value;</td>
+            </tr>
+            <tr>
+                <td class="csg-function-parameter">salvage</td>
+                <td>is the value at the end of the life;</td>
+            </tr>
+            <tr>
+                <td class="csg-function-parameter">life</td>
+                <td>is the number of periods for which you want to calculate the depreciation allowance;</td>
+            </tr>
+            <tr>
+                <td class="csg-function-parameter">period</td>
+                <td>is the period for which the depreciation is being measured;</td>
+            </tr>
+            <tr>
+                <td class="csg-function-parameter">month</td>
+                <td>is the number of months in the first year. Default is 12.</td>
+            </tr>
+        </table>
+    </div>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in Fireworkz 2.00.</p>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="../sg06c/sg6_CTERM.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_financial_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06d/sg6_DDB.htm">Next</a></td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

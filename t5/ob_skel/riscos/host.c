@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -310,8 +310,7 @@ button_click_event_encode(
     case Wimp_MouseButtonSingleSelect: /* 0x400 Single 'select' */
     case Wimp_MouseButtonSingleAdjust: /* 0x100 Single 'adjust' */
         /* cache on first phase of left or right click */
-        g_ctrl_pressed = host_ctrl_pressed();
-        g_shift_pressed = host_shift_pressed();
+        g_ctrl_pressed = host_keyboard_status(&g_shift_pressed);
         break;
 
     default:
@@ -859,8 +858,7 @@ generic_window_process_DataLoad(
 
     /* NB DataLoad event x,y are absolute screen coordinates (i.e. not window relative) */
     viewevent_click.click_context.hwnd = p_wimp_message_data_load->destination_window;
-    viewevent_click.click_context.ctrl_pressed = host_ctrl_pressed();
-    viewevent_click.click_context.shift_pressed = host_shift_pressed();
+    viewevent_click.click_context.ctrl_pressed = host_keyboard_status(&viewevent_click.click_context.shift_pressed);
     set_click_context_gdi_org_from_screen(&viewevent_click.click_context, p_wimp_message_data_load->destination_window);
     host_set_click_context(p_docu, p_view, &viewevent_click.click_context, &p_view->host_xform[p_ctrl_host_view->xform_idx]);
 
@@ -1035,10 +1033,12 @@ back_window_close(
     _DocuRef_   P_DOCU p_docu,
     _ViewRef_   P_VIEW p_view)
 {
+    BOOL f_shift_pressed;
+    const BOOL f_ctrl_pressed = host_keyboard_status(&f_shift_pressed);
     const BOOL adjust_clicked = winx_adjustclicked();
-    const BOOL shift_pressed  = host_shift_pressed();
     const BOOL opening_a_directory = adjust_clicked;
-    const BOOL closing_a_view = !(shift_pressed && adjust_clicked);
+    const BOOL closing_a_view = !(f_shift_pressed && adjust_clicked);
+    UNREFERENCED_LOCAL_VARIABLE(f_ctrl_pressed);
 
     process_close_request(p_docu, p_view, FALSE, closing_a_view, opening_a_directory);
 }
@@ -3865,6 +3865,13 @@ ensure_memory_froth(void)
 {
     return(alloc_ensure_froth(0x6000));
 }
+
+typedef struct MYRAND_SEED
+{
+    U32 seed_word;
+    U32 seed_bit; /* bottom bit is used */
+}
+MYRAND_SEED, * P_MYRAND_SEED;
 
 _Check_return_
 extern U32

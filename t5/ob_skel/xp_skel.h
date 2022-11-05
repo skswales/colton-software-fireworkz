@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -3177,6 +3177,14 @@ host_redraw_context_set_host_xform(
     _InoutRef_  P_REDRAW_CONTEXT p_context,
     _InoutRef_  P_HOST_XFORM p_host_xform /*updated*/);
 
+#if WINDOWS
+
+extern void
+set_host_xform_windows_common_end(
+    _InoutRef_  P_HOST_XFORM p_host_xform /*updated*/);
+
+#endif /* OS */
+
 extern void
 host_redraw_context_fillin(
     _InoutRef_  P_REDRAW_CONTEXT p_redraw_context);
@@ -3331,10 +3339,6 @@ host_acquire_global_clipboard(
 #endif /* USE_GLOBAL_CLIPBOARD */
 
 #if WINDOWS
-
-extern HBITMAP
-gdiplus_load_bitmap_from_file(
-    _In_z_      PCTSTR filename);
 
 #define TYPE5_PROPERTY_WORD TEXT("TYPE5WORD")
 
@@ -3613,6 +3617,12 @@ host_shift_pressed(void);
 _Check_return_
 extern BOOL
 host_ctrl_pressed(void);
+
+#if RISCOS
+extern BOOL /*ctrl_pressed*/
+host_keyboard_status(
+    _OutRef_    P_BOOL p_shift_pressed);
+#endif
 
 /*
 object dragging structures
@@ -5469,6 +5479,14 @@ typedef struct UI_SOURCE
 }
 UI_SOURCE, * P_UI_SOURCE; typedef const UI_SOURCE * PC_UI_SOURCE;
 
+typedef enum UI_DATA_INC_TYPE
+{
+    UI_DATA_IDT_MINIMUM = 0,
+    UI_DATA_IDT_DECREMENT,
+    UI_DATA_IDT_INCREMENT,
+    UI_DATA_IDT_MAXIMUM
+} UI_DATA_INC_TYPE;
+
 /*
 callback procedure required to bound check an 'ANY' format data value
 */
@@ -5493,7 +5511,7 @@ callback procedure required to increment or decrement an 'ANY' format data value
 typedef STATUS (* P_PROC_UI_ANY_DATA_INC_DEC) (
     P_ANY inc_dec_handle,
     /*inout*/ P_ARRAY_HANDLE p_data_handle,
-    _InVal_     S32 inc);
+    _InVal_     UI_DATA_INC_TYPE ui_data_inc);
 
 /*
 callback procedure required to convert 'ANY' format data into text suitable for output
@@ -5651,7 +5669,7 @@ ui_data_inc_dec(
     _InVal_     UI_DATA_TYPE ui_data_type,
     _InoutRef_  P_UI_DATA p_ui_data,
     /*in*/      const void /*UI_CONTROL*/ * const p_ui_control,
-    _InVal_     BOOL inc);
+    _InVal_     UI_DATA_INC_TYPE ui_data_inc);
 
 _Check_return_
 extern S32

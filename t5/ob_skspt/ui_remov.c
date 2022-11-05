@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -740,7 +740,6 @@ box_ctl_state_change(
     const H_DIALOG h_dialog = p_dialog_msg_ctl_state_change->h_dialog;
     PC_DIALOG_CTL_ID p_clear = NULL;
     U32 n_clear = 0;
-    U32 shift = 0;
 
     switch(p_dialog_msg_ctl_state_change->dialog_control_id)
     {
@@ -753,25 +752,25 @@ box_ctl_state_change(
     case BOX_ID_H_T:
     case BOX_ID_H_B:     p_clear = clear_H_tb;    n_clear = elemof32(clear_H_tb);    break;
 
-    case DIALOG_ID_RGB_B:
-        shift += 8;
-
-        /*FALLTHRU*/
-
-    case DIALOG_ID_RGB_G:
-        shift += 8;
-
-        /*FALLTHRU*/
-
     case DIALOG_ID_RGB_R:
         {
-        union DIALOG_CONTROL_DATA_USER_STATE user;
+        RGB rgb = g_box_persistent_state.rgb;
+        rgb.r = p_dialog_msg_ctl_state_change->new_state.bump_u8;
+        return(rgb_patch_set(p_dialog_msg_ctl_state_change->h_dialog, &rgb));
+        }
 
-        user.u32 =
-            (* (PC_U32) &g_box_persistent_state.rgb & ~(0x000000FFU << shift))
-          | ((p_dialog_msg_ctl_state_change->new_state.bump_s32 & 0x000000FFU) << shift);
+    case DIALOG_ID_RGB_G:
+        {
+        RGB rgb = g_box_persistent_state.rgb;
+        rgb.g = p_dialog_msg_ctl_state_change->new_state.bump_u8;
+        return(rgb_patch_set(p_dialog_msg_ctl_state_change->h_dialog, &rgb));
+        }
 
-        return(rgb_patch_set(p_dialog_msg_ctl_state_change->h_dialog, &user.rgb));
+    case DIALOG_ID_RGB_B:
+        {
+        RGB rgb = g_box_persistent_state.rgb;
+        rgb.b = p_dialog_msg_ctl_state_change->new_state.bump_u8;
+        return(rgb_patch_set(p_dialog_msg_ctl_state_change->h_dialog, &rgb));
         }
 
     case DIALOG_ID_RGB_PATCH:

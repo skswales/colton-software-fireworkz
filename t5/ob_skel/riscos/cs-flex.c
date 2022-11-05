@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1988-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -243,7 +243,7 @@ flex_granularity_floor(int n)
 
 #if defined(TBOXLIBS_FLEX)
 
-/* can get better code for loading structure members on ARM Norcroft */
+/* can get better code for loading structure members on ARM Norcroft C */
 
 static struct flex_
 {
@@ -336,7 +336,7 @@ flex__fail(int i)
 
 #else
 
-/* can get better code for loading structure members on ARM Norcroft */
+/* can get better code for loading structure members on ARM Norcroft C */
 
 static struct flex_
 {

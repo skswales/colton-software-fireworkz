@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>Compatibility functions</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Compatibility" />
+        <param name="Keyword" value="Compatibility functions" />
+        <param name="Keyword" value="Spreadsheet functions, Compatibility" />
+        <param name="Keyword" value="Spreadsheet functions, Compatibility, Engineering" />
+        <param name="Keyword" value="Spreadsheet functions, Compatibility, Financial" />
+        <param name="Keyword" value="Spreadsheet functions, Compatibility, Mathematical" />
+        <param name="Keyword" value="Spreadsheet functions, Compatibility, Miscellaneous" />
+        <param name="Keyword" value="Spreadsheet functions, Compatibility, Statistical" />
+    </object>
+    <nav class="navheader">
+        <table id="navheader">
+            <tr>
+                <td><a href="sg05_trigonometrical_functions.htm">Prev</a> </td>
+                <th>Fireworkz &amp; Fireworkz Pro</th>
+                <td> <a href="sg07_custom_functions.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td>Trigonometrical functions </td>
+                <th>User Guide</th>
+                <td> Custom functions</td>
+            </tr>
+        </table>
+    </nav>
+
+    <h1><a name="compatibility_functions" id="compatibility_functions"></a><span class="csg-chapter-sub-number">14.13 </span>Compatibility functions</h1>
+
+    <p>These functions are most useful for OpenDocument / Microsoft Excel compatibility (e.g. differing parameter order than Fireworkz).</p>
+
+    <h2 id="compatibility_engineering_functions">Engineering compatibility functions</h2>
+    <p>
+        These compatibility complex number functions provide
+        arithmetic, mathematical and trigonometrical functions for use with
+        <a href="../sg06/sg6_complex_numbers_odf.htm">complex number strings</a>,
+        i.e. text strings representing complex numbers that have both real and imaginary components.
+    </p>
+    <p>
+        In Fireworkz, complex numbers passed to compatibility complex number functions should be expressed as
+        OpenDocument / Microsoft Excel-style <a href="../sg06/sg6_complex_numbers_odf.htm">complex number strings</a>.
+    </p>
+    <ul style="list-style: none;">
+        <li>
+            <a href="../sg06odf/sg6_ODF_COMPLEX.htm">
+            ODF.COMPLEX</a>(
+            <span class="csg-function-parameter">real part</span>,
+            <span class="csg-function-parameter">imaginary part</span>
+            {, <span class="csg-function-parameter">suffix</span>} )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMABS.htm">
+            ODF.IMABS</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMAGINARY.htm">
+            ODF.IMAGINARY</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMARGUMENT.htm">
+            ODF.IMARGUMENT</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMCONJUGATE.htm">
+            ODF.IMCONJUGATE</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMCOS.htm">
+            ODF.IMCOS</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMDIV.htm">
+            ODF.IMDIV</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_dividend_odf</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_divisor_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMEXP.htm">
+            ODF.IMEXP</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMLN.htm">
+            ODF.IMLN</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMLOG10.htm">
+            ODF.IMLOG10</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMLOG2.htm">
+            ODF.IMLOG2</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMPOWER.htm">
+            ODF.IMPOWER</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf_1</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf_2</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMPRODUCT.htm">
+            ODF.IMPRODUCT</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_multiplicand_odf_1</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_multiplicand_odf_2</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMREAL.htm">
+            ODF.IMREAL</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMSIN.htm">
+            ODF.IMSIN</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMSQRT.htm">
+            ODF.IMSQRT</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_number_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMSUB.htm">
+            ODF.IMSUB</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_minuend_odf</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_subtrahend_odf</a></span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IMSUM.htm">
+            ODF.IMSUM</a>(
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_addend_odf_1</a></span>,
+            <span class="csg-function-parameter"><a href="../sg06/sg6_complex_numbers_odf.htm">complex_addend_odf_2</a></span> )
+        </li>
+    </ul>
+
+    <h2 style="list-style: none;">Financial compatibility functions</h2>
+    <ul>
+        <li>
+            <a href="../sg06odf/sg6_ODF_FV.htm">
+            ODF.FV</a>(
+            <span class="csg-function-parameter">rate</span>,
+            <span class="csg-function-parameter">nper</span>,
+            <span class="csg-function-parameter">pmt</span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_IRR.htm">
+            ODF.IRR</a>(
+            <span class="csg-function-parameter">cashflows</span>
+            {, <span class="csg-function-parameter">guess</span>} )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_PMT.htm">
+            ODF.PMT</a>(
+            <span class="csg-function-parameter">rate</span>,
+            <span class="csg-function-parameter">nper</span>,
+            <span class="csg-function-parameter">pv</span> )
+        </li>
+    </ul>
+
+    <h2 style="list-style: none;">Mathematical compatibility function</h2>
+    <ul>
+        <li>
+            <a href="../sg06odf/sg6_ODF_INT.htm">
+            ODF.INT</a>(
+            <span class="csg-function-parameter">number</span> )
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../sg06odf/sg6_ODF_LOG10.htm">
+            ODF.LOG10</a>(
+            <span class="csg-function-parameter">number</span> )
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../sg06odf/sg6_ODF_MOD.htm">
+            ODF.MOD</a>(
+            <span class="csg-function-parameter">number</span>,
+            <span class="csg-function-parameter">divisor</span> )
+        </li>
+    </ul>
+
+    <h2 style="list-style: none;">Miscellaneous compatibility functions</h2>
+    <ul>
+        <li>
+            <a href="../sg06odf/sg6_ODF_INDEX.htm">
+            ODF.INDEX</a>(
+            <span class="csg-function-parameter">data</span>,
+            <span class="csg-function-parameter">row</span>,
+            <span class="csg-function-parameter">column</span> )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_TYPE.htm">
+            ODF.TYPE</a>(
+            <span class="csg-function-parameter">parameter</span> )
+        </li>
+    </ul>
+
+    <h2>Statistical compatibility functions</h2>
+    <ul style="list-style: none;">
+        <li>
+            <a href="../sg06odf/sg6_ODF_BETADIST.htm">
+            ODF.BETADIST</a>(
+            <span class="csg-function-parameter">x</span>,
+            <span class="csg-function-parameter">alpha</span>,
+            <span class="csg-function-parameter">beta</span>
+            {, <span class="csg-function-parameter">lower_limit</span>
+            {, <span class="csg-function-parameter">upper_limit</span>
+            {, <span class="csg-function-parameter">cumulative</span>} } } )
+        </li>
+        <li>
+            <a href="../sg06odf/sg6_ODF_TDIST.htm">
+            ODF.TDIST</a>(
+            <span class="csg-function-parameter">x</span>,
+            <span class="csg-function-parameter">degrees of freedom</span>,
+            <span class="csg-function-parameter">tails</span> )
+        </li>
+    </ul>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="sg05_trigonometrical_functions.htm">Prev</a> </td>
+                <td><a accesskey="u" href="sg05_function_reference.htm">Up</a></td>
+                <td> <a accesskey="n" href="sg07_custom_functions.htm">Next</a></td>
+            </tr>
+            <tr>
+                <td>Trigonometrical functions </td>
+                <td><a accesskey="h" href="../index.htm">Home</a></td>
+                <td> Custom functions</td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

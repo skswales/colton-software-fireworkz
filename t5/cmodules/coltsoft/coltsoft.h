@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1989-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -247,10 +247,6 @@ typedef uint32_t U32; typedef U32 * P_U32, ** P_P_U32; typedef const U32 * PC_U3
 
 #define P_S32_NONE _P_DATA_NONE(P_S32)
 
-typedef  int64_t S64; typedef S64 * P_S64, ** P_P_S64; typedef const S64 * PC_S64;
-
-typedef uint64_t U64; typedef U64 * P_U64, ** P_P_U64; typedef const U64 * PC_U64;
-
 typedef double   F64; typedef F64 * P_F64, ** P_P_F64; typedef const F64 * PC_F64;
 
 typedef BOOL * P_BOOL; typedef const BOOL * PC_BOOL;
@@ -439,7 +435,7 @@ UCHARS/USTR is still Latin-N and should become UTF-8
 UTF-8 is a sequence of bytes encoding a UCS-4 32-bit character
 (ISO 10646-1:2000 Annex D, also described in RFC 3629,
 also section 3.9 of the Unicode 4.0 standard).
-See http://www.cl.cam.ac.uk/~mgk25/unicode.html
+See https://www.cl.cam.ac.uk/~mgk25/unicode.html
 */
 
 #if ((!RELEASED && 1) || defined(CODE_ANALYSIS))
@@ -622,9 +618,6 @@ printf format strings
 #define S32_FMT_POSTFIX  "d"
 #define U32_FMT         "%u"
 #define U32_XFMT        "0x%X"
-#define S64_FMT         "%" PRId64
-#define U64_FMT         "%" PRIu64
-#define U64_XFMT        "%" PRIx64
 #define F64_FMT         "%g"
 #define PTR_FMT         "%p"
 
@@ -640,15 +633,6 @@ printf format strings
 #define S32_TFMT_POSTFIX  TEXT("d")
 #define U32_TFMT         TEXT("%u")
 #define U32_XTFMT      TEXT("0x%X")
-#if defined(_MSC_VER)
-#define S64_TFMT         TEXT("%lld")
-#define U64_TFMT         TEXT("%llu")
-#define U64_XTFMT      TEXT("0x%llx")
-#else
-#define S64_TFMT         TEXT("%") PRId64
-#define U64_TFMT         TEXT("%") PRIu64
-#define U64_XTFMT      TEXT("0x%") PRIx64
-#endif /* _MSC_VER */
 #define F64_TFMT         TEXT("%g")
 #define PTR_TFMT         TEXT("%p")
 #define PTR_XTFMT      TEXT("0x%p")
@@ -1689,6 +1673,59 @@ profile_ensure_frame(void); /* ensure procedure gets a stack frame we can trace 
 
 #if __STDC_VERSION__ < 199901L
 #include "cmodules/mathxtra.h" /* for isless() etc when not C99 */
+#endif
+
+/*
+64-bit integer handling
+*/
+
+typedef  int64_t S64; typedef S64 * P_S64, ** P_P_S64; typedef const S64 * PC_S64;
+
+typedef uint64_t U64; typedef U64 * P_U64, ** P_P_U64; typedef const U64 * PC_U64;
+
+#define S64_FMT         "%" PRId64
+#define U64_FMT         "%" PRIu64
+#define U64_XFMT        "%" PRIx64
+
+#if defined(_MSC_VER)
+#define S64_TFMT         TEXT("%lld")
+#define U64_TFMT         TEXT("%llu")
+#define U64_XTFMT      TEXT("0x%llx")
+#else
+#define S64_TFMT         TEXT("%") PRId64
+#define U64_TFMT         TEXT("%") PRIu64
+#define U64_XTFMT      TEXT("0x%") PRIx64
+#endif /* _MSC_VER */
+
+/*
+* if both the top word and the MSB of the low word of a 64-bit value are all zeros
+* (+ve) or all ones (-ve) then the value will fit in a 32-bit signed integer
+*/
+
+#if WINDOWS && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+/* seems to stop Microsoft compiler generating a redundant generic shift by 32 call */
+#define int64_would_overflow_int32(v_int64) ( \
+    (((const int32_t *) &v_int64)[1])  -  (((int32_t) v_int64) >> 31) )
+#elif RISCOS
+/* just two instructions on ARM Norcroft C: SUBS rd, r_hi, r_lo ASR #31; MOVNE rd, #1 */
+#define int64_would_overflow_int32(v_int64) ( \
+    ((int32_t) (v_int64 >> 32))  -  (((int32_t) v_int64) >> 31) )
+#else
+/* portable version */
+#define int64_would_overflow_int32(v_int64) ( \
+    ((int32_t) (v_int64 >> 32))  !=  (((int32_t) v_int64) >> 31) )
+#endif /* OS */
+
+#if RISCOS
+/* just test sign bit of 64-bit value */
+/* single instruction TST r_hi on ARM Norcroft C */
+/* compare does full subtraction of zero, and often increases register use */
+#define int64_is_negative(v_int64) ( \
+    0x80000000U & ((uint32_t) (v_int64 >> 32)) )
+#else
+/* portable version */
+#define int64_is_negative(v_int64) ( \
+    (v_int64) < 0 )
 #endif
 
 #endif /* __coltsoft_h */

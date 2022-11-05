@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -73,6 +73,8 @@ typedef union RISCOS_PALETTE_U
     } bytes;
 }
 RISCOS_PALETTE_U;
+
+#define RISCOS_PALETTE_U_BYTES_INIT(gcol, red, green, blue) { .bytes = { (gcol), (red), (green), (blue) } }
 
 /* The gcol byte (least significant) is a gcol colour except in 8-bpp
  * modes, when bits 0..2 are the tint and bits 3..7 are the gcol colour.
@@ -163,13 +165,27 @@ host_clg(void)
 }
 
 _Check_return_
-static int /*colnum*/
+static inline int /*colnum*/
 colourtrans_ReturnColourNumber(
     _In_        unsigned int word)
 {
+    int colnum;
+#if defined(NORCROFT_INLINE_ASM)
+    __asm {
+        MOV     r0, word;
+        SWI     (ColourTrans_ReturnColourNumber | XOS_Bit), /*in*/ {R0}, /*out*/ {R0}, /*corrupted*/ {PSR};
+        MOVVS   r0, #0
+        MOV     colnum, r0
+    }
+#elif defined(NORCROFT_INLINE_SWIX) /* not yet handled, hence the __asm block */
+    if( /*NULL !=*/ _swix(ColourTrans_ReturnColourNumber, _IN(0)|_OUT(0), /*in*/ word, /*out*/ &colnum) )
+        colnum = 0;
+#else
     _kernel_swi_regs rs;
     rs.r[0] = word;
-    return(_kernel_swi(ColourTrans_ReturnColourNumber, &rs, &rs) ? 0 : rs.r[0]);
+    colnum = (/*NULL !=*/ _kernel_swi(ColourTrans_ReturnColourNumber, &rs, &rs)) ? 0 : rs.r[0];
+#endif
+    return(colnum);
 }
 
 _Check_return_
@@ -917,23 +933,31 @@ host_paint_drawfile_render_path(
         int fill = DMFT_PLOT_Bint | DMFT_PLOT_NonBint | DMFT_PLOT_Bext;
         DRAW_MODULE_CAP_JOIN_SPEC cjspec;
         U32 temp;
-        RISCOS_PALETTE_U os_rgb_foreground;
-        RISCOS_PALETTE_U os_rgb_background;
+        //RISCOS_PALETTE_U os_rgb_foreground;
+        //RISCOS_PALETTE_U os_rgb_background;
 
-        os_rgb_foreground.word = path.pathcolour;
+        RISCOS_PALETTE_U os_rgb_foreground; os_rgb_foreground.word = path.pathcolour;
+        const int colnum_foreground = colourtrans_ReturnColourNumber(os_rgb_foreground.word);
 
-        os_rgb_background.bytes.gcol  = 0;
-        os_rgb_background.bytes.red   = 0xFF; /*p_rgb_background->r;*/
-        os_rgb_background.bytes.green = 0xFF; /*p_rgb_background->g;*/
-        os_rgb_background.bytes.blue  = 0xFF; /*p_rgb_background->b;*/
+        RISCOS_PALETTE_U os_rgb_background; os_rgb_background.word = 0xFFFFFF00; /*bgrl*/
+        //os_rgb_background.bytes.gcol  = 0;
+        //os_rgb_background.bytes.red   = 0xFF; /*p_rgb_background->r;*/
+        //os_rgb_background.bytes.green = 0xFF; /*p_rgb_background->g;*/
+        //os_rgb_background.bytes.blue  = 0xFF; /*p_rgb_background->b;*/
+        const int colnum_background = colourtrans_ReturnColourNumber(os_rgb_background.word);
 
         { /* New machines usually demand this mechanism */
-        int colnum_foreground = colourtrans_ReturnColourNumber(os_rgb_foreground.word);
-        int colnum_background = colourtrans_ReturnColourNumber(os_rgb_background.word);
+#if defined(NORCROFT_INLINE_SWIX)
+        void_WrapOsErrorChecking(
+            _swix(OS_SetColour, _INR(0, 1),
+            /*in*/  3,
+                    colnum_foreground ^ colnum_background) );
+#else
         _kernel_swi_regs rs;
         rs.r[0] = 3;
         rs.r[1] = colnum_foreground ^ colnum_background;
         void_WrapOsErrorChecking(_kernel_swi(OS_SetColour, &rs, &rs));
+#endif
         } /*block*/
 
         /* flatness (no DrawFiles recommendation. Draw module recommends 2 OS units) */
@@ -1877,19 +1901,26 @@ host_invert_rectangle_filled(
     os_rgb_foreground.bytes.red   = p_rgb_foreground->r;
     os_rgb_foreground.bytes.green = p_rgb_foreground->g;
     os_rgb_foreground.bytes.blue  = p_rgb_foreground->b;
+    const int colnum_foreground = colourtrans_ReturnColourNumber(os_rgb_foreground.word);
 
     os_rgb_background.bytes.gcol  = 0;
     os_rgb_background.bytes.red   = p_rgb_background->r;
     os_rgb_background.bytes.green = p_rgb_background->g;
     os_rgb_background.bytes.blue  = p_rgb_background->b;
+    const int colnum_background = colourtrans_ReturnColourNumber(os_rgb_background.word);
 
     { /* New machines usually demand this mechanism */
-    int colnum_foreground = colourtrans_ReturnColourNumber(os_rgb_foreground.word);
-    int colnum_background = colourtrans_ReturnColourNumber(os_rgb_background.word);
+#if defined(NORCROFT_INLINE_SWIX)
+    void_WrapOsErrorChecking(
+        _swix(OS_SetColour, _INR(0, 1),
+        /*in*/  3,
+                colnum_foreground ^ colnum_background) );
+#else
     _kernel_swi_regs rs;
     rs.r[0] = 3;
     rs.r[1] = colnum_foreground ^ colnum_background;
     void_WrapOsErrorChecking(_kernel_swi(OS_SetColour, &rs, &rs));
+#endif
     } /*block*/
 
     host_invalidate_cache(HIC_FG);
@@ -2043,19 +2074,26 @@ host_invert_rectangle_outline(
     os_rgb_foreground.bytes.red   = p_rgb_foreground->r;
     os_rgb_foreground.bytes.green = p_rgb_foreground->g;
     os_rgb_foreground.bytes.blue  = p_rgb_foreground->b;
+    const int colnum_foreground = colourtrans_ReturnColourNumber(os_rgb_foreground.word);
 
     os_rgb_background.bytes.gcol  = 0;
     os_rgb_background.bytes.red   = p_rgb_background->r;
     os_rgb_background.bytes.green = p_rgb_background->g;
     os_rgb_background.bytes.blue  = p_rgb_background->b;
+    const int colnum_background = colourtrans_ReturnColourNumber(os_rgb_background.word);
 
     { /* New machines usually demand this mechanism */
-    int colnum_foreground = colourtrans_ReturnColourNumber(os_rgb_foreground.word);
-    int colnum_background = colourtrans_ReturnColourNumber(os_rgb_background.word);
+#if defined(NORCROFT_INLINE_SWIX)
+    void_WrapOsErrorChecking(
+        _swix(OS_SetColour, _INR(0, 1),
+        /*in*/  3,
+                colnum_foreground ^ colnum_background) );
+#else
     _kernel_swi_regs rs;
     rs.r[0] = 3;
     rs.r[1] = colnum_foreground ^ colnum_background;
     void_WrapOsErrorChecking(_kernel_swi(OS_SetColour, &rs, &rs));
+#endif
     } /*block*/
 
     host_invalidate_cache(HIC_FG);
@@ -2351,7 +2389,6 @@ host_setfontcolours(
 {
     RISCOS_PALETTE_U rgb_fg;
     RISCOS_PALETTE_U rgb_bg;
-    _kernel_swi_regs rs;
 
     assert(!p_rgb_foreground->transparent);
     rgb_fg.bytes.gcol  = 0;
@@ -2376,6 +2413,16 @@ host_setfontcolours(
     if(cache.font.set && (rgb_fg.word == cache.font.rgb_fg.word) && (rgb_bg.word == cache.font.rgb_bg.word))
         return(STATUS_OK);
 
+#if defined(NORCROFT_INLINE_SWIX_NOT_YET) /* not yet handled */
+    if( /*NULL !=*/ _swix(ColourTrans_SetFontColours, _INR(0, 3),
+        /*in*/  0,
+                rgb_bg.word,
+                rgb_fg.word,
+                14 /* max offset - some magic number, !Draw uses 14 */ ) )
+        return(ERR_FONT_COLOUR);
+#else
+    _kernel_swi_regs rs;
+
     rs.r[0] = 0;
     rs.r[1] = rgb_bg.word;
     rs.r[2] = rgb_fg.word;
@@ -2383,6 +2430,7 @@ host_setfontcolours(
 
     if(_kernel_swi(ColourTrans_SetFontColours, &rs, &rs))
         return(ERR_FONT_COLOUR);
+#endif
 
     cache.font.set = 1;
     cache.font.rgb_fg = rgb_fg;
@@ -2399,7 +2447,6 @@ host_setfontcolours_for_mlec(
 {
     RISCOS_PALETTE_U rgb_fg;
     RISCOS_PALETTE_U rgb_bg;
-    _kernel_swi_regs rs;
 
     rgb_fg.bytes.gcol  = 0;
     rgb_fg.bytes.red   = p_rgb_foreground->r;
@@ -2411,6 +2458,16 @@ host_setfontcolours_for_mlec(
     rgb_bg.bytes.green = p_rgb_background->g;
     rgb_bg.bytes.blue  = p_rgb_background->b;
 
+#if defined(NORCROFT_INLINE_SWIX_NOT_YET) /* not yet handled */
+    if( /*NULL !=*/ _swix(ColourTrans_SetFontColours, _INR(0, 3),
+        /*in*/  0,
+                rgb_bg.word,
+                rgb_fg.word,
+                14 /* max offset - some magic number, !Draw uses 14 */ ) )
+        return(ERR_FONT_COLOUR);
+#else
+    _kernel_swi_regs rs;
+
     rs.r[0] = 0;
     rs.r[1] = rgb_bg.word;
     rs.r[2] = rgb_fg.word;
@@ -2418,6 +2475,7 @@ host_setfontcolours_for_mlec(
 
     if(_kernel_swi(ColourTrans_SetFontColours, &rs, &rs))
         return(ERR_FONT_COLOUR);
+#endif
 
     cache.font.set = 0;
 
@@ -4354,18 +4412,17 @@ riscos_vdu_define_graphics_window(
     _In_        int x2,
     _In_        int y2)
 {
-    /* SKS 19apr95 get round VDU funnel/multiple SWI overhead */
+    /* SKS 19apr95 (Fireworkz), 09sep16 (PipeDream) get round VDU funnel/multiple SWI overhead */
     U8 buffer[9 /*length of VDU 24 sequence*/];
-    P_U8 p_u8 = buffer;
-    *p_u8++ = 24;
-    *p_u8++ = u8_from_int(x1);
-    *p_u8++ = u8_from_int(x1 >> 8);
-    *p_u8++ = u8_from_int(y1);
-    *p_u8++ = u8_from_int(y1 >> 8);
-    *p_u8++ = u8_from_int(x2);
-    *p_u8++ = u8_from_int(x2 >> 8);
-    *p_u8++ = u8_from_int(y2);
-    *p_u8++ = u8_from_int(y2 >> 8);
+    buffer[0] = 24;
+    buffer[1] = u8_from_int(x1);
+    buffer[2] = u8_from_int(x1 >> 8);
+    buffer[3] = u8_from_int(y1);
+    buffer[4] = u8_from_int(y1 >> 8);
+    buffer[5] = u8_from_int(x2);
+    buffer[6] = u8_from_int(x2 >> 8);
+    buffer[7] = u8_from_int(y2);
+    buffer[8] = u8_from_int(y2 >> 8);
     return(os_writeN(buffer, sizeof32(buffer)));
 }
 

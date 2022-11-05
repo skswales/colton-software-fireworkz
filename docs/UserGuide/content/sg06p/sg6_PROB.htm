@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>PROB</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Statistical, PROB" />
+        <param name="Keyword" value="Statistical functions, probability" />
+    </object>
+
+    <h1><a name="prob" id="prob"></a>PROB</h1>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        PROB(
+        <span class="csg-function-parameter">x range</span>:<span class="csg-function-parameter-type">Range or Array</span>,
+        <span class="csg-function-parameter">associated probabilities</span>:<span class="csg-function-parameter-type">Range or Array</span>,
+        <span class="csg-function-parameter">lower limit</span>:<span class="csg-function-parameter-type">Number</span>
+        {, <span class="csg-function-parameter">upper limit</span>:<span class="csg-function-parameter-type">Number</span>} )
+    </p>
+    <p>
+        Returns the probability that the values in
+        <span class="csg-function-parameter">x range</span> with
+        <span class="csg-function-parameter">associated probabilities</span> are between the
+        <span class="csg-function-parameter">lower limit</span> and <span class="csg-function-parameter">upper limit</span>.
+        If <span class="csg-function-parameter">upper limit</span> is omitted,
+        this function returns the probability of being equal to the <span class="csg-function-parameter">lower limit</span>.
+    </p>
+
+    <p class="csg-function-subheading">Formula:</p>
+    <p class="csg-function-formula">
+        PROB =
+        <sub class="csg-math-symbol-limit-lower"><em>i </em></sub><span class="csg-math-symbol-sum">&sum;</span><sub class="csg-math-symbol-limit-lower">1</sub><sup class="csg-math-symbol-limit-upper"><em>n</em></sup>
+        <span class="csg-function-formula-parentheses-1">(</span>
+            I( <em>x</em><sub><em>i</em></sub>, <em>lower limit</em>, <em>upper limit</em>) &times; <em>p</em><sub><em>i</em></sub>
+        <span class="csg-function-formula-parentheses-1">)</span>
+    </p>
+    <p>
+        where <span class="csg-function-formula-variable">n</span> is the number of values,
+        <span class="csg-function-formula-variable">x<sub>i</sub></span> is the <span class="csg-function-formula-variable">i</span>&#8209;th value,
+        <span class="csg-function-formula-variable">p<sub>i</sub></span> is the associated probability for that value, and
+        I(x,a,b) is the indicator function that yields 1 if x&isin;[a,b] and 0 otherwise.
+    </p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in Fireworkz 2.00.</p>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="../sg06p/sg6_POISSON_DIST.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_mathematical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06q/sg6_QUARTILE_EXC.htm">Next</a></td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

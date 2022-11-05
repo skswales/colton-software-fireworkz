@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -40,7 +40,7 @@ static const EV_TYPE arg_SLR[]  = { 1, EM_SLR };
 
 static const EV_TYPE arg_STR[]  = { 1, EM_STR };
 
-/* Logical: not primitive, actually integer (which includes logical) or real */
+/* Boolean: not primitive, actually integer (which includes Boolean) or real */
 static const EV_TYPE arg_BOO[]  = { 1, EM_LOGICAL };
 
 /* IoD: integer or date */
@@ -1616,7 +1616,9 @@ ev_enum_resource_get_builtin_functions(
             PTR_ASSERT(ustr_name);
             status_break(status = al_ustr_append(&p_resource_spec->h_id_ustr, ustr_name));
 
-            p_resource_spec->n_args = p_rpndef->n_args;
+            /* prevent custom control keywords from getting () appended when that's enabled in UI */
+            p_resource_spec->may_have_args = (0 != p_rpndef->n_args) || (EXEC_CONTROL != p_rpndef->fun_parms.ex_type);
+            p_resource_spec->n_args = (U32) ((S32) p_rpndef->n_args);
             p_resource_spec->max_additional_args = p_rpndef->max_additional_args;
 
             if(p_rpndef->n_args < 0)

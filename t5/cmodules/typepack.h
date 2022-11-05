@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1989-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -187,7 +187,7 @@ functions as macros
 reading from memory - assume unaligned access works, even if slower
 */
 
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #define readval_U16_BE(from) (* (PC_U16) (from))
 #define readval_U32_BE(from) (* (PC_U32) (from))
 #define readval_S16_BE(from) (* (PC_S16) (from))
@@ -197,7 +197,7 @@ reading from memory - assume unaligned access works, even if slower
 #define readval_U32(from) readval_U32_BE(from)
 #define readval_S16(from) readval_S16_BE(from)
 #define readval_S32(from) readval_S32_BE(from)
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define readval_U16_LE(from) (* (PC_U16) (from))
 #define readval_U32_LE(from) (* (PC_U32) (from))
 #define readval_S16_LE(from) (* (PC_S16) (from))
@@ -286,7 +286,7 @@ writing to memory - assume unaligned access works, even if slower
 #define __writeval_generic(to, val, type) ( \
     * (type *) (to) = (val) )
 
-#if BYTE_ORDER == BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #define writeval_U16_BE(to, u16) __writeval_generic(to, u16, U16)
 #define writeval_U32_BE(to, u32) __writeval_generic(to, u32, U32)
 #define writeval_S16_BE(to, s16) __writeval_generic(to, s16, S16)
@@ -296,7 +296,7 @@ writing to memory - assume unaligned access works, even if slower
 #define writeval_U32(to, u32) writeval_U32_BE(to, u32)
 #define writeval_S16(to, s16) writeval_S16_BE(to, s16)
 #define writeval_S32(to, s32) writeval_S32_BE(to, s32)
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define writeval_U16_LE(to, u16) __writeval_generic(to, u16, U16)
 #define writeval_U32_LE(to, u32) __writeval_generic(to, u32, U32)
 #define writeval_S16_LE(to, s16) __writeval_generic(to, s16, S16)

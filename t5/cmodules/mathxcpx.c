@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -25,7 +25,7 @@
 internal functions
 */
 
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
 
 enum HYP_FN_TYPE
 {
@@ -45,7 +45,7 @@ do_inverse_hyperbolic(
     _InRef_opt_ PC_DBL mult_res_by_i,
     _OutRef_    P_COMPLEX z_out);
 
-#endif /* defined(__STDC_NO_COMPLEX__) */
+#endif /* defined(USE_OWN_COMPLEX_IMPL) */
 
 /******************************************************************************
 *
@@ -85,7 +85,7 @@ extern double
 complex_modulus( /* |z| */
     _InRef_     PC_COMPLEX z)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     return(hypot(complex_real(z), complex_imag(z)));
 #else
     return(cabs(*z));
@@ -103,7 +103,7 @@ extern double
 complex_argument( /* arg(z) */
     _InRef_     PC_COMPLEX z)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     return(atan2(complex_imag(z), complex_real(z))); /* note silly C library ordering (y, x) */
 #else
     return(carg(*z));
@@ -124,7 +124,7 @@ complex_add( /* z1 + z2 */
     _InRef_     PC_COMPLEX z2,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__) || defined(_MSC_VER)
+#if defined(USE_OWN_COMPLEX_IMPL) || defined(_MSC_VER)
     complex_set_ri(z_out,
                    /*r*/ complex_real(z1) + complex_real(z2),
                    /*i*/ complex_imag(z1) + complex_imag(z2));
@@ -147,7 +147,7 @@ complex_subtract( /* z1 - z2 */
     _InRef_     PC_COMPLEX z2,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__) || defined(_MSC_VER)
+#if defined(USE_OWN_COMPLEX_IMPL) || defined(_MSC_VER)
     complex_set_ri(z_out,
                    /*r*/ complex_real(z1) - complex_real(z2),
                    /*i*/ complex_imag(z1) - complex_imag(z2));
@@ -170,7 +170,7 @@ complex_multiply( /* z1 * z2 */
     _InRef_     PC_COMPLEX z2,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     complex_set_ri(z_out,
                    /*r*/ complex_real(z1) * complex_real(z2) - complex_imag(z1) * complex_imag(z2),
                    /*i*/ complex_imag(z1) * complex_real(z2) + complex_real(z1) * complex_imag(z2));
@@ -203,7 +203,7 @@ complex_divide( /* z1 / z2 */
     if(fabs(divisor) < DBL_MIN)
         return(EVAL_ERR_DIVIDEBY0);
 
-#if defined(__STDC_NO_COMPLEX__) || defined(_MSC_VER)
+#if defined(USE_OWN_COMPLEX_IMPL) || defined(_MSC_VER)
     complex_set_ri(z_out,
                    /*r*/ (complex_real(z1) * complex_real(z2) + complex_imag(z1) * complex_imag(z2)) / divisor,
                    /*i*/ (complex_imag(z1) * complex_real(z2) - complex_real(z1) * complex_imag(z2)) / divisor);
@@ -225,7 +225,7 @@ complex_conjugate( /* conj(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     complex_set_ri(z_out,
                    /*r*/   complex_real(z),
                    /*i*/ - complex_imag(z));
@@ -247,7 +247,7 @@ complex_exp( /* e^z */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     /* make exp(a) */
     const double exp_a = exp(complex_real(z));
 
@@ -276,7 +276,7 @@ complex_log_e( /* log_e(z) */
     _OutRef_    P_COMPLEX z_out)
 {
     STATUS status = STATUS_OK;
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     const double r_squared = mx_fsquare(complex_real(z)) + mx_fsquare(complex_imag(z));
     double lnz_real_part;
 
@@ -365,7 +365,7 @@ complex_log_10( /* log_10(z) */
     return(status);
 }
 
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
 
 /******************************************************************************
 *
@@ -391,7 +391,7 @@ complex_wlnz(
     return(STATUS_OK);
 }
 
-#endif /* __STDC_NO_COMPLEX__ */
+#endif /* USE_OWN_COMPLEX_IMPL */
 
 /******************************************************************************
 *
@@ -406,7 +406,7 @@ complex_power( /* z1^z2 */
     _InRef_     PC_COMPLEX z2,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     COMPLEX wlnz;
 
     /* find and check wlnz */
@@ -433,7 +433,7 @@ complex_square_root( /* square root : sqrt(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     if( (0.0 == complex_real(z)) && (0.0 == complex_imag(z)) )
     {
         *z_out = complex_zero;
@@ -465,7 +465,7 @@ complex_cosine( /* cosine : cos(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     /* make exp(b) and exp(-b) */
     const double exp_b = exp(complex_imag(z));
     const double exp_mb = 1.0 / exp_b;
@@ -490,7 +490,7 @@ complex_arc_cosine( /* arc cosine : arccos(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     static const double c_acos_mult_res = +1.0;
 
     return(do_inverse_hyperbolic(C_COSH, z, NULL, &c_acos_mult_res, z_out));
@@ -554,7 +554,7 @@ complex_sine( /* sine : sin(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     /* make exp(b) and exp(-b) */
     const double exp_b = exp(complex_imag(z));
     const double exp_mb = 1.0 / exp_b;
@@ -579,7 +579,7 @@ complex_arc_sine( /* arc sine(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     static const double c_asin_mult_z   = -1.0;
     static const double c_asin_mult_res = +1.0;
 
@@ -643,7 +643,7 @@ complex_tangent( /* tangent : tan(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     COMPLEX sin_z, cos_z;
 
     complex_sine(z, &sin_z);
@@ -670,7 +670,7 @@ complex_arc_tangent( /* arc tangent : arctan(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     static const double c_atan_mult_z   = -1.0;
     static const double c_atan_mult_res = +1.0;
 
@@ -743,7 +743,7 @@ complex_hyperbolic_cosine( /* hyperbolic cosine : cosh(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     /* make exp(a) and exp(-a) */
     const double exp_a = exp(complex_real(z));
     const double exp_ma = 1.0 / exp_a;
@@ -768,7 +768,7 @@ complex_inverse_hyperbolic_cosine( /* inverse hyperbolic cosine : acosh(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     return(do_inverse_hyperbolic(C_COSH, z, NULL, NULL, z_out));
 #else
     *z_out = cacosh(*z);
@@ -830,7 +830,7 @@ complex_hyperbolic_sine( /* hyperbolic sine : sinh(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     /* make exp(a) and exp(-a) */
     const double exp_a = exp(complex_real(z));
     const double exp_ma = 1.0 / exp_a;
@@ -855,7 +855,7 @@ complex_inverse_hyperbolic_sine( /* inverse hyperbolic sine : asinh(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     return(do_inverse_hyperbolic(C_SINH, z, NULL, NULL, z_out));
 #else
     *z_out = casinh(*z);
@@ -916,7 +916,7 @@ complex_hyperbolic_tangent( /* hyperbolic tangent : tanh(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     COMPLEX sinh_z, cosh_z;
 
     complex_hyperbolic_sine(z, &sinh_z);
@@ -943,7 +943,7 @@ complex_inverse_hyperbolic_tangent( /* inverse hyperbolic tangent : atanh(z) */
     _InRef_     PC_COMPLEX z,
     _OutRef_    P_COMPLEX z_out)
 {
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
     return(do_inverse_hyperbolic(C_TANH, z, NULL, NULL, z_out));
 #else
     *z_out = catanh(*z);
@@ -992,7 +992,7 @@ complex_inverse_hyperbolic_cotangent( /* inverse hyperbolic cotangent : acoth(z)
     return(complex_inverse_hyperbolic_tangent(&reciprocal_z, z_out));
 }
 
-#if defined(__STDC_NO_COMPLEX__)
+#if defined(USE_OWN_COMPLEX_IMPL)
 
 /******************************************************************************
 *
@@ -1105,7 +1105,7 @@ do_inverse_hyperbolic(
     return(STATUS_OK);
 }
 
-#endif /* defined(__STDC_NO_COMPLEX__) */
+#endif /* defined(USE_OWN_COMPLEX_IMPL) */
 
 /* [that's enough complex algebra - Ed] */
 

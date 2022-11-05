@@ -5,5 +5,153 @@
 <!-- Sitemap 1.0 -->
 </HEAD><BODY>
 <UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Adjust (RISC OS)">
+		<param name="Local" value="content\ug\ug98_glossary.htm#adjust_risc_os">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Ampersand">
+		<param name="Local" value="content\ug\ug98_glossary.htm#ampersand">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Anchor points">
+		<param name="Local" value="content\ug\ug98_glossary.htm#anchor_points">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Anti-aliasing">
+		<param name="Local" value="content\ug\ug98_glossary.htm#antialiasing">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Array">
+		<param name="Local" value="content\ug\ug98_glossary.htm#array">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="ASCII">
+		<param name="Local" value="content\ug\ug98_glossary.htm#ascii">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="">
+		<param name="Local" value="content\ug\ug98_glossary.htm#">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="">
+		<param name="Local" value="content\ug\ug98_glossary.htm#">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Autosum">
+		<param name="Local" value="content\ug\ug98_glossary.htm#autosum">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Autowidth">
+		<param name="Local" value="content\ug\ug98_glossary.htm#autowidth">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Backdrop">
+		<param name="Local" value="content\ug\ug98_glossary.htm#backdrop">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Binding">
+		<param name="Local" value="content\ug\ug98_glossary.htm#binding">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Bold">
+		<param name="Local" value="content\ug\ug98_glossary.htm#bold">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Border">
+		<param name="Local" value="content\ug\ug98_glossary.htm#border">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Button">
+		<param name="Local" value="content\ug\ug98_glossary.htm#button">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Caret">
+		<param name="Local" value="content\ug\ug98_glossary.htm#caret">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Case">
+		<param name="Local" value="content\ug\ug98_glossary.htm#case">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Cell">
+		<param name="Local" value="content\ug\ug98_glossary.htm#cell">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Cell reference">
+		<param name="Local" value="content\ug\ug98_glossary.htm#cell_reference">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Check box">
+		<param name="Local" value="content\ug\ug98_glossary.htm#check_box">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Click">
+		<param name="Local" value="content\ug\ug98_glossary.htm#click">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Clipboard">
+		<param name="Local" value="content\ug\ug98_glossary.htm#clipboard">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Close button (Windows)">
+		<param name="Local" value="content\ug\ug98_glossary.htm#close">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Column">
+		<param name="Local" value="content\ug\ug98_glossary.htm#column">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Comma separated values">
+		<param name="Local" value="content\ug\ug98_glossary.htm#comma_separated_values">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Condensed">
+		<param name="Local" value="content\ug\ug98_glossary.htm#condensed">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Constant">
+		<param name="Local" value="content\ug\ug98_glossary.htm#constant">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Copy">
+		<param name="Local" value="content\ug\ug98_glossary.htm#copy">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Custom function">
+		<param name="Local" value="content\ug\ug98_glossary.htm#custom_function">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Cut">
+		<param name="Local" value="content\ug\ug98_glossary.htm#cut">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Template">
+		<param name="Local" value="content\ug\ug98_glossary.htm#template">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Toggle size icon (RISC OS)">
+		<param name="Local" value="content\ug\ug98_glossary.htm#toggle_size_icon">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Toolbar">
+		<param name="Local" value="content\ug\ug98_glossary.htm#toolbar">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Transpose">
+		<param name="Local" value="content\ug\ug98_glossary.htm#transpose">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Typeface">
+		<param name="Local" value="content\ug\ug98_glossary.htm#typeface">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Weight">
+		<param name="Local" value="content\ug\ug98_glossary.htm#weight">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Worksheet">
+		<param name="Local" value="content\ug\ug98_glossary.htm#worksheet">
+		</OBJECT>
 </UL>
 </BODY></HTML>

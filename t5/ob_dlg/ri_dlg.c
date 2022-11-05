@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -908,8 +908,11 @@ dialog_riscos_event_mouse_click_core(
                     case Wimp_MouseButtonSingleAdjust:
                         {
                         BOOL adjust_clicked = (p_mouse_click->buttons == Wimp_MouseButtonSingleAdjust); /* NB. get 0 or 1 answer for subsequent bitwise EOR */
-                        BOOL inc_clicked    = (hit_icon_handle == p_dialog_ictl->riscos.dwi[1].icon_handle);
-                        status = dialog_click_bump_xx(p_dialog, p_dialog_ictl, inc_clicked ^ adjust_clicked);
+                        BOOL increment_clicked = (hit_icon_handle == p_dialog_ictl->riscos.dwi[1].icon_handle);
+                        UI_DATA_INC_TYPE ui_data_inc = (increment_clicked ^ adjust_clicked) ? UI_DATA_IDT_INCREMENT : UI_DATA_IDT_DECREMENT;
+                        if(host_ctrl_pressed())
+                            ui_data_inc = (UI_DATA_IDT_INCREMENT == ui_data_inc) ? UI_DATA_IDT_MAXIMUM : UI_DATA_IDT_MINIMUM;
+                        status = dialog_click_bump_xx(p_dialog, p_dialog_ictl, ui_data_inc);
                         break;
                         }
                     }
@@ -3072,6 +3075,8 @@ dialog_riscos_Key_Pressed(
 
     case KMAP_FUNC_ARROW_DOWN:
     case KMAP_FUNC_ARROW_UP:
+    case KMAP_FUNC_CARROW_DOWN:
+    case KMAP_FUNC_CARROW_UP:
         if( (NULL != p_dialog_ictl_edit_xx) && p_dialog_ictl_edit_xx->riscos.mlec && p_dialog_ictl_edit_xx->multiline )
         {
             status = mlec__Key_Pressed(p_dialog_ictl_edit_xx->riscos.mlec, kmap_code);
@@ -3086,12 +3091,24 @@ dialog_riscos_Key_Pressed(
         {
         case DIALOG_CONTROL_BUMP_S32:
         case DIALOG_CONTROL_BUMP_F64:
-            status_assert(dialog_click_bump_xx(p_dialog, p_dialog_ictl, (kmap_code == KMAP_FUNC_ARROW_UP)));
+            {
+            UI_DATA_INC_TYPE ui_data_inc;
+            switch(kmap_code)
+            {
+            case KMAP_FUNC_ARROW_UP:    ui_data_inc = UI_DATA_IDT_INCREMENT; break;
+            case KMAP_FUNC_ARROW_DOWN:  ui_data_inc = UI_DATA_IDT_DECREMENT; break;
+            case KMAP_FUNC_CARROW_UP:   ui_data_inc = UI_DATA_IDT_MAXIMUM; break;
+            default:
+            case KMAP_FUNC_CARROW_DOWN: ui_data_inc = UI_DATA_IDT_MINIMUM; break;
+            }
+            status_assert(dialog_click_bump_xx(p_dialog, p_dialog_ictl, ui_data_inc));
             break;
+            }
 
         default:
             /* move input focus along to next/prev control */
-            dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id, (kmap_code == KMAP_FUNC_ARROW_UP) ? -1 : +1);
+            dialog_riscos_current_move(p_dialog, p_dialog->current_dialog_control_id,
+                ((kmap_code == KMAP_FUNC_ARROW_UP) || (kmap_code == KMAP_FUNC_CARROW_UP)) ? -1 : +1);
             break;
         }
 

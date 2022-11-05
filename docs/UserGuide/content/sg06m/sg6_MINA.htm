@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>MINA</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Statistical, MINA" />
+        <param name="Keyword" value="Statistical functions, minimum value (including text)" />
+    </object>
+
+    <h1><a name="mina" id="mina"></a>MINA</h1>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        MINA(
+        <span class="csg-function-parameter"><a href="../sg06/sg6_array_or_range_or_list.htm">list</a></span> )
+    </p>
+    <p>Returns the minimum value in the <span class="csg-function-parameter">list</span>.</p>
+    <p>
+        <span class="csg-function-parameter">list</span> may be a <a href="../sg06/sg6_ranges.htm">range</a> of cells,
+        an <a href="../sg06/sg6_arrays.htm">array</a>,
+        or a comma-separated list of values (which may contain cell references
+        and also <a href="../sg06/sg6_ranges.htm">ranges</a> of cells as one or more of its elements).
+    </p>
+    <p>Note that numeric values and text cells are included in the calculation - with text being treated as zero - but not blank elements.</p>
+
+    <p class="csg-function-subheading">Example:</p>
+    <pre class="csg-sample-indent">MINA("", 1, 2, 3)</pre>
+    <p>returns the number <code>0</code>.</p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in Fireworkz 2.00.</p>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="../sg06m/sg6_MIN.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06m/sg6_MODE_SNGL.htm">Next</a></td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

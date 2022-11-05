@@ -1,37 +1,36 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>Custom functions</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
         <param name="Keyword" value="Custom functions" />
-        <param name="Keyword" value="Functions, Custom control" />
+        <param name="Keyword" value="Spreadsheet functions, Custom control" />
     </object>
-    <div class="navheader">
-        <table id="navheader" summary="Navigation header">
+    <nav class="navheader">
+        <table id="navheader">
             <tr>
-                <td class="navheader_PCN_L"><a href="../sg/sg05_function_reference.htm#compatibility_functions">Prev</a> </td>
-                <th class="navheader_PCN_C">Fireworkz and Fireworkz Pro</th>
-                <td class="navheader_PCN_R"> <a href="../sg/sg04_charts.htm">Next</a></td>
+                <td><a href="../sg/sg05_compatibility_functions.htm">Prev</a> </td>
+                <th>Fireworkz &amp; Fireworkz Pro</th>
+                <td> <a href="../sg/sg04_charts.htm">Next</a></td>
             </tr>
             <tr>
-                <td class="navheader_PCN_L">Compatibility functions </td>
-                <th class="navheader_PCN_C">User Guide</th>
-                <td class="navheader_PCN_R"> Charts</td>
+                <td>Compatibility functions </td>
+                <th>User Guide</th>
+                <td> Charts</td>
             </tr>
         </table>
-    </div>
+    </nav>
 
     <h1><a name="custom_functions" id="custom_functions"></a>Custom functions</h1>
 
@@ -90,7 +89,7 @@
     <p>The default library location is:</p>
     <ul>
         <li>RISC OS:<code> Choices:Fireworkz.Library</code></li>
-        <li>Windows:<code> %APPDATA%\Colton&nbsp;Software\Fireworkz\Library</code></li>
+        <li>Windows:<code> %APPDATA%\Colton Software\Fireworkz\Library</code></li>
     </ul>
 
     <h3><a name="using_custom_functions" id="using_custom_functions"></a>Using custom functions</h3>
@@ -155,9 +154,10 @@
     <p>You should use <code>FUNCTION</code> in the following way:</p>
 
     <p class="csg-function-declaration">
-        FUNCTION(<span class="csg-function-parameter">name</span>:<span class="csg-function-parameter-type">Text</span>
-        {,&nbsp;<span class="csg-function-parameter">parameter_1</span>:<span class="csg-function-parameter-type">Text</span>
-        {,&nbsp;<span class="csg-function-parameter">parameter_2</span>:<span class="csg-function-parameter-type">Text</span> &hellip;}})
+        FUNCTION(
+        <span class="csg-function-parameter">name</span>:<span class="csg-function-parameter-type">Text</span>
+        {, <span class="csg-function-parameter">parameter_1</span>:<span class="csg-function-parameter-type">Text</span>
+        {, <span class="csg-function-parameter">parameter_2</span>:<span class="csg-function-parameter-type">Text</span> &hellip;} } )
     </p>
 
     <p>You must always specify the <span class="csg-function-parameter">name</span> of a custom function.</p>
@@ -210,32 +210,34 @@
         the same as those which appear throughout Fireworkz,
         as yielded by the <code>TYPE</code> function:
     </p>
-    <table>
-        <tr>
-            <td><code>array</code></td>
-            <td>array or range</td>
-        </tr>
-        <tr>
-            <td><code>date</code></td>
-            <td>dates and/or times</td>
-        </tr>
-        <tr>
-            <td><code>error</code></td>
-            <td>errors</td>
-        </tr>
-        <tr>
-            <td><code>number</code></td>
-            <td>numbers</td>
-        </tr>
-        <tr>
-            <td><code>reference&nbsp;</code></td>
-            <td>cell references</td>
-        </tr>
-        <tr>
-            <td><code>text</code></td>
-            <td>text</td>
-        </tr>
-    </table>
+    <div class="csg-page-padding-left">
+        <table>
+            <tr>
+                <td><code>array</code></td>
+                <td>array or range</td>
+            </tr>
+            <tr>
+                <td><code>date</code></td>
+                <td>dates and/or times</td>
+            </tr>
+            <tr>
+                <td><code>error</code></td>
+                <td>errors</td>
+            </tr>
+            <tr>
+                <td><code>number</code></td>
+                <td>numbers</td>
+            </tr>
+            <tr>
+                <td><code>reference </code></td>
+                <td>cell references</td>
+            </tr>
+            <tr>
+                <td><code>text</code></td>
+                <td>text</td>
+            </tr>
+        </table>
+    </div>
 
     <p>You may specify the type of data a parameter must have by appending one of the above names, preceded by a colon, to the parameter name.</p>
     <p>For example:</p>
@@ -268,7 +270,10 @@
         You do this using the <code>RESULT</code> function, in the following form:
     </p>
     <p class="csg-function-subheading">Syntax:</p>
-    <p class="csg-function-declaration">RESULT(<span class="csg-function-parameter">value</span>)</p>
+    <p class="csg-function-declaration">
+        RESULT(
+        <span class="csg-function-parameter">value</span>)
+    </p>
 
     <p>You may enter either a specific value, a formula, or a cell reference in the custom function sheet.</p>
 
@@ -316,10 +321,15 @@
 
     <h3><a name="BREAK" id="BREAK"></a>BREAK</h3>
     <p class="csg-function-subheading">Syntax #1:</p>
-    <p class="csg-function-declaration">BREAK</p>
+    <p class="csg-function-declaration">
+        BREAK
+    </p>
     <p>Breaks out of the most recent loop in a custom function.</p>
     <p class="csg-function-subheading"><br />Syntax #2:</p>
-    <p class="csg-function-declaration">BREAK(<span class="csg-function-parameter">number</span>)</p>
+    <p class="csg-function-declaration">
+        BREAK(
+        <span class="csg-function-parameter">number</span> )
+    </p>
     <p>You can break out of a <span class="csg-function-parameter">number</span> of containing loops at once.</p>
 
     <h3><a name="CONTINUE" id="CONTINUE"></a>CONTINUE</h3>
@@ -334,10 +344,11 @@
     <h3><a name="FOR_NEXT" id="FOR_NEXT"></a>FOR, NEXT</h3>
     <p>Repetetive execution of statements in a custom function, controlled by a counter.</p>
     <p class="csg-function-declaration">
-        FOR(<span class="csg-function-parameter">counter_name</span>:<span class="csg-function-parameter-type">Text</span>,
+        FOR(
+        <span class="csg-function-parameter">counter_name</span>:<span class="csg-function-parameter-type">Text</span>,
         <span class="csg-function-parameter">start</span>:<span class="csg-function-parameter-type">Number</span>,
         <span class="csg-function-parameter">end</span>:<span class="csg-function-parameter-type">Number</span>
-        {,&nbsp;<span class="csg-function-parameter">step</span>:<span class="csg-function-parameter-type">Number</span>})
+        {, <span class="csg-function-parameter">step</span>:<span class="csg-function-parameter-type">Number</span>} )
     </p>
     <p>The named counter is initialised to <span class="csg-function-parameter">start</span>.</p>
     <p>Statements in the loop are executed if the counter is less than, or equal to, <span class="csg-function-parameter">end</span>.</p>
@@ -362,24 +373,30 @@
 
     <pre class="csg-sample-indent">
 FOR(&quot;i&quot;,1,rows(@list))
-&nbsp;&nbsp;IF(index(@list,1,i)&lt;0)
-&nbsp;&nbsp;&nbsp;&nbsp;SET_VALUE(INDEX(D1:D100,1,i),0)
-&nbsp;&nbsp;ELSE
-&nbsp;&nbsp;&nbsp;&nbsp;SET_VALUE(INDEX(D1:D100,1,i),SQR(INDEX(@list,1,i))) 
-&nbsp;&nbsp;ENDIF
+  IF(index(@list,1,i)&lt;0)
+    SET_VALUE(INDEX(D1:D100,1,i),0)
+  ELSE
+    SET_VALUE(INDEX(D1:D100,1,i),SQR(INDEX(@list,1,i))) 
+  ENDIF
 NEXT
     </pre>
 
     <h3><a name="GOTO" id="GOTO"></a>GOTO</h3>
     <p>Move to a specified statement in a custom function.</p>
     <p class="csg-function-subheading">Syntax:</p>
-    <p class="csg-function-declaration">GOTO(<span class="csg-function-parameter">cell_reference</span>)</p>
+    <p class="csg-function-declaration">
+        GOTO(
+        <span class="csg-function-parameter">cell_reference</span> )
+    </p>
     <p>Moves to the statement specified by <span class="csg-function-parameter">cell_reference</span>.</p>
 
     <h3><a name="IF_ELSE_ELSEIF_ENDIF" id="IF_ELSE_ELSEIF_ENDIF"></a>IF, ELSE, ELSEIF, ENDIF</h3>
     <p>Conditional execution of statements in a custom function.</p>
     <p class="csg-function-subheading">Syntax #1:</p>
-    <p class="csg-function-declaration">IF(<span class="csg-function-parameter">parameter</span>)</p>
+    <p class="csg-function-declaration">
+        IF(
+        <span class="csg-function-parameter">parameter</span> )
+    </p>
     <p>
         When <code>IF</code> has only a single parameter,
         it signals the start of an <code>IF &hellip; ENDIF</code> sequence.
@@ -427,9 +444,10 @@ ENDIF
 
     <p class="csg-function-subheading"><br />Syntax #2:</p>
     <p class="csg-function-declaration">
-        IF(<span class="csg-function-parameter">parameter_1</span>,
+        IF(
+        <span class="csg-function-parameter">parameter_1</span>,
         <span class="csg-function-parameter">parameter_2</span>
-        {,&nbsp;<span class="csg-function-parameter">parameter_3</span>})
+        {, <span class="csg-function-parameter">parameter_3</span>} )
     </p>
     <p>
         If the condition expressed in <span class="csg-function-parameter">parameter_1</span> is <code>TRUE</code>,
@@ -445,9 +463,14 @@ ENDIF
     <h3><a name="REPEAT_UNTIL" id="REPEAT_UNTIL"></a>REPEAT, UNTIL</h3>
     <p>Repetetive execution of statements in a custom function, controlled by condition at end of loop.</p>
     <p class="csg-function-subheading">Syntax:</p>
-    <p class="csg-function-declaration">REPEAT</p>
+    <p class="csg-function-declaration">
+        REPEAT
+    </p>
     <pre style="font-style: italic">  loop code</pre>
-    <p class="csg-function-declaration">UNTIL(<span class="csg-function-parameter">condition</span>)</p>
+    <p class="csg-function-declaration">
+        UNTIL(
+        <span class="csg-function-parameter">condition</span> )
+    </p>
     <p>Loops executing statements between the <code>REPEAT</code> and <code>UNTIL</code> statements until the <span class="csg-function-parameter">condition</span> is <code>TRUE</code>.</p>
     <p>Note that the loop will always execute at least once.</p>
     <p class="csg-function-subheading">Example:</p>
@@ -460,7 +483,10 @@ UNTIL(remainder&lt;divisor)
     <h3><a name="RESULT" id="RESULT"></a>RESULT</h3>
     <p>Returning a value from a custom function.</p>
     <p class="csg-function-subheading">Syntax:</p>
-    <p class="csg-function-declaration">RESULT(<span class="csg-function-parameter">value</span>)</p>
+    <p class="csg-function-declaration">
+        RESULT(
+        <span class="csg-function-parameter">value</span> )
+    </p>
     <p>
         As described above, a <code>RESULT</code> statement marks the end of the custom function.
         The <span class="csg-function-parameter">value</span> is returned as the result of the function.
@@ -469,9 +495,14 @@ UNTIL(remainder&lt;divisor)
     <h3><a name="WHILE_ENDWHILE" id="WHILE_ENDWHILE"></a>WHILE, ENDWHILE</h3>
     <p>Repetetive execution of statements in a custom function, controlled by condition at start of loop.</p>
     <p class="csg-function-subheading">Syntax:</p>
-    <p class="csg-function-declaration">WHILE(<span class="csg-function-parameter">condition</span>)</p>
+    <p class="csg-function-declaration">
+        WHILE(
+        <span class="csg-function-parameter">condition</span> )
+    </p>
     <pre style="font-style: italic">  loop code</pre>
-    <p class="csg-function-declaration">ENDWHILE</p>
+    <p class="csg-function-declaration">
+        ENDWHILE
+    </p>
     <p>Loops executing statements between the <code>WHILE</code> and <code>ENDWHILE</code> statements while the <span class="csg-function-parameter">condition</span> is <code>TRUE</code>.</p>
     <p class="csg-function-subheading">Example:</p>
     <pre class="csg-sample-indent">
@@ -494,7 +525,7 @@ ENDWHILE
         Note the use of quotes in <code>A4</code> and their absence in <code>A5</code>.
     </p>
     <p>In cell <code>A8, FOR(&quot;i&quot;,1,rows(@list))</code>, the part <code>rows(@list)</code> returns the number of rows in the array.</p>
-    <p>Cell <code>A9 ...index(@list,1,i)</code> returns the <em>i</em>-th element of the array to be added to the total.</p>
+    <p>Cell <code>A9 ...index(@list,1,i)</code> returns the <em>i</em>&#8209;th element of the array to be added to the total.</p>
 
     <h2><a name="recalculation_and_custom_function_sheets" id="recalculation_and_custom_function_sheets"></a>Recalculation and custom function sheets</h2>
     <p>
@@ -514,19 +545,19 @@ ENDWHILE
         All of the data which the function exports should be passed out using <a href="#RESULT">RESULT</a>, perhaps passing out an array.
     </p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg/sg05_function_reference.htm#compatibility_functions">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg/sg04_charts.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg/sg05_compatibility_functions.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_function_reference.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg/sg04_charts.htm">Next</a></td>
             </tr>
             <tr>
-                <td class="navfooter_PUN_L">Compatibility functions </td>
-                <td class="navfooter_PUN_C"><a accesskey="h" href="../index.htm">Home</a></td>
-                <td class="navfooter_PUN_R"> Charts</td>
+                <td>Compatibility functions </td>
+                <td><a accesskey="h" href="../index.htm">Home</a></td>
+                <td> Charts</td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

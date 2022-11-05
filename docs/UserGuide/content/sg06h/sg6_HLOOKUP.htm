@@ -1,22 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>HLOOKUP</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="HLOOKUP" />
-        <param name="Keyword" value="Functions, Lookup, HLOOKUP" />
+        <param name="Keyword" value="Spreadsheet functions, Lookup, HLOOKUP" />
         <param name="Keyword" value="Lookup functions, search horizonally-arranged data" />
     </object>
 
@@ -26,21 +24,22 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        HLOOKUP(<span class="csg-function-parameter">lookup_key_value</span>,
-        <span class="csg-function-parameter">lookup_data</span>:<span class="csg-function-parameter-type">Array</span>,
+        HLOOKUP(
+        <span class="csg-function-parameter">lookup_key_value</span>,
+        <span class="csg-function-parameter">lookup_data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
         <span class="csg-function-parameter">row_index</span>:<span class="csg-function-parameter-type">Number</span>
-        {,&nbsp;<span class="csg-function-parameter">lookup_type</span>:<span class="csg-function-parameter-type">Number</span>})
+        {, <span class="csg-function-parameter">lookup_type</span>:<span class="csg-function-parameter-type">Number</span>} )
     </p>
 
     <p>
         Looks up the <span class="csg-function-parameter">lookup_key_value</span> in the first row of the
-        <span class="csg-function-parameter">lookup_data</span> <a href="../sg06/sg6_array_or_range.htm">array</a> (or <a href="../sg06/sg6_ranges.htm">range</a> of cells)
-        and returns the corresponding value in that array (or range of cells) from the
+        <span class="csg-function-parameter">lookup_data</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>)
+        and returns the corresponding value in that range of cells (or array) from the
         row specified by <span class="csg-function-parameter">row_index</span>.
     </p>
     <p>
         <span class="csg-function-parameter">lookup_data</span> must be a horizontally-arranged sorted set of data
-        (an <a href="../sg06/sg6_array_or_range.htm">array</a> or <a href="../sg06/sg6_ranges.htm">range</a> of cells).
+        (a <a href="../sg06/sg6_ranges.htm">range</a> of cells, or an <a href="../sg06/sg6_arrays.htm">array</a>).
     </p>
     <p>
         <span class="csg-function-parameter">row_index</span>=<code>1</code>
@@ -53,21 +52,23 @@
     <div class="csg-page-padding-left">
         <table>
             <colgroup>
-                <col style="min-width: 8em;" />
-                <col />
+                <col style="min-width: 8em;">
+                <col>
             </colgroup>
             <thead class="csg-table-align-top">
                 <tr>
-                    <th style="min-width: 8em; text-align: left;"><span class="csg-function-parameter">lookup_type</span>&nbsp;</th>
+                    <th style="min-width: 8em; text-align: left;"><span class="csg-function-parameter">lookup_type</span> </th>
                     <th><code>HLOOKUP</code> action</th>
                 </tr>
             </thead>
             <tbody class="csg-table-align-top">
                 <tr>
-                    <td><code>1</code> or omitted</td>
+                    <td><code>1</code> (or omitted)</td>
                     <td>
-                        <code>HLOOKUP</code> finds the largest value which is less than or equal to <span class="csg-function-parameter">lookup_key_value</span>.<br />
-                        NB <span class="csg-function-parameter">lookup_data</span> must be sorted in ascending order (largest values at the right).
+                        <code>HLOOKUP</code> finds the largest value which is less than or equal to<br />
+                        <span class="csg-function-parameter">lookup_key_value</span>.<br />
+                        NB <span class="csg-function-parameter">lookup_data</span> must be sorted in ascending order<br />
+                        (largest values at the right).
                     </td>
                 </tr>
                 <tr>
@@ -77,22 +78,24 @@
                 <tr>
                     <td><code>-1</code></td>
                     <td>
-                        <code>HLOOKUP</code> finds the smallest value which is greater than or equal to <span class="csg-function-parameter">lookup_key_value</span>.<br />
-                        NB <span class="csg-function-parameter">lookup_data</span> must be sorted in descending order (largest values at the left).
+                        <code>HLOOKUP</code> finds the smallest value which is greater than or equal to<br />
+                        <span class="csg-function-parameter">lookup_key_value</span>.<br />
+                        NB <span class="csg-function-parameter">lookup_data</span> must be sorted in descending order<br />
+                        (largest values at the left).
                     </td>
                 </tr>
             </tbody>
         </table>
-        </div>
+    </div>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06c/sg6_CHOOSE.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#lookup_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06l/sg6_LOOKUP.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06c/sg6_CHOOSE.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_lookup_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06l/sg6_LOOKUP.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

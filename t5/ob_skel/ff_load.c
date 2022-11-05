@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1992-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -1041,6 +1041,7 @@ t5_filetype_from_data(
     static const BYTE buffer_rtf[]          = { '{',    '\\',   'r',    't',    'f' };
     static const BYTE buffer_pipedream[]    = { '%',    'O',    'P',    '%' };
     static const BYTE buffer_pipedream_2[]  = { '%',    'C',    'O',    ':' };
+    static const BYTE buffer_basic_text[]   = { 'R',    'E',    'M',    ' ' };
     static const BYTE buffer_tiff_LE[]      = { 'I',    'I',    '*',    '\x00' };
     static const BYTE buffer_tiff_BE[]      = { 'M',    'M',    '\x00', '*'    };
     static const BYTE buffer_lotus_wk1[]    = { '\x00', '\x00', '\x02', '\x00' /*BOF*/ };
@@ -1107,6 +1108,8 @@ t5_filetype_from_data(
         t5_filetype = FILETYPE_PIPEDREAM;
     else if(0 == try_memcmp32(p_data, n_bytes, buffer_pipedream_2, sizeof32(buffer_pipedream_2)))
         t5_filetype = FILETYPE_PIPEDREAM;
+    else if(0 == try_memcmp32(p_data, n_bytes, buffer_basic_text, sizeof32(buffer_basic_text)))
+        t5_filetype = FILETYPE_TEXT; /* in case of first line commas that look like CSV! */
     else if(0 == try_memcmp32(p_data, n_bytes, buffer_tiff_LE, sizeof32(buffer_tiff_LE)))
         t5_filetype = FILETYPE_TIFF;
     else if(0 == try_memcmp32(p_data, n_bytes, buffer_tiff_BE, sizeof32(buffer_tiff_BE)))
@@ -1117,6 +1120,37 @@ t5_filetype_from_data(
         t5_filetype = FILETYPE_LOTUS123;
     else if(0 == try_memcmp32(p_data, n_bytes, buffer_acorn_sid, sizeof32(buffer_acorn_sid)))
         t5_filetype = FILETYPE_SID;
+    else
+    {   /* have a look in the data */
+        U32 n;
+
+        for(n = 0; n < n_bytes; ++n)
+        {
+            if(0 != n)
+            {   /* don't look for these at the first byte in a line */
+                if(UCH_CHARACTER_TABULATION == p_data[n])
+                {   /* first line of TSV should contain TAB-separated text field headings */
+                    if(sbchar_isalpha(p_data[n-1]))
+                    {
+                        t5_filetype = FILETYPE_TSV;
+                        break;
+                    }
+                }
+
+                if(UCH_COMMA == p_data[n])
+                {
+                    if( (UCH_QUOTATION_MARK == p_data[n-1]) || sbchar_isdigit(p_data[n-1]) )
+                    {
+                        t5_filetype = FILETYPE_CSV;
+                        break;
+                    }
+                }
+            }
+
+            if(p_data[n] < CH_SPACE)
+                break;
+        }
+    }
 
     return(t5_filetype);
 }

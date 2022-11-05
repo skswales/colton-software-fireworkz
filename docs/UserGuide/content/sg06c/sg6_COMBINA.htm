@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
+    <title>COMBINA</title>
+</head>
+<body>
+    <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+        <param name="Keyword" value="Spreadsheet functions, Statistical, COMBINA" />
+        <param name="Keyword" value="Statistical functions, number of combinations (including repetitions)" />
+    </object>
+
+    <h1><a name="combina" id="combina"></a>COMBINA</h1>
+
+    <p>
+        Number of combinations<sup><a href="#cite_note-1">[1]</a></sup>, including repetitions.
+    </p>
+
+    <p class="csg-function-subheading">Syntax:</p>
+    <p class="csg-function-declaration">
+        COMBINA(
+        <span class="csg-function-parameter">n</span>:<span class="csg-function-parameter-type">Integer</span>,
+        <span class="csg-function-parameter">m</span>:<span class="csg-function-parameter-type">Integer</span> )
+    </p>
+    <p>
+        This function yields the number of combinations of
+        <span class="csg-function-parameter">n</span> unlike things taken
+        <span class="csg-function-parameter">m</span> at a time,
+        but allowing for repetitions.
+    </p>
+
+    <p class="csg-function-subheading">Formula:</p>
+    <p class="csg-function-formula">
+        COMBINA
+        =
+        (<em>n</em> &plus; <em>m</em> &minus; 1)!
+         &#x2215; 
+        ((<em>n</em> &minus; 1)! &times; <em>m</em>!)
+    </p>
+
+    <p class="csg-function-subheading">Revisions:</p>
+    <p>This function was added in 2.00.</p>
+
+    <div class="csg-line"><!-- ... --> </div>
+    <ol class="references">
+        <li id="cite_note-1">
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/about/author.html">Weisstein, Eric W.</a>
+            "Combination."
+            From <a class="external" target="_blank" href="https://mathworld.wolfram.com/">MathWorld</a>--A Wolfram Web Resource.
+            <a class="external" target="_blank" href="https://mathworld.wolfram.com/Combination.html">https://mathworld.wolfram.com/Combination.html</a>
+        </li>
+    </ol>
+
+    <nav class="navfooter">
+        <table id="navfooter">
+            <tr>
+                <td><a accesskey="p" href="../sg06c/sg6_COMBIN.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_statistical_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06c/sg6_CONFIDENCE_NORM.htm">Next</a></td>
+            </tr>
+        </table>
+    </nav>
+</body>
+</html>

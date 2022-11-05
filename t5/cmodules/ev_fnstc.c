@@ -2,9 +2,9 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-/* Copyright (C) 2014-2021 Stuart Swales */
+/* Copyright (C) 2014-2022 Stuart Swales */
 
 /* Statistical function routines (distributions etc) for evaluator */
 
@@ -741,7 +741,7 @@ PROC_EXEC_PROTO(c_confidence_t)
 
 /******************************************************************************
 *
-* NUMBER expon.dist(x:number, lambda:number {, cumulative:Logical=TRUE})
+* NUMBER expon.dist(x:number, lambda:number {, cumulative:Boolean=TRUE})
 *
 * See OpenDocument 1.2 definition of EXPONDIST
 *
@@ -1203,7 +1203,7 @@ PROC_EXEC_PROTO(c_F_test)
 
 /******************************************************************************
 *
-* NUMBER gamma.dist(x, shape, scale {, cumulative:Logical=TRUE})
+* NUMBER gamma.dist(x, shape, scale {, cumulative:Boolean=TRUE})
 *
 * See OpenDocument 1.2 definition of GAMMADIST
 *
@@ -1411,7 +1411,7 @@ PROC_EXEC_PROTO(c_gamma_inv)
 
 /******************************************************************************
 *
-* NUMBER lognorm.dist(x:number {, mean:number {, sigma:number {, cumulative:Logical=TRUE}}})
+* NUMBER lognorm.dist(x:number {, mean:number {, sigma:number {, cumulative:Boolean=TRUE}}})
 *
 ******************************************************************************/
 
@@ -1491,7 +1491,7 @@ PROC_EXEC_PROTO(c_lognorm_inv)
 
 /******************************************************************************
 *
-* NUMBER norm.s.dist(z:number, {, cumulative:Logical=TRUE})
+* NUMBER norm.s.dist(z:number, {, cumulative:Boolean=TRUE})
 *
 * NUMBER phi(z:number)
 *
@@ -1626,7 +1626,7 @@ PROC_EXEC_PROTO(c_norm_s_inv)
 
 /******************************************************************************
 *
-* NUMBER norm.dist(x:number, mean:number, sigma:number {, cumulative:Logical=TRUE})
+* NUMBER norm.dist(x:number, mean:number, sigma:number {, cumulative:Boolean=TRUE})
 *
 ******************************************************************************/
 
@@ -2207,7 +2207,7 @@ PROC_EXEC_PROTO(c_t_test)
 
 /******************************************************************************
 *
-* NUMBER weibull.dist(x:number, shape:number, scale:number, cumulative:Logical)
+* NUMBER weibull.dist(x:number, shape:number, scale:number, cumulative:Boolean)
 *
 * See OpenDocument 1.2 definition of WEIBULL
 *

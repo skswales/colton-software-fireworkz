@@ -432,7 +432,7 @@ compound_file_read_DIFAT(
     memcpy32(p_compound_file->full_DIFAT, p_compound_file->hdr._sectFat, DIFAT_entry_bytes);
 
 #if TRACE_ALLOWED
-    if(tracing(TRACE_MODULE_CFBF))
+    if_constant(tracing(TRACE_MODULE_CFBF))
         compound_file_dump_DIFAT_file_header(p_compound_file);
 #endif
 
@@ -456,7 +456,7 @@ compound_file_read_DIFAT(
         memcpy32(p, p_compound_file->p_sector_buffer, DIFAT_entry_bytes);
 
 #if TRACE_ALLOWED
-        if(tracing(TRACE_MODULE_CFBF))
+        if_constant(tracing(TRACE_MODULE_CFBF))
             compound_file_dump_file_DIFAT_DIF(p_compound_file, i, p);
 #endif
 

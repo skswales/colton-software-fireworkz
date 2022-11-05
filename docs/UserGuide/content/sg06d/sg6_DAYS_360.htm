@@ -1,21 +1,19 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 2014-2022 Stuart Swales -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>DAYS_360</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 2014-2021 Stuart Swales -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="DAYS_360" />
-        <param name="Keyword" value="Functions, Date and time, DAYS_360" />
+        <param name="Keyword" value="Spreadsheet functions, Date and time, DAYS_360" />
         <param name="Keyword" value="Date and time functions, number of days between dates" />
     </object>
 
@@ -23,9 +21,10 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        DAYS_360(<span class="csg-function-parameter">start</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_date_formats.htm">Date</a></span>,
-        <span class="csg-function-parameter">end</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_date_formats.htm">Date</a></span>
-        {,&nbsp;<span class="csg-function-parameter">method</span>:<span class="csg-function-parameter-type">Logical</span>})
+        DAYS_360(
+        <span class="csg-function-parameter"><a href="../sg06/sg6_date_formats.htm">start_date</a></span>,
+        <span class="csg-function-parameter"><a href="../sg06/sg6_date_formats.htm">end_date</a></span>
+        {, <span class="csg-function-parameter">method</span>:<span class="csg-function-parameter-type">Boolean</span>} )
     </p>
 
     <p>This function returns the number of days between the given dates according to the desired 360-day calendar method.</p>
@@ -52,19 +51,19 @@
     <p>In both cases the difference between the possibly-adjusted dates is then computed by treating all intervening months as being 30 days long.</p>
 
     <p>Credit:</p>
-    <p><a href="http://en.wikipedia.org/wiki/360-day_calendar">http://en.wikipedia.org/wiki/360-day_calendar</a></p>
+    <p><a href="https://en.wikipedia.org/wiki/360-day_calendar">https://en.wikipedia.org/wiki/360-day_calendar</a></p>
 
     <p class="csg-function-subheading">Revisions:</p>
     <p>This function was added in Fireworkz 2.00.</p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06d/sg6_DAYS.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#date_time_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06h/sg6_HOUR.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06d/sg6_DAYS.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_date_time_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06e/sg6_EDATE.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

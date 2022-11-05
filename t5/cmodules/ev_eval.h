@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -215,6 +215,7 @@ typedef struct RESOURCE_SPEC
 {
     ARRAY_HANDLE_USTR h_id_ustr;
     ARRAY_HANDLE_USTR h_definition_ustr;
+    BOOL may_have_args;
     U32 n_args;
     U32 max_additional_args;
     P_USTR ustr_description; /* owned by us */

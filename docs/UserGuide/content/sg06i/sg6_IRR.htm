@@ -1,22 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>IRR</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="IRR" />
-        <param name="Keyword" value="Functions, Financial, IRR" />
+        <param name="Keyword" value="Spreadsheet functions, Financial, IRR" />
         <param name="Keyword" value="Financial functions, internal rate of return" />
     </object>
 
@@ -26,38 +24,45 @@
 
     <p class="csg-function-subheading">Syntax:</p>
     <p class="csg-function-declaration">
-        IRR(<span class="csg-function-parameter">guess</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>)
+        IRR(
+        <span class="csg-function-parameter">guess</span>:<span class="csg-function-parameter-type">Number</span>,
+        <span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span> )
     </p>
     <p>where:</p>
-    <table>
-        <tr>
-            <td class="csg-function-parameter">guess</td>
-            <td>is the guessed rate of return, entered as a decimal fraction;</td>
-        </tr>
-        <tr>
-            <td class="csg-function-parameter"><a href="../sg06/sg6_array_or_range.htm">data</a></td>
-            <td>
-                is a series of cash flows.
-                The initial investment should be entered as a negative number in the first cell in the range (or first element of the array).
-                Further cells in the range (or elements of the array) should contain positive numbers, the expected returns on the investment.
-            </td>
-        </tr>
-    </table>
+    <div class="csg-page-padding-left">
+        <table>
+            <colgroup>
+                <col style="width: 4em;">
+                <col>
+            </colgroup>
+            <tr>
+                <td class="csg-function-parameter">guess</td>
+                <td>is the guessed rate of return, entered as a decimal fraction;</td>
+            </tr>
+            <tr>
+                <td class="csg-function-parameter"><a href="../sg06/sg6_array_or_range.htm">data</a></td>
+                <td>
+                    is a series of cash flows.
+                    The initial investment should be entered as a negative number in the first cell in the range (or first element of the array).
+                    Further cells in the range (or elements of the array) should contain positive numbers, the expected returns on the investment.
+                </td>
+            </tr>
+        </table>
+    </div>
 
     <p class="csg-function-subheading">Example:</p>
     <p>With <code>-5000</code> in cell <code>A1</code> and <code>500</code> in cells <code>A2:A14</code> and a guessed rate of return of <code>0.05</code> in <code>A1</code>6, the formula</p>
     <pre class="csg-sample-indent">IRR(A16, A1:A14)</pre>
     <p>will return the internal rate of return for the cash flows in column <code>A</code>.</p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06f/sg6_FVSCHEDULE.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#financial_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06m/sg6_MIRR.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06f/sg6_FVSCHEDULE.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_financial_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06m/sg6_MIRR.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>

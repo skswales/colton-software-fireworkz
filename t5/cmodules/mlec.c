@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -583,13 +583,13 @@ mlec_get_host_font(void)
     {
         (void) font_LoseFont(host_font);
         
-        host_font = mlec_host_font_find("\\F" "DejaVuSans.Mono" /*"\\E" "Latin1"*/, x16_size_y, x16_size_y);
+        host_font = mlec_host_font_find("\\F" "DejaVuSans.Mono" /*current alphabet*/, x16_size_y, x16_size_y);
 
         if(HOST_FONT_NONE != host_font)
             return(host_font);
     }
 
-    host_font = mlec_host_font_find("\\F" "Corpus.Medium" /*"\\E" "Latin1"*/, x16_size_y, x16_size_y);
+    host_font = mlec_host_font_find("\\F" "Corpus.Medium" /*current alphabet*/, x16_size_y, x16_size_y);
 
     if(HOST_FONT_NONE != host_font)
         return(host_font);
@@ -3552,9 +3552,23 @@ static inline int /*colnum*/
 colourtrans_ReturnColourNumber(
     _In_        unsigned int word)
 {
+    int colnum;
+#if defined(NORCROFT_INLINE_ASM)
+    __asm {
+        MOV     r0, word;
+        SWI     (ColourTrans_ReturnColourNumber | XOS_Bit), /*in*/ {R0}, /*out*/ {R0}, /*corrupted*/ {PSR};
+        MOVVS   r0, #0
+        MOV     colnum, r0
+    }
+#elif defined(NORCROFT_INLINE_SWIX) /* not yet handled, hence the __asm block */
+    if( /*NULL !=*/ _swix(ColourTrans_ReturnColourNumber, _IN(0)|_OUT(0), /*in*/ word, /*out*/ &colnum) )
+        colnum = 0;
+#else
     _kernel_swi_regs rs;
     rs.r[0] = word;
-    return(_kernel_swi(ColourTrans_ReturnColourNumber, &rs, &rs) ? 0 : rs.r[0]);
+    colnum = (/*NULL !=*/ _kernel_swi(ColourTrans_ReturnColourNumber, &rs, &rs)) ? 0 : rs.r[0];
+#endif
+    return(colnum);
 }
 
 typedef union RISCOS_PALETTE_U
@@ -3571,30 +3585,36 @@ typedef union RISCOS_PALETTE_U
 }
 RISCOS_PALETTE_U;
 
+#define RISCOS_PALETTE_U_BYTES_INIT(gcol, red, green, blue) { .bytes = { (gcol), (red), (green), (blue) } }
+
 static void
 host_set_EOR_for_mlec(void)
 {
-    RISCOS_PALETTE_U os_rgb_foreground;
-    RISCOS_PALETTE_U os_rgb_background;
+    /* New machines usually demand this mechanism */
 
-    os_rgb_foreground.bytes.gcol  = 0;
-    os_rgb_foreground.bytes.red   = 0x00;
-    os_rgb_foreground.bytes.green = 0x00;
-    os_rgb_foreground.bytes.blue  = 0x00;
+    //static const RISCOS_PALETTE_U os_rgb_foreground = RISCOS_PALETTE_U_BYTES_INIT(0, 0x00, 0x00, 0x00);
+    //static const RISCOS_PALETTE_U os_rgb_background = RISCOS_PALETTE_U_BYTES_INIT(0, 0xFF, 0xFF, 0xFF);
 
-    os_rgb_background.bytes.gcol  = 0;
-    os_rgb_background.bytes.red   = 0xFF;
-    os_rgb_background.bytes.green = 0xFF;
-    os_rgb_background.bytes.blue  = 0xFF;
+    RISCOS_PALETTE_U os_rgb_foreground; os_rgb_foreground.word = 0;
+    const int colnum_foreground = colourtrans_ReturnColourNumber(os_rgb_foreground.word);
 
-    { /* New machines usually demand this mechanism */
-    int colnum_foreground = colourtrans_ReturnColourNumber(os_rgb_foreground.word);
-    int colnum_background = colourtrans_ReturnColourNumber(os_rgb_background.word);
+    RISCOS_PALETTE_U os_rgb_background; os_rgb_background.word = 0xFFFFFF00; /*bgrl*/
+    //os_rgb_background.bytes.gcol  = 0;
+    //os_rgb_background.bytes.red   = 0xFF;
+    //os_rgb_background.bytes.green = 0xFF;
+    //os_rgb_background.bytes.blue  = 0xFF;
+    const int colnum_background = colourtrans_ReturnColourNumber(os_rgb_background.word);
+#if defined(NORCROFT_INLINE_SWIX)
+    void_WrapOsErrorChecking(
+        _swix(OS_SetColour, _INR(0, 1),
+        /*in*/  3,
+                colnum_foreground ^ colnum_background) );
+#else
     _kernel_swi_regs rs;
     rs.r[0] = 3;
     rs.r[1] = colnum_foreground ^ colnum_background;
     void_WrapOsErrorChecking(_kernel_swi(OS_SetColour, &rs, &rs));
-    } /*block*/
+#endif
 }
 
 static void

@@ -18,9 +18,23 @@
 #define	_MATH_PRIVATE_H_
 
 #if 1 /* COLTON_SOFTWARE */
+#ifdef __arm__
+#if defined(__VFP_FP__)
+#define	__FLOAT_WORD_ORDER__	BYTE_ORDER
+#else
+#define	__FLOAT_WORD_ORDER__	BIG_ENDIAN
+#endif
+#else /* __arm__ */
+#define	__FLOAT_WORD_ORDER__	BYTE_ORDER
+#endif
 #else /* COLTON_SOFTWARE */
-#include <sys/types.h>
-#include <machine/endian.h>
+#include <openlibm_complex.h>
+#include <openlibm_defs.h>
+#include "cdefs-compat.h"
+#include "types-compat.h"
+#include "fpmath.h"
+#include <stdint.h>
+#include "math_private_openbsd.h"
 #endif /* COLTON_SOFTWARE */
 
 /*
@@ -41,17 +55,7 @@
  * ints.
  */
 
-#ifdef __arm__
-#if defined(__VFP_FP__)
-#define	IEEE_WORD_ORDER	BYTE_ORDER
-#else
-#define	IEEE_WORD_ORDER	BIG_ENDIAN
-#endif
-#else /* __arm__ */
-#define	IEEE_WORD_ORDER	BYTE_ORDER
-#endif
-
-#if IEEE_WORD_ORDER == BIG_ENDIAN
+#if __FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__
 
 typedef union
 {
@@ -69,7 +73,7 @@ typedef union
 
 #endif
 
-#if IEEE_WORD_ORDER == LITTLE_ENDIAN
+#if __FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__
 
 typedef union
 {
@@ -233,71 +237,26 @@ do {								\
 /*
  * Common routine to process the arguments to nan(), nanf(), and nanl().
  */
-void _scan_nan(uint32_t *__words, int __num_words, const char *__s);
-
-#ifdef _COMPLEX_H
+void __scan_nan(uint32_t *__words, int __num_words, const char *__s);
 
 /*
- * C99 specifies that complex numbers have the same representation as
- * an array of two elements, where the first element is the real part
- * and the second element is the imaginary part.
- */
-typedef union {
-	float complex f;
-	float a[2];
-} float_complex;
-typedef union {
-	double complex f;
-	double a[2];
-} double_complex;
-typedef union {
-	long double complex f;
-	long double a[2];
-} long_double_complex;
-#define	REALPART(z)	((z).a[0])
-#define	IMAGPART(z)	((z).a[1])
-
-/*
- * Inline functions that can be used to construct complex values.
+ * Mix 1 or 2 NaNs.  First add 0 to each arg.  This normally just turns
+ * signaling NaNs into quiet NaNs by setting a quiet bit.  We do this
+ * because we want to never return a signaling NaN, and also because we
+ * don't want the quiet bit to affect the result.  Then mix the converted
+ * args using addition.  The result is typically the arg whose mantissa
+ * bits (considered as in integer) are largest.
  *
- * The C99 standard intends x+I*y to be used for this, but x+I*y is
- * currently unusable in general since gcc introduces many overflow,
- * underflow, sign and efficiency bugs by rewriting I*y as
- * (0.0+I)*(y+0.0*I) and laboriously computing the full complex product.
- * In particular, I*Inf is corrupted to NaN+I*Inf, and I*-0 is corrupted
- * to -0.0+I*0.0.
+ * Technical complications: the result in bits might depend on the precision
+ * and/or on compiler optimizations, especially when different register sets
+ * are used for different precisions.  Try to make the result not depend on
+ * at least the precision by always doing the main mixing step in long double
+ * precision.  Try to reduce dependencies on optimizations by adding the
+ * the 0's in different precisions (unless everything is in long double
+ * precision).
  */
-static __inline float complex
-cpackf(float x, float y)
-{
-	float_complex z;
+#define	nan_mix(x, y)	(((x) + 0.0L) + ((y) + 0))
 
-	REALPART(z) = x;
-	IMAGPART(z) = y;
-	return (z.f);
-}
-
-static __inline double complex
-cpack(double x, double y)
-{
-	double_complex z;
-
-	REALPART(z) = x;
-	IMAGPART(z) = y;
-	return (z.f);
-}
-
-static __inline long double complex
-cpackl(long double x, long double y)
-{
-	long_double_complex z;
-
-	REALPART(z) = x;
-	IMAGPART(z) = y;
-	return (z.f);
-}
-#endif /* _COMPLEX_H */
- 
 #ifdef __GNUCLIKE_ASM
 
 /* Asm versions of some functions. */
@@ -308,7 +267,7 @@ irint(double x)
 {
 	int n;
 
-	asm("cvtsd2si %1,%0" : "=r" (n) : "x" (x));
+	__asm__("cvtsd2si %1,%0" : "=r" (n) : "x" (x));
 	return (n);
 }
 #define	HAVE_EFFICIENT_IRINT
@@ -320,7 +279,7 @@ irint(double x)
 {
 	int n;
 
-	asm("fistl %0" : "=m" (n) : "t" (x));
+	__asm__("fistl %0" : "=m" (n) : "t" (x));
 	return (n);
 }
 #define	HAVE_EFFICIENT_IRINT
@@ -347,9 +306,7 @@ irint(double x)
 #define	__ieee754_fmod	fmod
 #define	__ieee754_pow	pow
 #define	__ieee754_lgamma lgamma
-#define	__ieee754_gamma	gamma
 #define	__ieee754_lgamma_r lgamma_r
-#define	__ieee754_gamma_r gamma_r
 #define	__ieee754_log10	log10
 #define	__ieee754_sinh	sinh
 #define	__ieee754_hypot	hypot
@@ -360,7 +317,6 @@ irint(double x)
 #define	__ieee754_jn	jn
 #define	__ieee754_yn	yn
 #define	__ieee754_remainder remainder
-#define	__ieee754_scalb	scalb
 #define	__ieee754_sqrtf	sqrtf
 #define	__ieee754_acosf	acosf
 #define	__ieee754_acoshf acoshf
@@ -373,9 +329,7 @@ irint(double x)
 #define	__ieee754_fmodf	fmodf
 #define	__ieee754_powf	powf
 #define	__ieee754_lgammaf lgammaf
-#define	__ieee754_gammaf gammaf
 #define	__ieee754_lgammaf_r lgammaf_r
-#define	__ieee754_gammaf_r gammaf_r
 #define	__ieee754_log10f log10f
 #define	__ieee754_log2f log2f
 #define	__ieee754_sinhf	sinhf
@@ -387,7 +341,6 @@ irint(double x)
 #define	__ieee754_jnf	jnf
 #define	__ieee754_ynf	ynf
 #define	__ieee754_remainderf remainderf
-#define	__ieee754_scalbf scalbf
 
 /* fdlibm kernel function */
 int	__kernel_rem_pio2(double*,double*,int,int,int);
@@ -401,9 +354,7 @@ double	__kernel_sin(double,double,int);
 double	__kernel_cos(double,double);
 double	__kernel_tan(double,double,int);
 double	__ldexp_exp(double,int);
-#ifdef _COMPLEX_H
-double complex __ldexp_cexp(double complex,int);
-#endif
+/* COLTON_SOFTWARE double complex __ldexp_cexp(double complex,int); */
 
 /* float precision kernel functions */
 #ifdef INLINE_REM_PIO2F
@@ -423,9 +374,7 @@ __inline
 #endif
 float	__kernel_tandf(double,int);
 float	__ldexp_expf(float,int);
-#ifdef _COMPLEX_H
-float complex __ldexp_cexpf(float complex,int);
-#endif
+/* COLTON_SOFTWARE float complex __ldexp_cexpf(float complex,int); */
 
 /* long double precision kernel functions */
 long double __kernel_sinl(long double, long double, int);

@@ -2,7 +2,7 @@
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 /* Copyright (C) 1991-1998 Colton Software Limited
  * Copyright (C) 1998-2015 R W Colton */
@@ -305,12 +305,12 @@ PROC_EXEC_PROTO(c_days)
 
 /******************************************************************************
 *
-* INTEGER days_360(start_date, end_date {, method:Logical=FALSE})
+* INTEGER days_360(start_date, end_date {, method:Boolean=FALSE})
 *
 ******************************************************************************/
 
 /*
-Credit: http://en.wikipedia.org/wiki/360-day_calendar
+Credit: https://en.wikipedia.org/wiki/360-day_calendar
 
 A duration is calculated as an integral number of days between two dates A and B (where by convention A is earlier than B).
 There are two methods commonly available which differ in the way that they handle the cases where the months are not 30 days long:

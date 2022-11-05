@@ -561,11 +561,17 @@ claim_broadcast_foreign_file_mutate_filetype(
     switch(t5_filetype)
     {
     case FILETYPE_TEXT:
+        {
         /* Might have been Shift-double-clicked or Shift-Filer_Run */
         /* Pass on these */
-        if(host_shift_pressed())
+        BOOL f_shift_pressed;
+        const BOOL f_ctrl_pressed = host_keyboard_status(&f_shift_pressed);
+        UNREFERENCED_LOCAL_VARIABLE(f_ctrl_pressed);
+
+        if(f_shift_pressed)
             return(FILETYPE_UNDETERMINED);
         break;
+        }
 
     case FILETYPE_DOS:
     case FILETYPE_DATA:
@@ -698,6 +704,7 @@ general_message_DataOpen(
     _InRef_     PC_WimpMessage p_wimp_message)
 {
     /* File double-clicked in directory display */
+    /* NB it's a DataOpen message but effectively the same as DataLoad (and wimp.h definition is malformed) */
     TCHARZ buffer[BUF_MAX_PATHSTRING];
     const PCTSTR filename = canonicalise_unless_rooted(buffer, elemof32(buffer), p_wimp_message->data.data_load.leaf_name);
     const T5_FILETYPE t5_filetype = claim_broadcast_file_mutate_filetype((T5_FILETYPE) p_wimp_message->data.data_load.file_type, filename);
@@ -984,9 +991,12 @@ general_event_handler(
 static void
 iconbar_event_mouse_click_Select(void)
 {
-    if(host_ctrl_pressed())
+    BOOL f_shift_pressed;
+    const BOOL f_ctrl_pressed = host_keyboard_status(&f_shift_pressed);
+
+    if(f_ctrl_pressed)
     { /*EMPTY*/ } /* reserved */
-    else if(host_shift_pressed())
+    else if(f_shift_pressed)
     {
         TCHARZ filename[BUF_MAX_PATHSTRING];
 
@@ -1005,9 +1015,12 @@ iconbar_event_mouse_click_Select(void)
 static void
 iconbar_event_mouse_click_Adjust(void)
 {
-    if(host_ctrl_pressed())
+    BOOL f_shift_pressed;
+    const BOOL f_ctrl_pressed = host_keyboard_status(&f_shift_pressed);
+
+    if(f_ctrl_pressed)
     { /*EMPTY*/ } /* reserved */
-    else if(host_shift_pressed())
+    else if(f_shift_pressed)
     { /*EMPTY*/ } /* reserved */
     else
     {
@@ -1240,8 +1253,6 @@ iconbar_event_handler(
 *
 ******************************************************************************/
 
-#define SCRAP_NAME_LEAF product_family_id()
-
 extern void
 host_xfer_import_file_via_scrap(
     _InRef_     PC_WimpMessage p_wimp_message /*DataSave*/)
@@ -1288,7 +1299,7 @@ host_xfer_import_file_via_scrap(
         if(!file_is_dir(host_xfer_load_statics.scrap_name_buffer))
             file_create_directory(host_xfer_load_statics.scrap_name_buffer);
 
-        tstr_xstrkat(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), SCRAP_NAME_LEAF);
+        tstr_xstrkat(host_xfer_load_statics.scrap_name_buffer, elemof32(host_xfer_load_statics.scrap_name_buffer), ".Scrap");
     }
 
     msg.hdr.size = sizeof32(msg.hdr) + sizeof32(WimpDataSaveAckMessage);

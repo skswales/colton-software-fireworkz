@@ -1,41 +1,41 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta charset="UTF-8">
 
-    <link href="../common/guide.css" rel="stylesheet" type="text/css" />
+    <!-- This Source Code Form is subject to the terms of the Mozilla Public
+       - License, v. 2.0. If a copy of the MPL was not distributed with this
+       - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+    <!-- Copyright © 1994-1998 Colton Software Limited
+       - Copyright © 1998-2015 R W Colton -->
+
+    <link href="../common/guide.css" rel="stylesheet" type="text/css">
     <title>INDEX</title>
 </head>
 <body>
-    <!-- This Source Code Form is subject to the terms of the Mozilla Public
-       - License, v. 2.0. If a copy of the MPL was not distributed with this
-       - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-    <!-- Copyright (C) 1994-1998 Colton Software Limited
-       - Copyright (C) 1998-2015 R W Colton -->
     <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-        <param name="Keyword" value="INDEX" />
-        <param name="Keyword" value="Functions, Miscellaneous, INDEX" />
+        <param name="Keyword" value="Spreadsheet functions, Miscellaneous, INDEX" />
         <param name="Keyword" value="Miscellaneous functions, indexed element of array" />
         <param name="Keyword" value="Miscellaneous functions, indexed sub-array of array" />
     </object>
 
     <h1><a name="index" id="index"></a>INDEX</h1>
 
-    <p>Returns one or more elements from an array or range of cells.</p>
+    <p>Returns one or more elements from a range of cells or an array.</p>
 
     <p class="csg-function-subheading">Syntax #1:</p>
     <p class="csg-function-declaration">
-        INDEX(<span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>,
-        <span class="csg-function-parameter">col</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter">row</span>:<span class="csg-function-parameter-type">Number</span>)
+        INDEX(
+        <span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">column</span>:<span class="csg-function-parameter-type">Integer</span>,
+        <span class="csg-function-parameter">row</span>:<span class="csg-function-parameter-type">Integer</span> )
     </p>
     <p>
-        Returns the element of the <span class="csg-function-parameter">data</span> <a href="../sg06/sg6_array_or_range.htm">array</a> (or range of cells)
-        specified by <span class="csg-function-parameter">col</span>,<span class="csg-function-parameter">row</span>.
+        Returns the element of the
+        <span class="csg-function-parameter">data</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>)
+        specified by the <span class="csg-function-parameter">column</span>,<span class="csg-function-parameter">row</span> parameters.
     </p>
-    <p>Column and row indices start at 1.</p>
+    <p>Column and row numbers start at 1.</p>
 
     <p class="csg-function-subheading">Example:</p>
     <pre class="csg-sample-indent">INDEX(B1:D20, 2, 3)</pre>
@@ -43,17 +43,19 @@
 
     <p class="csg-function-subheading">Syntax #2:</p>
     <p class="csg-function-declaration">
-        INDEX(<span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Array|Range</a></span>,
-        <span class="csg-function-parameter">col</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter">row</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter">cols</span>:<span class="csg-function-parameter-type">Number</span>,
-        <span class="csg-function-parameter">rows</span>:<span class="csg-function-parameter-type">Number</span>)
+        INDEX(
+        <span class="csg-function-parameter">data</span>:<span class="csg-function-parameter-type"><a href="../sg06/sg6_array_or_range.htm">Range or Array</a></span>,
+        <span class="csg-function-parameter">column</span>:<span class="csg-function-parameter-type">Integer</span>,
+        <span class="csg-function-parameter">row</span>:<span class="csg-function-parameter-type">Integer</span>,
+        <span class="csg-function-parameter">columns</span>:<span class="csg-function-parameter-type">Integer</span>,
+        <span class="csg-function-parameter">rows</span>:<span class="csg-function-parameter-type">Integer</span> )
     </p>
 
     <p>
-        With five parameters this function returns a sub-array of the <span class="csg-function-parameter">data</span> <a href="../sg06/sg6_array_or_range.htm">array</a> (or range of cells)<br />
-        starting at the position <span class="csg-function-parameter">col</span>,<span class="csg-function-parameter">row</span>
-        with <span class="csg-function-parameter">cols</span> columns and <span class="csg-function-parameter">rows</span> rows.
+        With five parameters this function returns a sub-array of the
+        <span class="csg-function-parameter">data</span> <a href="../sg06/sg6_ranges.htm">range</a> of cells (or <a href="../sg06/sg6_arrays.htm">array</a>)
+        starting at the position <span class="csg-function-parameter">column</span>,<span class="csg-function-parameter">row</span>
+        with <span class="csg-function-parameter">columns</span> columns and <span class="csg-function-parameter">rows</span> rows.
     </p>
 
     <p class="csg-function-subheading">Example:</p>
@@ -67,19 +69,19 @@
         If the row number is zero, the whole of the specified column(s) is returned.
     </p>
     <p>
-        Starting with 2.00, this function will accept zero for the optional column and/or row size.<br />
-        If the column size is zero, the rest of the specified row(s) beginning at the given column number is returned.<br />
-        If the row size is zero, the whole of the specified column(s) beginning at the given row number is returned.
+        Starting with 2.00, this function will accept zero for the optional number of columns and/or rows.<br />
+        If the number of columns is zero, the rest of the specified row(s) beginning at the given column number is returned.<br />
+        If the number of rows is zero, the whole of the specified column(s) beginning at the given row number is returned.
     </p>
 
-    <div class="navfooter">
-        <table id="navfooter" summary="Navigation footer">
+    <nav class="navfooter">
+        <table id="navfooter">
             <tr>
-                <td class="navfooter_PUN_L"><a accesskey="p" href="../sg06i/sg6_IF.htm">Prev</a> </td>
-                <td class="navfooter_PUN_C"><a accesskey="u" href="../sg/sg05_function_reference.htm#miscellaneous_functions">Up</a></td>
-                <td class="navfooter_PUN_R"> <a accesskey="n" href="../sg06i/sg6_INPUT.htm">Next</a></td>
+                <td><a accesskey="p" href="../sg06i/sg6_IF.htm">Prev</a> </td>
+                <td><a accesskey="u" href="../sg/sg05_miscellaneous_functions.htm">Up</a></td>
+                <td> <a accesskey="n" href="../sg06i/sg6_INPUT.htm">Next</a></td>
             </tr>
         </table>
-    </div>
+    </nav>
 </body>
 </html>
