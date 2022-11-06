@@ -12,10 +12,10 @@
 
 #TEXTUAL_VERSION_NUMBER=2.xx.yy (yy usually omitted when 00)
 TEXTUAL_VERSION_NUMBER=2.32
-#TEXTUAL_VERSION_NUMBER=2.32.01
+TEXTUAL_VERSION_NUMBER=2.32.01
 # this goes in !Boot/!Run/Config files
 
-STUBS_VERSION_NUMBER=0x23200
+STUBS_VERSION_NUMBER=0x23201
 # when changing version number for release, remember:
 #   common.mf_mid
 #   ob_skel.version.h

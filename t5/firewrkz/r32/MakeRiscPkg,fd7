@@ -8,7 +8,7 @@
 | Copyright © 1998-2015 R W Colton
 
 Set t5$Release 2_32
-|Set t5$Release 2_32_01
+Set t5$Release 2_32_01
 
 Set t5$Disc $.Temp.Fire.Fireworkz_<t5$Release>
 IfThere     $.Temp      Then Else %CDir $.Temp

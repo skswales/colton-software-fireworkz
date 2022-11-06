@@ -474,7 +474,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug XP|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\cmodules\mathxcpx.c" />
-    <ClCompile Include="..\..\cmodules\muldiv64.c" />
+    <ClCompile Include="..\..\cmodules\muldiv86.c" />
     <ClCompile Include="..\..\cmodules\riscos\myrand.s">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug XP ANSI|Win32'">true</ExcludedFromBuild>

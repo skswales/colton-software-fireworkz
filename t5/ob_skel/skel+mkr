@@ -255,6 +255,7 @@ $(BUILD_DIR).ob_skel.riscos.o.ho_xform \
 $(BUILD_DIR).ob_skel.riscos.o.main \
 $(BUILD_DIR).ob_skel.riscos.o.ho_dll \
 $(BUILD_DIR).ob_skel.riscos.o.ho_sqush \
+$(BUILD_DIR).ob_skel.riscos.o.muldivas \
 $(BUILD_DIR).ob_skel.riscos.o.myrand \
 
 SKEL_SB=\
@@ -331,7 +332,6 @@ $(BUILD_DIR).ob_skel.modules.o.im_cache \
 $(BUILD_DIR).ob_skel.modules.o.im_convert \
 $(BUILD_DIR).ob_skel.modules.o.list \
 $(BUILD_DIR).ob_skel.modules.o.mrofmun \
-$(BUILD_DIR).ob_skel.modules.o.muldiv64 \
 $(BUILD_DIR).ob_skel.modules.o.myassert \
 $(BUILD_DIR).ob_skel.modules.o.numform \
 $(BUILD_DIR).ob_skel.modules.o.quickblk \

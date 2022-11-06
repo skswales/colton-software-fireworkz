@@ -96,6 +96,7 @@ gr_scale_from_s32_pair(
     _InVal_     S32 numerator,
     _InVal_     S32 denominator)
 {
+#if defined(PORTABLE_MULDIV64)
     MULDIV64_REMOVF removf;
     GR_SCALE num;
 
@@ -115,6 +116,30 @@ gr_scale_from_s32_pair(
     }
 
     return((removf.overflow < 0) ? -GR_SCALE_MAX : +GR_SCALE_MAX);
+#else
+    GR_SCALE num;
+    S32 overflow;
+
+    if(numerator == 0)
+        return(GR_SCALE_ZERO);
+
+    num = muldiv64(numerator, GR_SCALE_ONE, denominator);
+
+    /* check not OTT */
+    overflow = muldiv64_overflow();
+
+    if(overflow > 0)
+        return(+GR_SCALE_MAX);
+
+    if(overflow < 0)
+        return(-GR_SCALE_MAX);
+
+    /* SKS create rounding scale (assumes denominator +ve) */
+    if((muldiv64_remainder() * 2) > denominator)
+        ++num;
+
+    return(num);
+#endif
 }
 
 /******************************************************************************

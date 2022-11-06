@@ -74,6 +74,22 @@ extern void
 muldiv64_init(void);
 #endif
 
+#if !defined(PORTABLE_MULDIV64)
+
+/* the overflow from a prior muldiv64() */
+
+_Check_return_
+extern S32
+muldiv64_overflow(void);
+
+/* the remainder from a prior muldiv64() */
+
+_Check_return_
+extern S32
+muldiv64_remainder(void);
+
+#endif /* PORTABLE_MULDIV64 */
+
 #if defined(__cplusplus)
 }
 #endif

@@ -1321,7 +1321,7 @@
     <ClCompile Include="..\..\cmodules\ss_string.c">
       <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cmodules\muldiv64.c">
+    <ClCompile Include="..\..\cmodules\muldiv86.c">
       <Filter>Source Files\ob_skel\ob_skel_cmodules</Filter>
     </ClCompile>
   </ItemGroup>
