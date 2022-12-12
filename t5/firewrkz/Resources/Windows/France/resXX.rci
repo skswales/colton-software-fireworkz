@@ -919,8 +919,8 @@ BEGIN
 	0x6A95,	L"Right tab"
 // UK 278:Decimal tab
 	0x6A96,	L"Decimal tab"
-// UK r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST double-click to change type
-//r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST double-click to change type
+// UK r279:Drag/Adjust-drag to reposition. Double-click to clear. Adjust-double-click to change type
+//r279:Drag/Adjust-drag to reposition. Double-click to clear. Adjust-double-click to change type
 // UK w279:Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type
 	0x6A97,	L"Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type"
 //

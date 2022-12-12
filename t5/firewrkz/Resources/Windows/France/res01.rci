@@ -39,23 +39,23 @@ BEGIN
 //
 // Toolbar button help
 //
-// UK r90:Click Select to fill selected cells down from the top. Click Adjust to fill selected cells up from the bottom
-//r90:Click Select to fill selected cells down from the top. Click Adjust to fill selected cells up from the bottom
+// UK r90:Click to fill selected cells down from the top. Adjust-click to fill selected cells up from the bottom
+//r90:Click to fill selected cells down from the top. Adjust-click to fill selected cells up from the bottom
 // UK w90:Fill down (or Ctrl-click to Fill up)
 	0x205A,	L"Fill down (or Ctrl-click to Fill up)"
-// UK r91:Click Select to fill selected cells towards the right. Click Adjust to fill selected cells towards the left
-//r91:Click Select to fill selected cells towards the right. Click Adjust to fill selected cells towards the left
+// UK r91:Click to fill selected cells towards the right. Adjust-click to fill selected cells towards the left
+//r91:Click to fill selected cells towards the right. Adjust-click to fill selected cells towards the left
 // UK w91:Fill right (or Ctrl-click to Fill left)
 	0x205B,	L"Fill right (or Ctrl-click to Fill left)"
-// UK 92:Click Select to insert an Auto sum. Click Adjust for short function list
-	0x205C,	L"Click Select to insert an Auto sum. Click Adjust for short function list"
-//r93:Click Select for the Chart menu
+// UK 92:Click to insert an Auto sum. Adjust-click for short function list
+	0x205C,	L"Click to insert an Auto sum. Adjust-click for short function list"
+//r93:Click for the Chart menu
 	0x205D,	L"Create chart"
-//r94:Click Select for the Function selector menu
+//r94:Click for the Function selector menu
 	0x205E,	L"Function selector"
-//r95:Click Select to cancel editing in the formula line
+//r95:Click to cancel editing in the formula line
 	0x205F,	L"Cancel formula line editing"
-//r96:Click Select to enter the formula as new cell contents
+//r96:Click to enter the formula as new cell contents
 	0x2060,	L"Enter formula as new cell contents"
 // UK 97:This is the formula line
 	0x2061,	L"This is the formula line"

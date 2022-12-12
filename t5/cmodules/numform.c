@@ -349,15 +349,27 @@ convert_number_engineering(
 
         switch(exponent)
         {
+#if 1
+        /* Resolution 3 of the 27th CGPM (2022) - On the extension of the range of SI prefixes */
+        case +30: p_numform_info->ustr_engineering_section = USTR_TEXT("Q"); break; /* quetta */
+        case +27: p_numform_info->ustr_engineering_section = USTR_TEXT("R"); break; /* ronna */
+#else
         /* NB X-U and x-u are the Jeff K. Aronson 1990s proposal and are vaguely sensible! */
         case +36: p_numform_info->ustr_engineering_section = USTR_TEXT("U"); break; /* udeka */
         case +33: p_numform_info->ustr_engineering_section = USTR_TEXT("V"); break; /* vendeka */
         case +30: p_numform_info->ustr_engineering_section = USTR_TEXT("W"); break; /* wekta */
         case +27: p_numform_info->ustr_engineering_section = USTR_TEXT("X"); break; /* xenta */
+#endif
+
+        /* Resolution 4 of the 19th CGPM (1991) - SI prefixes zetta, zepto, yotta and yocto */
         case +24: p_numform_info->ustr_engineering_section = USTR_TEXT("Y"); break; /* yotta */
         case +21: p_numform_info->ustr_engineering_section = USTR_TEXT("Z"); break; /* zetta */
+
+        /* Resolution 10 of the 15th CGPM (1975) - SI prefixes peta and exa */
         case +18: p_numform_info->ustr_engineering_section = USTR_TEXT("E"); break; /* exa */
         case +15: p_numform_info->ustr_engineering_section = USTR_TEXT("P"); break; /* peta */
+
+        /* Resolution 12 of the 11th CGPM (1960) - SI */
         case +12: p_numform_info->ustr_engineering_section = USTR_TEXT("T"); break; /* tera */
         case  +9: p_numform_info->ustr_engineering_section = USTR_TEXT("G"); break; /* giga */
         case  +6: p_numform_info->ustr_engineering_section = USTR_TEXT("M"); break; /* mega */
@@ -367,14 +379,25 @@ convert_number_engineering(
         case  -6: p_numform_info->ustr_engineering_section = USTR_TEXT("u"); break; /* micro */
         case  -9: p_numform_info->ustr_engineering_section = USTR_TEXT("n"); break; /* nano */
         case -12: p_numform_info->ustr_engineering_section = USTR_TEXT("p"); break; /* pico */
+
+        /* Resolution 8 of the 12th CGPM (1964) - SI prefixes femto and atto */
         case -15: p_numform_info->ustr_engineering_section = USTR_TEXT("f"); break; /* femto */
         case -18: p_numform_info->ustr_engineering_section = USTR_TEXT("a"); break; /* atto */
+
+        /* Resolution 4 of the 19th CGPM (1991) - SI prefixes zetta, zepto, yotta and yocto */
         case -21: p_numform_info->ustr_engineering_section = USTR_TEXT("z"); break; /* zepto */
         case -24: p_numform_info->ustr_engineering_section = USTR_TEXT("y"); break; /* yocto */
+
+#if 1
+        /* Resolution 3 of the 27th CGPM (2022) - On the extension of the range of SI prefixes */
+        case -27: p_numform_info->ustr_engineering_section = USTR_TEXT("r"); break; /* ronto */
+        case -30: p_numform_info->ustr_engineering_section = USTR_TEXT("q"); break; /* quecto */
+#else
         case -27: p_numform_info->ustr_engineering_section = USTR_TEXT("x"); break; /* xenno */
         case -30: p_numform_info->ustr_engineering_section = USTR_TEXT("w"); break; /* weko */
         case -33: p_numform_info->ustr_engineering_section = USTR_TEXT("v"); break; /* vendeko */
         /*case -36: p_numform_info->ustr_engineering_section = USTR_TEXT("uu"); break;*/ /* udeko */
+#endif
 
         default:
             {

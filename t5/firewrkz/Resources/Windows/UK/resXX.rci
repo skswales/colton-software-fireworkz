@@ -819,7 +819,7 @@ BEGIN
 	0x6A94,	L"Centre tab"
 	0x6A95,	L"Right tab"
 	0x6A96,	L"Decimal tab"
-//r279:Drag/Adjust-drag to reposition. Double-click to clear. Double-click Adjust to change type
+//r279:Drag/Adjust-drag to reposition. Double-click to clear. Adjust-double-click to change type
 	0x6A97,	L"Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type"
 //
 	0x6A9D,	L"Left margin"

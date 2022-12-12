@@ -36,8 +36,8 @@ BEGIN
 // The definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	L"2.32.01"
-	0x2,	L"06 Nov 2022"
+	0x1,	L"2.32.02"
+	0x2,	L"12 Dec 2022"
 //
 	0x3,	L"© 1992-2022 Colton Software"
 	0x40D,	L"The product uses the following components"
@@ -137,7 +137,7 @@ BEGIN
 	0xAB,	L"Insert Page Number"
 	0xAC,	L"&Live"
 // spare 173
-//r174:Click Select to insert date. Click Adjust to insert time. Inserts either when this document was last changed or today
+//r174:Click to insert date. Adjust-click to insert time. Inserts either when this document was last changed or today
 	0xAE,	L"Click to insert date. Ctrl-click to insert time. Inserts either when this document was last changed or today"
 //
 	0x40E,	L"Y page number"
@@ -167,7 +167,7 @@ BEGIN
 	0x101,	L"Scale View"
 	0x4D7,	L"ug/ug02_fireworkz_basics.htm#accessing_the_view_control_dialogue_box"
 	0x4D8,	L"ug/ug02_fireworkz_basics.htm#accessing_the_view_scale_dialogue_box"
-//r702:Click Select for View control dialogue box. Click Adjust for View scale dialogue box
+//r702:Click for View control dialogue box. Adjust-click for View scale dialogue box
 	0x2BE,	L"Click for View Control dialogue box. Ctrl-click for View Scale dialogue box"
 //
 	0x102,	L"C&olumn border"
@@ -385,54 +385,54 @@ BEGIN
 	0x2BD,	L"Page x %d, y %d"
 	0x3F8,	L"Create a new document"
 	0x3F9,	L"Open an existing document"
-//r703:Click Select to apply left justification to the selection or at caret
+//r703:Click to apply left justification to the selection or at caret
 	0x2BF,	L"Apply left justification to the selection or at caret"
-//r704:Click Select to apply centre justification to the selection or at caret
+//r704:Click to apply centre justification to the selection or at caret
 	0x2C0,	L"Apply centre justification to the selection or at caret"
-//r705:Click Select to apply right justification to the selection or at caret
+//r705:Click to apply right justification to the selection or at caret
 	0x2C1,	L"Apply right justification to the selection or at caret"
-//r706:Click Select to apply full justification to the selection or at caret
+//r706:Click to apply full justification to the selection or at caret
 	0x2C2,	L"Apply full justification to the selection or at caret"
-//r707:Click Select for Style dialogue box, where you can apply a style to the selection, and also change, create and delete styles
+//r707:Click for Style dialogue box, where you can apply a style to the selection, and also change, create and delete styles
 	0x2C3,	L"Apply, change, create and delete styles"
-//r708:Click Select for Effects dialogue box, where you can apply various effects to the selection or at the caret
+//r708:Click for Effects dialogue box, where you can apply various effects to the selection or at the caret
 	0x2C4,	L"Apply effects to the selection or at caret"
-//r709:Click Select to apply bold to the selection or at caret
+//r709:Click to apply bold to the selection or at caret
 	0x2C5,	L"Apply bold to the selection or at caret"
-//r710:Click Select to apply italic to the selection or at caret
+//r710:Click to apply italic to the selection or at caret
 	0x2C6,	L"Apply italic to the selection or at caret"
-//r1012:Click Select to apply underline to the selection or at caret
+//r1012:Click to apply underline to the selection or at caret
 	0x3F4,	L"Apply underline to the selection or at caret"
-//r1018:Click Select to apply superscript to the selection or at caret
+//r1018:Click to apply superscript to the selection or at caret
 	0x3FA,	L"Apply superscript to the selection or at caret"
-//r1019:Click Select to apply subscript to the selection or at caret
+//r1019:Click to apply subscript to the selection or at caret
 	0x3FB,	L"Apply subscript to the selection or at caret"
 	0x2C7,	L"Use left tab stop; click in ruler to place new tab"
 	0x2C8,	L"Use centre tab stop; click in ruler to place new tab"
 	0x2C9,	L"Use right tab stop; click in ruler to place new tab"
 	0x2CA,	L"Use decimal tab stop; click in ruler to place new tab"
-//r715:Click Select to select all if no selection is present, otherwise to clear the selection
+//r715:Click to select all if no selection is present, otherwise to clear the selection
 	0x2CB,	L"Clear selection/select document"
-//r716:Click Select to copy the selection to the clipboard
+//r716:Click to copy the selection to the clipboard
 	0x2CC,	L"Copy the selection to the clipboard"
-//r717:Click Select to cut the selection to the clipboard. Click Adjust to delete the selection without altering the clipboard
+//r717:Click to cut the selection to the clipboard. Adjust-click to delete the selection without altering the clipboard
 	0x2CD,	L"Click to cut the selection to the clipboard. Ctrl-click to delete the selection without altering the clipboard"
-//r718:Click Select to paste from the clipboard
+//r718:Click to paste from the clipboard
 	0x2CE,	L"Paste from the clipboard"
 	0x2CF,	L"This is the status line"
-//r720:Click Select for Save dialogue box. Click Adjust to save document immediately
+//r720:Click for Save dialogue box. Adjust-click to save document immediately
 	0x2D0,	L"Save document"
-//r721:Click Select for Print dialogue box. Click Adjust for Print Extra dialogue box
+//r721:Click for Print dialogue box. Adjust-click for Print Extra dialogue box
 	0x2D1,	L"Print document"
-//r1013:Click Select to apply box effects to the selection
+//r1013:Click to apply box effects to the selection
 	0x3F5,	L"Apply box effects to the selection"
-//r1014:Click Select to insert a table at the caret
+//r1014:Click to insert a table at the caret
 	0x3F6,	L"Insert table at caret"
-//r1015:Click Select for Search dialogue box. Click Adjust to find the next match
+//r1015:Click for Search dialogue box. Adjust-click to find the next match
 	0x3F7,	L"Click for Search dialogue box. Ctrl-click to find the next match"
-//r1030:Click Select for Sort dialogue box
+//r1030:Click for Sort dialogue box
 	0x406,	L"Sort dialogue box"
-//r1051:Click Select to spell check. Click Adjust for dictionary management
+//r1051:Click to spell check. Adjust-click for dictionary management
 	0x41B,	L"Click to spell check. Ctrl-Click for dictionary management"
 	0x41C,	L"Thesaurus"
 	0x2D2,	L"Can't delete as selection spans more than one row"
@@ -698,7 +698,7 @@ BEGIN
 	0x413,	L"sg/sg01_entering_and_editing_numerical_data.htm#sorting_your_data"
 	0x3E7,	L"Descending order"
 //
-//r1011:This is the %s application.|MClick Select to create a new document.
+//r1011:This is the %s application.|MClick to create a new document.
 //
 // MSG_OBJECT_TYPE_xxx
 //

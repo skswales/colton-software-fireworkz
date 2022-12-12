@@ -101,8 +101,8 @@ BEGIN
 // UK 126:Series label
 	0x307E,	L"Series label"
 //
-// UK r130:Click on a chart element to select it. ADJUST-click for finer selection
-//r130:Click on a chart element to select it. ADJUST-click for finer selection
+// UK r130:Click on a chart element to select it. Adjust-click for finer selection
+//r130:Click on a chart element to select it. Adjust-click for finer selection
 // UK w130:Click on a chart element to select it. Ctrl-click for finer selection
 	0x3082,	L"Click on a chart element to select it. Ctrl-click for finer selection"
 //

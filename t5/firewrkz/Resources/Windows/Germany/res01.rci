@@ -39,28 +39,28 @@ BEGIN
 //
 // Toolbar button help
 //
-// UK r90:Click Select to fill selected cells down from the top. Click Adjust to fill selected cells up from the bottom
-//r90:Replizieren Sie den Zelleninhalt in jeder Spalte (nach unten). SPEZIAL-Klick, um nach oben zu replizieren.
+// UK r90:Click to fill selected cells down from the top. Adjust-click to fill selected cells up from the bottom
+//r90:Replizieren Sie den Zelleninhalt in jeder Spalte (nach unten). Spezial-Klick, um nach oben zu replizieren.
 // UK w90:Fill down (or Ctrl-click to Fill up)
 	0x205A,	L"Replizieren Sie den Zelleninhalt in jeder Spalte (nach unten). Strg-Klick, um nach oben zu replizieren."
-// UK r91:Click Select to fill selected cells towards the right. Click Adjust to fill selected cells towards the left
-//r91:Replizieren Sie den Zelleninhalt in jeder Zeile (nach rechts). SPEZIAL-Klick, um nach links zu replizieren.
+// UK r91:Click to fill selected cells towards the right. Adjust-click to fill selected cells towards the left
+//r91:Replizieren Sie den Zelleninhalt in jeder Zeile (nach rechts). Spezial-Klick, um nach links zu replizieren.
 // UK w91:Fill right (or Ctrl-click to Fill left)
 	0x205B,	L"Replizieren Sie den Zelleninhalt in jeder Zeile (nach rechts). Strg-Klick, um nach links zu replizieren."
-// UK r92:Click Select to insert an Auto sum. Click Adjust for short function list
-//r92:Summe. SPEZIAL-Klick, um eine kurze Liste der Funktionen anzuzeigen
+// UK r92:Click to insert an Auto sum. Adjust-click for short function list
+//r92:Summe. Spezial-Klick, um eine kurze Liste der Funktionen anzuzeigen
 // UK w92:Auto sum. Ctrl-click for short function list
 	0x205C,	L"Summe. Strg-Klick, um eine kurze Liste der Funktionen anzuzeigen"
-// UK r93:Click Select for the Chart menu
+// UK r93:Click for the Chart menu
 // UK w93:Create chart
 	0x205D,	L"Diagramm erstellen"
-// UK r94:Click Select for the Function selector menu
+// UK r94:Click for the Function selector menu
 // UK w94:Function selector
 	0x205E,	L"Funktionsauswahl"
-// UK r95:Click Select to cancel editing in the formula line
+// UK r95:Click to cancel editing in the formula line
 // UK w95:Cancel formula line editing
 	0x205F,	L"Brechen Sie die Bearbeitung der Formelzeile ab"
-// UK r96:Click Select to enter the formula as new cell contents
+// UK r96:Click to enter the formula as new cell contents
 // UK w96:Enter formula as new cell contents
 	0x2060,	L"Geben Sie die Formel als neuen Zelleninhalt ein"
 // UK 97:This is the formula line

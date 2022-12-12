@@ -35,19 +35,19 @@ BEGIN
 //
 // Toolbar button help
 //
-//r90:Click Select to fill selected cells down from the top. Click Adjust to fill selected cells up from the bottom
+//r90:Click to fill selected cells down from the top. Adjust-click to fill selected cells up from the bottom
 	0x205A,	L"Fill down (or Ctrl-click to Fill up)"
-//r91:Click Select to fill selected cells towards the right. Click Adjust to fill selected cells towards the left
+//r91:Click to fill selected cells towards the right. Adjust-click to fill selected cells towards the left
 	0x205B,	L"Fill right (or Ctrl-click to Fill left)"
-//r92:Click Select to insert an Auto sum. Click Adjust for short function list
+//r92:Click to insert an Auto sum. Adjust-click for short function list
 	0x205C,	L"Auto sum. Ctrl-click for short function list"
-//r93:Click Select for the Chart menu
+//r93:Click for the Chart menu
 	0x205D,	L"Create chart"
-//r94:Click Select for the Function selector menu
+//r94:Click for the Function selector menu
 	0x205E,	L"Function selector"
-//r95:Click Select to cancel editing in the formula line
+//r95:Click to cancel editing in the formula line
 	0x205F,	L"Cancel formula line editing"
-//r96:Click Select to enter the formula as new cell contents
+//r96:Click to enter the formula as new cell contents
 	0x2060,	L"Enter formula as new cell contents"
 	0x2061,	L"This is the formula line"
 //
@@ -55,11 +55,11 @@ BEGIN
 	0x23B8,	L"Minus"
 	0x23B9,	L"Times"
 	0x23BA,	L"Divide"
-//r955:Click Select to force cell to text
+//r955:Click to force cell to text
 	0x23BB,	L"Force cell to text"
-//r956:Click Select to attempt to force cell to number
+//r956:Click to attempt to force cell to number
 	0x23BC,	L"Attempt to force cell to number"
-//r957:Click Select to force cell to constant
+//r957:Click to force cell to constant
 	0x23BD,	L"Force cell to constant"
 	0x23BE,	L"Insert date"
 	0x23BF,	L"Insert name"

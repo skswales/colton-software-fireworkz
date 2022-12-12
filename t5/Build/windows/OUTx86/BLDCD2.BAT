@@ -7,7 +7,7 @@
 pushd %~dp0
 IF NOT EXIST BLDCD2.BAT EXIT
 
-set BLDCD2_DIR=fwin-23201
+set BLDCD2_DIR=fwin-23202
 
 rmdir /s /q                                            %BLDCD2_DIR%
 @del                                                   %BLDCD2_DIR%.zip

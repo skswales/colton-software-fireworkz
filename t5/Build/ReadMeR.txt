@@ -31,13 +31,18 @@ Run !!!Boot in t5.Build to set up the 32-bit Fireworkz release build environment
 
 Edit 'configure' - set the URD macro to the directory containing the Fireworkz source.
 
-Run !Amu and drag 'configure' to !Amu. This will build the tools
-(MakeAOF/MakeMess/MakeResp) and Makefiles that you use to build Fireworkz.
+Run !Amu.
 
-Then drag 'r32.firewrkz.Makefile' to !Amu... and wait...  A Fireworkz build
-takes about eighty minutes on a SA RISC PC.  Building on a Pi 3 takes under
-four minutes. A Fireworkz Pro build takes about ten minutes longer on a SA
-RISC PC, and about thirty seconds longer on a Pi 3.
+Drag 'configure' to !Amu. This will build the tools (MakeAOF / MakeMess /
+MakeResp) and Makefiles that you use to build Fireworkz.
+
+Then drag 'r32.firewrkz.Makefile' to !Amu... and wait...  hopefully not very long.
+
+A Fireworkz build takes about two minutes on a Raspberry Pi 4 (depending on
+your overclock) and about eighty minutes on a SA RISC PC.
+
+A Fireworkz Pro build takes about twenty seconds longer on a Raspberry Pi 4
+and about ten minutes longer on a SA RISC PC.
 
 Please note that the ObjMunge tool only works on 26-bit systems.  In order to
 build the modular Fireworkz, r32m, you will need to build on such a system.

@@ -25,7 +25,7 @@ BEGIN
 // messages: keep consistent with ob_skel/resource/resource.h
 //
 // NB Keep Style Guide in mind
-// Use SELECT / ADJUST for mouse buttons on RISC OS
+// Use Select / Adjust for mouse buttons on RISC OS
 // Use Title Caps on Windows for:
 // Title Bar / Action Buttons
 //
@@ -36,9 +36,9 @@ BEGIN
 // The definitive list of files is in common.mf_mid
 //1:2.xx.yy
 //1:2.xx
-	0x1,	L"2.32.01"
+	0x1,	L"2.32.02"
 // UK 2:dd mmm yyyy
-	0x2,	L"06 Nov. 2022"
+	0x2,	L"12 Dez. 2022"
 //
 	0x3,	L"© 1992-2022 Colton Software"
 // UK w1037:The product uses the following components
@@ -216,8 +216,8 @@ BEGIN
 // UK 172:&Live
 	0xAC,	L"&Aktualisieren"
 // spare 173
-// UK r174:Insert date (or ADJUST to insert time). Inserts either when this file was last changed or today
-//r174:Datum einfügen (oder SPEZIAL-Klick, um die Uhrzeit einzufügen). Fügt entweder ein, wann diese Datei zuletzt geändert wurde oder heute
+// UK r174:Insert date (or Adjust-click to insert time). Inserts either when this file was last changed or today
+//r174:Datum einfügen (oder Spezial-Klick, um die Uhrzeit einzufügen). Fügt entweder ein, wann diese Datei zuletzt geändert wurde oder heute
 // UK w174:Insert date (or Ctrl-click to insert time). Inserts either when this file was last changed or today
 	0xAE,	L"Datum einfügen (oder Strg-Klick, um die Uhrzeit einzufügen). Fügt entweder ein, wann diese Datei zuletzt geändert wurde oder heute"
 //
@@ -268,8 +268,8 @@ BEGIN
 	0x4D8,	L"ug/ug02_accessing_the_view_control_dialogue_box.htm"
 // UK OLD 702:View control dialogue box
 // Germany OLD 702:Ansicht Kontrolle Dialogfenster
-// UK r702:Click SELECT for View control dialogue box. Click ADJUST for View scale dialogue box
-//r702:Click SELECT for View control dialogue box. Click ADJUST for View scale dialogue box
+// UK r702:Click for View control dialogue box. Adjust-click for View scale dialogue box
+//r702:Click for View control dialogue box. Adjust-click for View scale dialogue box
 // UK w702:Click for View control dialogue box. Ctrl-click for View Scale dialogue box
 	0x2BE,	L"Click for View control dialogue box. Ctrl-click for View Scale dialogue box"
 //
@@ -692,12 +692,12 @@ BEGIN
 	0x2CE,	L"Aus der Zwischenablage einfügen"
 // UK 719:This is the status line
 	0x2CF,	L"Dies ist die Statuszeile"
-// UK NEW r720:Click SELECT for Save dialogue box. Click ADJUST to save immediately
-//r720:Dokument speichern. AUSWAHL für Dialogfenster, SPEZIAL um sofort zu speichern
+// UK NEW r720:Click for Save dialogue box. Adjust-click to save immediately
+//r720:Dokument speichern. Auswahl für Dialogfenster, Spezial um sofort zu speichern
 // UK w720:Save document
 	0x2D0,	L"Dokument Speichern"
-// UK NEW r721:Click SELECT for Print dialogue box. Click ADJUST for Print Extra dialogue box
-//r721:Dokument drucken. AUSWAHL für Dialogfenster, SPEZIAL für Print Extra Dialogfenster
+// UK NEW r721:Click for Print dialogue box. Adjust-click for Print Extra dialogue box
+//r721:Dokument drucken. Auswahl für Dialogfenster, Spezial für Print Extra Dialogfenster
 // UK w721:Print document
 	0x2D1,	L"Dokument drucken"
 // UK 1013:Apply box to the selection
@@ -720,14 +720,14 @@ BEGIN
 	0x2DA,	L"Nicht gefunden"
 // UK 731:%d replaced
 	0x2DB,	L"%d ausgetauscht"
-// UK r732:Drag to resize. Double-click for auto-width. ADJUST-drag to reposition
-//r732:Ziehen um Größe zu ändern, Doppelclick für automatische Breite. SPEZIAL-ziehen um zu positionieren
+// UK r732:Drag to resize. Double-click for auto-width. Adjust-drag to reposition
+//r732:Ziehen um Größe zu ändern, Doppelclick für automatische Breite. Spezial-ziehen um zu positionieren
 // UK w732:Drag to resize. Double-click for auto-width. Ctrl+drag to reposition
 	0x2DC,	L"Ziehen um Größe zu ändern, Doppelclick für automatische Breite. Strg+ziehen um zu positionieren"
 // UK 733:Drag to resize. Double-click for auto-height
 	0x2DD,	L"Ziehen um Größe zu ändern, Doppleclick für automatische Höhe"
-// UK r734:ADJUST-drag to reposition
-//r734:SPEZIAL-ziehen um zu positionieren
+// UK r734:Adjust-drag to reposition
+//r734:Spezial-ziehen um zu positionieren
 // UK w734:Ctrl+drag to reposition
 	0x2DE,	L"Strg+ziehen um zu positionieren"
 // UK 738:Picture at (%s,%s) cm : w=%s h=%s cm %d%%,%d%%
@@ -1163,8 +1163,8 @@ BEGIN
 // UK 999:Descending order
 	0x3E7,	L"Absteig. Reihenfolge"
 //
-// UK r1011:This is the %s application.|MClick SELECT to create a new document.
-//r1011:Dies ist die %s Applikation.|MKlick SELECT um ein neues Dokument zu erzeugen.
+// UK r1011:This is the %s application.|MClick to create a new document.
+//r1011:Dies ist die %s Applikation.|MKlick um ein neues Dokument zu erzeugen.
 //
 // MSG_OBJECT_TYPE_xxx
 //

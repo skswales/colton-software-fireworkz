@@ -919,8 +919,8 @@ BEGIN
 	0x6A95,	L"Rechter Tabulator"
 // UK 278:Decimal tab
 	0x6A96,	L"Dezimaler Tabulator"
-// UK r279:Drag/ADJUST-drag to reposition. Double-click to clear. ADJUST-double-click to change type
-//r279:Ziehen/ADJUST-Ziehen zur Neupositionierung. Doppelklicken Sie zum Löschen. ADJUST-Doppelklicken Sie, um den Typ zu ändern
+// UK r279:Drag/Adjust-drag to reposition. Double-click to clear. Adjust-double-click to change type
+//r279:Ziehen/Spezial-Ziehen zur Neupositionierung. Doppelklicken Sie zum Löschen. Spezial-Doppelklicken Sie, um den Typ zu ändern
 // UK w279:Drag/Ctrl-drag to reposition. Double-click to clear. Ctrl+double-click to change type
 	0x6A97,	L"Ziehen/Strg-Ziehen zum Neupositionieren. Doppelklicken Sie zum Löschen. Strg+Doppelklick, um den Typ zu ändern"
 //

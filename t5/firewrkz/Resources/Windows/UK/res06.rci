@@ -69,7 +69,7 @@ BEGIN
 	0x307D,	L"Category labels"
 	0x307E,	L"Series label"
 //
-//r130:Click on a chart element to select it. Click Adjust for finer selection
+//r130:Click on a chart element to select it. Adjust-click for finer selection
 	0x3082,	L"Click on a chart element to select it. Ctrl-click for finer selection"
 //
 // CHART_MSG_DIALOG_BAR_xxx

@@ -1,9 +1,9 @@
-{Version:1.07;13 Nov 1993;Fireworkz;Colton Software;4000 2029 4983 8986}
-{Block:0;0;;32;8;38;;32;8;38}
-{Style:BaseSheet;{ColWidth:1929}{ColName:X#}{RowHeight:480}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:2}{JustifyV:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy hh:mm:ss}{NumformSE:@}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
+{Version:2.32.02;12 Dec 2022;Fireworkz;Development copy - Colton Software;8032 2677 0041 8348;Alphabet-Latin1}
+{Flow:10}
+{Block:0;0;;32;8;43;;32;8;43}
+{Style:BaseSheet;{ColWidth:2211}{ColName:X#}{RowHeight:480}{RowHeightFix:0}{RowUnbreakable:0}{RowName:#}{MarginLeft:114}{MarginRight:114}{MarginPara:0}{Tablist}{Background:255;255;255}{ParaStart:68}{ParaEnd:68}{LineSpace:0;72}{Justify:2}{JustifyV:0}{NewObject:3}{Numform:#,##0.00}{NumformDT:dd.mm.yy hh:mm:ss}{NumformSE:@}{BorderColour:0;0;0}{Border:0}{GridLeftColour:221;221;221}{GridTopColour:221;221;221}{GridRightColour:221;221;221}{GridBottomColour:221;221;221}{GridLeft:0}{GridTop:0}{GridRight:0}{GridBottom:0}{Protect:0}{Typeface:Helvetica}{Fontx:0}{Fonty:240}{Underline:0}{Bold:0}{Italic:0}{Superscript:0}{Subscript:0}{Foreground:0;0;0}}
 {StyleBase:BaseSheet}
 {Style:BaseHeadFoot}
-{StyleHeaderFooter:BaseHeadFoot}
 {Style:Current cell;{Background:221;221;221}{BorderColour:0;0;0}{Border:1}}
 {StyleCurrent:Current cell}
 {Style:Heading;{Background:0;68;153}{Fonty:600}{Bold:1}{Foreground:255;255;255}}
@@ -17,12 +17,14 @@
 {S:X;X;0;9;M + N :}
 {S:S;F;0;10;0;set_value(b11d13,b6d8+f6h8)}
 {S:X;X;0;14;M * N :}
-{S:X;X;0;18;Inv(M)  (M -1 ) :}
-{S:X;X;0;22;2x2 Matrices :}
-{S:X;X;0;24;Matrix M :}
-{S:X;X;0;27;M + N :}
-{S:X;X;0;30;M * N :}
-{S:X;X;0;33;Inv(M)    M -1 :}
+{S:X;X;0;18;inverse(M) (M -1 ) :}
+{S:X;X;0;22;transpose(M) :}
+{S:X;X;0;27;2x2 Matrices :}
+{S:X;X;0;29;Matrix M :}
+{S:X;X;0;32;M + N :}
+{S:X;X;0;35;M * N :}
+{S:X;X;0;38;inverse(M) (M -1) :}
+{S:X;X;0;41;transpose(M) :}
 {S:X;X;1;4;Matrix M}
 {S:S;C;1;5;1}
 {S:S;C;1;6;4}
@@ -36,14 +38,19 @@
 {S:S;F;1;18;\{0.166666666666667,-0.666666666666667,0.5\\\;-2.33333333333333,2.33333333333333,-1\\\;1.83333333333333,-1.33333333333333,0.5\};m_inverse(b6d8)}
 {S:S;F;1;19;-2.33333333333333;index($b$19,col-col($b$19)+1,row-row($b$19)+1)}
 {S:S;F;1;20;1.83333333333333;index($b$19,col-col($b$19)+1,row-row($b$19)+1)}
-{S:S;C;1;24;1}
-{S:S;C;1;25;2}
-{S:S;F;1;27;\{0,7\\\;4,2\};b25c26+f25g26}
-{S:S;F;1;28;4;index($b$28,col-col($b$28)+1,row-row($b$28)+1)}
-{S:S;F;1;30;\{7,-1\\\;4,3\};m_mult(b25c26,f25g26)}
-{S:S;F;1;31;4;index($b$31,col-col($b$31)+1,row-row($b$31)+1)}
-{S:S;F;1;33;\{-0.6,0.8\\\;0.4,-0.2\};m_inverse(b25c26)}
-{S:S;F;1;34;0.4;index($b$34,col-col($b$34)+1,row-row($b$34)+1)}
+{S:S;F;1;22;\{1,4,7\\\;2,5,6\\\;3,6,7\};transpose(b6d8)}
+{S:S;F;1;23;2;index($b$23,col-col($b$23)+1,row-row($b$23)+1)}
+{S:S;F;1;24;3;index($b$23,col-col($b$23)+1,row-row($b$23)+1)}
+{S:S;C;1;29;1}
+{S:S;C;1;30;2}
+{S:S;F;1;32;\{0,7\\\;4,2\};b30c31+f30g31}
+{S:S;F;1;33;4;index($b$33,col-col($b$33)+1,row-row($b$33)+1)}
+{S:S;F;1;35;\{7.0,-1.0\\\;4.0,3.0\};m_mult(b30c31,f30g31)}
+{S:S;F;1;36;4.0;index($b$36,col-col($b$36)+1,row-row($b$36)+1)}
+{S:S;F;1;38;\{-0.6,0.8\\\;0.4,-0.2\};m_inverse(b30c31)}
+{S:S;F;1;39;0.4;index($b$39,col-col($b$39)+1,row-row($b$39)+1)}
+{S:S;F;1;41;\{1,2\\\;4,3\};transpose(b30c31)}
+{S:S;F;1;42;4;index($b$42,col-col($b$42)+1,row-row($b$42)+1)}
 {S:S;C;2;5;2}
 {S:S;C;2;6;5}
 {S:S;C;2;7;6}
@@ -56,14 +63,19 @@
 {S:S;F;2;18;-0.666666666666667;index($b$19,col-col($b$19)+1,row-row($b$19)+1)}
 {S:S;F;2;19;2.33333333333333;index($b$19,col-col($b$19)+1,row-row($b$19)+1)}
 {S:S;F;2;20;-1.33333333333333;index($b$19,col-col($b$19)+1,row-row($b$19)+1)}
-{S:S;C;2;24;4}
-{S:S;C;2;25;3}
-{S:S;F;2;27;7;index($b$28,col-col($b$28)+1,row-row($b$28)+1)}
-{S:S;F;2;28;2;index($b$28,col-col($b$28)+1,row-row($b$28)+1)}
-{S:S;F;2;30;-1;index($b$31,col-col($b$31)+1,row-row($b$31)+1)}
-{S:S;F;2;31;3;index($b$31,col-col($b$31)+1,row-row($b$31)+1)}
-{S:S;F;2;33;0.8;index($b$34,col-col($b$34)+1,row-row($b$34)+1)}
-{S:S;F;2;34;-0.2;index($b$34,col-col($b$34)+1,row-row($b$34)+1)}
+{S:S;F;2;22;4;index($b$23,col-col($b$23)+1,row-row($b$23)+1)}
+{S:S;F;2;23;5;index($b$23,col-col($b$23)+1,row-row($b$23)+1)}
+{S:S;F;2;24;6;index($b$23,col-col($b$23)+1,row-row($b$23)+1)}
+{S:S;C;2;29;4}
+{S:S;C;2;30;3}
+{S:S;F;2;32;7;index($b$33,col-col($b$33)+1,row-row($b$33)+1)}
+{S:S;F;2;33;2;index($b$33,col-col($b$33)+1,row-row($b$33)+1)}
+{S:S;F;2;35;-1.0;index($b$36,col-col($b$36)+1,row-row($b$36)+1)}
+{S:S;F;2;36;3.0;index($b$36,col-col($b$36)+1,row-row($b$36)+1)}
+{S:S;F;2;38;0.8;index($b$39,col-col($b$39)+1,row-row($b$39)+1)}
+{S:S;F;2;39;-0.2;index($b$39,col-col($b$39)+1,row-row($b$39)+1)}
+{S:S;F;2;41;2;index($b$42,col-col($b$42)+1,row-row($b$42)+1)}
+{S:S;F;2;42;3;index($b$42,col-col($b$42)+1,row-row($b$42)+1)}
 {S:S;C;3;5;3}
 {S:S;C;3;6;6}
 {S:S;C;3;7;7}
@@ -76,15 +88,22 @@
 {S:S;F;3;18;0.5;index($b$19,col-col($b$19)+1,row-row($b$19)+1)}
 {S:S;F;3;19;-1;index($b$19,col-col($b$19)+1,row-row($b$19)+1)}
 {S:S;F;3;20;0.5;index($b$19,col-col($b$19)+1,row-row($b$19)+1)}
+{S:S;F;3;22;7;index($b$23,col-col($b$23)+1,row-row($b$23)+1)}
+{S:S;F;3;23;6;index($b$23,col-col($b$23)+1,row-row($b$23)+1)}
+{S:S;F;3;24;7;index($b$23,col-col($b$23)+1,row-row($b$23)+1)}
 {S:X;X;4;5; }
 {S:X;X;4;9;M - N :}
 {S:S;F;4;10;2;set_value(f11h13,b6d8-f6h8)}
 {S:X;X;4;14;det(M) :}
+{S:X;X;4;15;det(N) :}
 {S:X;X;4;18;M -1 * M :}
-{S:X;X;4;24;Matrix N :}
-{S:X;X;4;27;M - N :}
-{S:X;X;4;30;det(M) :}
-{S:X;X;4;33;M -1 * M :}
+{S:X;X;4;22;transpose(N) :}
+{S:X;X;4;29;Matrix N :}
+{S:X;X;4;32;M - N :}
+{S:X;X;4;35;det(M) :}
+{S:X;X;4;36;det(N) :}
+{S:X;X;4;38;M -1 * M :}
+{S:X;X;4;41;transpose(N) :}
 {S:X;X;5;4;Matrix N}
 {S:S;C;5;5;-1}
 {S:S;C;5;6;2}
@@ -93,16 +112,23 @@
 {S:S;C;5;11;2}
 {S:S;C;5;12;7}
 {S:S;F;5;14;-6;m_determ(b6d8)}
+{S:S;F;5;15;11.0;m_determ(f6h8)}
 {S:S;F;5;18;\{1,4.44089209850063e-16,0\\\;0,1,0\\\;0,4.44089209850063e-16,1\};m_mult(b19,b6d8)}
 {S:S;F;5;19;0;index($f$19,col-col($f$19)+1,row-row($f$19)+1)}
 {S:S;F;5;20;0;index($f$19,col-col($f$19)+1,row-row($f$19)+1)}
-{S:S;C;5;24;-1}
-{S:S;C;5;25;2}
-{S:S;F;5;27;\{2,1\\\;0,4\};b25c26-f25g26}
-{S:S;F;5;28;0;index($f$28,col-col($f$28)+1,row-row($f$28)+1)}
-{S:S;F;5;30;-5;m_determ(b25c26)}
-{S:S;F;5;33;\{1,4.44089209850063e-16\\\;0,1\};m_mult(b34,b25c26)}
-{S:S;F;5;34;0;index($f$34,col-col($f$34)+1,row-row($f$34)+1)}
+{S:S;F;5;22;\{-1,2,0\\\;5,0,-3\\\;0,3,-2\};transpose(f6h8)}
+{S:S;F;5;23;5;index($f$23,col-col($f$23)+1,row-row($f$23)+1)}
+{S:S;F;5;24;0;index($f$23,col-col($f$23)+1,row-row($f$23)+1)}
+{S:S;C;5;29;-1}
+{S:S;C;5;30;2}
+{S:S;F;5;32;\{2,1\\\;0,4\};b30c31-f30g31}
+{S:S;F;5;33;0;index($f$33,col-col($f$33)+1,row-row($f$33)+1)}
+{S:S;F;5;35;-5.0;m_determ(b30c31)}
+{S:S;F;5;36;-5.0;m_determ(f30g31)}
+{S:S;F;5;38;\{1.0,4.44089209850063e-16\\\;0.0,1.0\};m_mult(b39,b30c31)}
+{S:S;F;5;39;0.0;index($f$39,col-col($f$39)+1,row-row($f$39)+1)}
+{S:S;F;5;41;\{-1,2\\\;3,-1\};transpose(f30g31)}
+{S:S;F;5;42;3;index($f$42,col-col($f$42)+1,row-row($f$42)+1)}
 {S:S;C;6;5;5}
 {S:S;C;6;6;0}
 {S:S;C;6;7;-3}
@@ -112,12 +138,17 @@
 {S:S;F;6;18;4.44089209850063e-16;index($f$19,col-col($f$19)+1,row-row($f$19)+1)}
 {S:S;F;6;19;1;index($f$19,col-col($f$19)+1,row-row($f$19)+1)}
 {S:S;F;6;20;4.44089209850063e-16;index($f$19,col-col($f$19)+1,row-row($f$19)+1)}
-{S:S;C;6;24;3}
-{S:S;C;6;25;-1}
-{S:S;F;6;27;1;index($f$28,col-col($f$28)+1,row-row($f$28)+1)}
-{S:S;F;6;28;4;index($f$28,col-col($f$28)+1,row-row($f$28)+1)}
-{S:S;F;6;33;4.44089209850063e-16;index($f$34,col-col($f$34)+1,row-row($f$34)+1)}
-{S:S;F;6;34;1;index($f$34,col-col($f$34)+1,row-row($f$34)+1)}
+{S:S;F;6;22;2;index($f$23,col-col($f$23)+1,row-row($f$23)+1)}
+{S:S;F;6;23;0;index($f$23,col-col($f$23)+1,row-row($f$23)+1)}
+{S:S;F;6;24;3;index($f$23,col-col($f$23)+1,row-row($f$23)+1)}
+{S:S;C;6;29;3}
+{S:S;C;6;30;-1}
+{S:S;F;6;32;1;index($f$33,col-col($f$33)+1,row-row($f$33)+1)}
+{S:S;F;6;33;4;index($f$33,col-col($f$33)+1,row-row($f$33)+1)}
+{S:S;F;6;38;4.44089209850063e-16;index($f$39,col-col($f$39)+1,row-row($f$39)+1)}
+{S:S;F;6;39;1.0;index($f$39,col-col($f$39)+1,row-row($f$39)+1)}
+{S:S;F;6;41;2;index($f$42,col-col($f$42)+1,row-row($f$42)+1)}
+{S:S;F;6;42;-1;index($f$42,col-col($f$42)+1,row-row($f$42)+1)}
 {S:S;C;7;5;0}
 {S:S;C;7;6;3}
 {S:S;C;7;7;-2}
@@ -127,57 +158,64 @@
 {S:S;F;7;18;0;index($f$19,col-col($f$19)+1,row-row($f$19)+1)}
 {S:S;F;7;19;0;index($f$19,col-col($f$19)+1,row-row($f$19)+1)}
 {S:S;F;7;20;1;index($f$19,col-col($f$19)+1,row-row($f$19)+1)}
+{S:S;F;7;22;0;index($f$23,col-col($f$23)+1,row-row($f$23)+1)}
+{S:S;F;7;23;-3;index($f$23,col-col($f$23)+1,row-row($f$23)+1)}
+{S:S;F;7;24;-2;index($f$23,col-col($f$23)+1,row-row($f$23)+1)}
 {BR:;;;;;;;;1;1;{StyleHandle:BaseSheet}}
 {R:8;;;;9;;;;1;0;{ColWidth:964}}
 {R:0;5;;32;1;6;;32;0;0;{Justify:2}}
 {R:0;9;;32;1;10;;32;0;0;{Justify:2}}
 {R:0;14;;32;1;15;;32;0;0;{Justify:2}}
-{R:0;18;10;3;1;19;13;3;0;0;{Superscript:1}}
+{R:0;18;13;3;1;19;16;3;0;0;{Superscript:1}}
 {R:0;18;;32;1;19;;32;0;0;{Justify:2}}
-{R:0;24;;32;1;25;;32;0;0;{Justify:2}}
-{R:0;27;;32;1;28;;32;0;0;{Justify:2}}
-{R:0;30;;32;1;31;;32;0;0;{Justify:2}}
-{R:0;33;11;3;1;34;14;3;0;0;{Superscript:1}}
-{R:0;33;;32;1;34;;32;0;0;{Justify:2}}
+{R:0;29;;32;1;30;;32;0;0;{Justify:2}}
+{R:0;32;;32;1;33;;32;0;0;{Justify:2}}
+{R:0;35;;32;1;36;;32;0;0;{Justify:2}}
+{R:0;38;13;3;1;39;16;3;0;0;{Superscript:1}}
+{R:0;38;;32;1;39;;32;0;0;{Justify:2}}
 {R:4;5;;32;5;6;;32;0;0;{Justify:2}}
 {R:4;9;;32;5;10;;32;0;0;{Justify:2}}
 {R:4;14;;32;5;15;;32;0;0;{Justify:2}}
 {R:4;18;1;3;5;19;4;3;0;0;{Superscript:1}}
 {R:4;18;;32;5;19;;32;0;0;{Justify:2}}
-{R:4;24;;32;5;25;;32;0;0;{Justify:2}}
-{R:4;27;;32;5;28;;32;0;0;{Justify:2}}
-{R:4;30;;32;5;31;;32;0;0;{Justify:2}}
-{R:4;33;1;3;5;34;4;3;0;0;{Superscript:1}}
-{R:4;33;;32;5;34;;32;0;0;{Justify:2}}
+{R:4;29;;32;5;30;;32;0;0;{Justify:2}}
+{R:4;32;;32;5;33;;32;0;0;{Justify:2}}
+{R:4;35;;32;5;36;;32;0;0;{Justify:2}}
+{R:4;38;1;3;5;39;4;3;0;0;{Superscript:1}}
+{R:4;38;;32;5;39;;32;0;0;{Justify:2}}
 {R:1;5;;32;4;8;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
 {R:5;5;;32;8;8;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
 {R:1;4;;32;2;5;;32;0;0;{Justify:1}}
 {R:5;4;;32;6;5;;32;0;0;{Justify:1}}
 {R:1;18;;32;4;21;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
 {R:5;18;;32;8;21;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{R:1;24;;32;3;26;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{R:5;24;;32;7;26;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{R:1;27;;32;3;29;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{R:5;27;;32;7;29;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{R:1;30;;32;3;32;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{R:5;30;;32;6;31;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{R:1;33;;32;3;35;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{R:5;33;;32;7;35;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:1;29;;32;3;31;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:5;29;;32;7;31;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:1;32;;32;3;34;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:5;32;;32;7;34;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:1;35;;32;3;37;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:1;38;;32;3;40;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:5;38;;32;7;40;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
 {R:1;14;;32;4;17;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
 {R:1;10;;32;4;13;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
 {R:0;1;;32;1;2;;32;0;0;{StyleHandle:Heading}}
 {R:0;1;;32;1;2;;32;0;0;{ColWidth:9468}{Justify:1}}
 {R:0;3;;32;1;4;;32;0;0;{Bold:1}}
 {R:5;10;;32;8;13;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
-{R:0;22;;32;1;23;;32;0;0;{Bold:1}}
+{R:0;27;;32;1;28;;32;0;0;{Bold:1}}
 {R:1;;;;2;;;;1;0;{ColWidth:1189}}
 {R:2;;;;3;;;;1;0;{ColWidth:849}}
 {R:3;;;;4;;;;1;0;{ColWidth:793}}
-{R:4;;;;5;;;;1;0;{ColWidth:1303}}
 {R:5;;;;6;;;;1;0;{ColWidth:1133}}
 {R:6;;;;7;;;;1;0;{ColWidth:793}}
 {R:7;;;;8;;;;1;0;{ColWidth:793}}
 {R:1;1;;32;8;2;;32;0;0;{ColWidth:0}}
+{R:1;41;;32;3;43;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:5;41;;32;7;43;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:4;;;;5;;;;1;0;{ColWidth:1870}}
+{R:1;22;;32;4;25;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{R:5;22;;32;8;25;;32;0;0;{GridLeftColour:0;0;0}{GridTopColour:0;0;0}{GridRightColour:0;0;0}{GridBottomColour:0;0;0}{GridLeft:2}{GridTop:2}{GridRight:2}{GridBottom:2}}
+{ImpR:0;2;;32;1;3;;32;0;0;36;1001;0;40;{StyleHandle:Current cell}}
 {PageHefoBreakValues-H:0;0;0;;1;569;0;0;;;0;;;1;569;228;0;;;0}
 {HD-H:0;2}
 {HBR-H:0;2;;32;;32;{StyleHandle:BaseSheet}}
@@ -186,7 +224,4 @@
 {HBR-H:0;3;;32;;32;{StyleHandle:BaseSheet}}
 {HBR-H:0;3;;32;;32;{StyleHandle:BaseHeadFoot}}
 {EndOfData}
-{CmdGroup:{ViewCreate:0;13472;12400;13440}
-{ViewControl:100;2;0;0;1;1;0;2048;0;2048}
-{CurrentPosition:0;2}
-}
+{CmdGroup:{ViewCreate:0;13472;12368;13440}{ViewControl:100;2;0;0;1;1;0;2048;0;2048}{CurrentPosition:0;2;0;3;0}}
